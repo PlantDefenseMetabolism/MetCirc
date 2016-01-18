@@ -56,6 +56,8 @@ convert2MSP <- function (mm, splitPattern = "_", splitInd = 1) {
     if (colNames[1] != "mz") stop("name of first colomn is not mz")
     if (colNames[2] != "rt") stop("name of second column is not rt")
     if (colNames[3] != "intensity") stop("name of third column is not intensity")
+    
+    
     ## if (colNames[4] != "pcgroup_precursorMZ") break
      
     precursor <- mm[,4]
