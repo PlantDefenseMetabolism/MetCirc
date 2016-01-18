@@ -56,9 +56,9 @@ getBegEndIndMSP <- function(msp) {
     indPeaks <- which(msp[,1] == "Num Peaks: ")
     indLosses <- which(msp[,1] == "Num Losses: ")
     
-    if (length(indPeaks) > indLosses) indNumPeaks <- indPeaks
+    if (length(indPeaks) > length(indLosses)) indNumPeaks <- indPeaks
     ## <=: to get all possibilities
-    if (length(indPeaks) <= indLosses) indNumPeaks <- indLosses 
+    if (length(indPeaks) <= length(indLosses)) indNumPeaks <- indLosses 
     
     indEnd <- as.numeric(msp[indNumPeaks, 2])
     indBeg <- indNumPeaks + 1 
