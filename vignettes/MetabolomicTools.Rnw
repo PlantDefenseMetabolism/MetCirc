@@ -185,10 +185,11 @@ mzCheck Maximum tolerated distance for mz
 rtCheck Maximum tolerated distance for RT
 kNN Number of nearest Neighbours to check
 <<eval=FALSE>>=
-uniquePreMZ_cut <- .cutUniquePreMZ(sd02_deconvoluted[,4], splitPattern=" _ ", splitInd=2)
+uniquePreMZ_cut <- cutUniquePreMZ(sd02_deconvoluted[,4], splitPattern=" _ ",
+                            splitInd=2)
 
-finalCluster <- allocatePrecursor2mz(sd01 = sd01_outputXCMS, sd02 = sd02_deconvoluted, rtCheck = 60, 
-                                    mzVsRTbalance = 1000) 
+finalCluster <- allocatePrecursor2mz(sd01 = sd01_outputXCMS, 
+    sd02 = sd02_deconvoluted, rtCheck = 60, mzVsRTbalance = 1000) 
 
 ## write finalCluster 
 write.table(finalCluster, file = "finalCluster.csv", sep=";", dec=".",
@@ -226,7 +227,8 @@ colnames(similarityMat)[hClustMSP$order]
 ## order newSim according to order of clustering
 colnames(similarityMat)
 hClustMSP$order
-newSim <- matrix(data=NA, nrow = dim(similarityMat)[1], ncol = dim(similarityMat)[1])
+newSim <- matrix(data=NA, nrow = dim(similarityMat)[1], 
+                 ncol = dim(similarityMat)[1])
 newColnames <- colnames(similarityMat)[hClustMSP$order]
 colnames(newSim) <- rownames(newSim) <- newColnames
 @
@@ -327,7 +329,8 @@ colnames(similarityMat)[hClustMSP$order]
 ## order newSim according to order of clustering
 colnames(similarityMat)
 hClustMSP$order
-newSim <- matrix(data=NA, nrow = dim(similarityMat)[1], ncol = dim(similarityMat)[1])
+newSim <- matrix(data=NA, nrow = dim(similarityMat)[1], 
+                 ncol = dim(similarityMat)[1])
 newColnames <- colnames(similarityMat)[hClustMSP$order]
 colnames(newSim) <- rownames(newSim) <- newColnames
 @
@@ -351,7 +354,8 @@ namesPrec <- rownames(binnedMSPNL)
 namesPrec <- rownames(binnedMSP)
 set.seed(999)
 ## needs to be replaced by group/sector identifier
-compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), replace=TRUE) 
+compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), 
+                      replace=TRUE) 
 ## yl = young leaf, ol = old leaf, s = stem, r = root
 
 ## create vector with new names compartment_mz/rt
@@ -360,11 +364,13 @@ compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), replace=
 if (length(unique(namesPrec)) == length(namesPrec)) {
     namesPrec <- paste(compartment, namesPrec, sep="_")
 } else {
-    namesPrec <- paste(compartment, namesNL, sprintf("%04d", 1:length(namesPrec), sep="_"))
+    namesPrec <- paste(compartment, namesNL, 
+                       sprintf("%04d", 1:length(namesPrec), sep="_"))
 }
 
-dfNameGroup <- data.frame(group = compartment, name = namesPrec) ## start = 0, end =1, 
-dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] ## order according to compartment
+dfNameGroup <- data.frame(group = compartment, name = namesPrec) 
+## order according to compartment
+dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] 
 @
 
 <<eval=FALSE>>=
@@ -387,7 +393,8 @@ dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] ## order according to c
 
 
 <<eval=FALSE>>=
-linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold=0.5, dfNameGroup = dfNameGroup)
+linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold=0.5,
+                            dfNameGroup = dfNameGroup)
 @
 
 \section{Visualisation}
