@@ -1,4 +1,5 @@
-To install enter:
+To install `MetabolomicTools` enter:
 
-`library(devtools)`
-`install_github(repo = "MetabolomicTools", username = "PlantDefenseMetabolism")`
+`library(devtools)` 
+
+`install_github(repo = "PlantDefenseMetabolism/MetabolomicTools"
