@@ -449,10 +449,14 @@ selectedFeatures <- shinyCircos(dfNameGroup, similarityMat)
 
 To rebuild the figure in a non-interactive environment, run 
 <<eval=FALSE>>=
-plotCircos(dfNameGroup, linkMat, initialize = TRUE, featureNames = TRUE, 
+linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold=0.95,
+                            dfNameGroup = dfNameGroup)
+linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
+plotCircos(dfNameGroup, linkMat_cut, initialize = TRUE, featureNames = TRUE, 
     cexFeatureNames = 0.2, groupName = TRUE, links = FALSE, highlight = TRUE)
-indSelected <- which(selectedFeatures == dfNameGroup[,"name"])
-highlight(dfNameGroup = dfNameGroup, ind = indSelected, LinkMatrix = linkMat)
+indSelected <- mapply(function(x) which(x == dfNameGroup$name), selectedFeatures)
+indSelected <- as.numeric(indSelected)
+highlight(dfNameGroup = dfNameGroup, ind = indSelected, LinkMatrix = linkMat_cut)
 @
 
 \printbibliography
