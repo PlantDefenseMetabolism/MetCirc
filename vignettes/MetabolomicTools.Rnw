@@ -1,0 +1,424 @@
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{Workflow for Metabolomics}
+%\VignetteKeywords{Mass Spectrometry, MS, MSMS, Metabolomics}
+%\VignettePackage{MetabolomicTools-vignette}
+
+\documentclass[11pt,a4paper,english,arial,twoside]{article}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{geometry}
+\geometry{verbose,
+    tmargin=25mm,
+    bmargin=25mm,
+    lmargin=25mm,
+    rmargin=25mm}
+\setlength\parindent{0pt}
+
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{textcomp}
+
+%\definecolor{red}{rgb}{1,0,0}
+%\definecolor{blue}{rgb}{0,0,1}
+
+%\usepackage{breakurl}
+\usepackage{hyperref}
+\hypersetup{%
+  pdfusetitle,
+  bookmarks = {true},
+  bookmarksnumbered = {true},
+  bookmarksopen = {true},
+  bookmarksopenlevel = 2,
+  unicode = {true},
+  breaklinks = {false},
+  hyperindex = {true},
+  colorlinks = {true},
+  linktocpage = {true},
+  plainpages = {false},
+  linkcolor = {blue},
+ % citecolor = {blue},
+ % urlcolor = {red},
+  pdfstartview = {Fit},
+  pdfpagemode = {UseOutlines},
+  pdfview = {XYZ null null null}
+}
+
+\widowpenalty10000
+\clubpenalty10000
+
+\newcommand{\email}[1]{\href{mailto:#1}{\normalfont\texttt{#1}}}
+\newcommand{\R}{\texttt{R}}
+\newcommand{\code}[1]{{\texttt{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\mbox{\normalfont\textsf{#1}}}}
+
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+\usepackage[nottoc]{tocbibind}
+
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+
+\usepackage{graphicx}
+%\usepackage[font=footnotesize]{subfig}
+
+\usepackage[english]{babel}
+\usepackage{color}
+
+%\usepackage[backend=bibtex,natbib,style=authoryear,maxcitenames=2]{biblatex}
+
+
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{authblk} 
+\author[]{Thomas Naake and Emmanuel Gaquerel}
+
+
+
+\affil{
+    Plant Defense Metabolism \\
+    Centre for Organismel Studies
+}
+
+\title{MetabolomicTools: A workflow for metabolomics data in R}
+% \textit{In silico} evolutionary model allows for the emergence of a quorum 
+% sensing network in \textit{Bacillus subtilis}
+\begin{document}
+
+\maketitle
+
+<<knitr, include=FALSE, cache=FALSE>>=
+library("knitr")
+@
+
+\section{Prepare the environment}
+Before starting, load the \Rpackage{MetabolomicTools} package. This will also
+load the required packages \Rpackage{shiny}, \Rpackage{circlize} and 
+\Rpackage{scales}: 
+<<eval=TRUE>>=
+library(MetabolomicTools)
+@
+
+Load example data sets from Li et al. (2015, PNAS). sd01\_outputXCMS is ...,
+sd02\_deconvoluted is ... .
+<<eval=TRUE,echo=c(1:3)>>=
+## load data
+load(system.file("data/sd01_outputXCMS.Rdata", package = "MetabolomicTools")) 
+load(system.file("data/sd02_deconvoluted.Rdata", package = "MetabolomicTools")) 
+
+##spectra_0_less <- read.csv("20158251022_spectra_0_less.msp", 
+##                           comment.char="#")
+##rawmatrix_0_less <- read.delim("20158251022_rawmatrix_0_less.txt")
+
+## PNAS article
+## sd01
+##sd01_outputXCMS <- read.csv("sd01_outputXCMS.csv", header=FALSE, sep=";")
+##colnames(sd01_outputXCMS) <- as.matrix(sd01_outputXCMS[3,])[1,]
+##sd01_outputXCMS <- sd01_outputXCMS[-c(1:3),]
+##sd01_FoldChangePvalue <- read.csv("sd01_FoldchangePvalue.csv", sep=";")
+## sd02
+##sd02_similarityMatrix <- read.csv("sd02_similarityMatrix.csv", sep=";")
+##rownames(sd02_similarityMatrix) <- sd02_similarityMatrix[,1]
+#sd02_similarityMatrix <- sd02_similarityMatrix[,-1]
+#sd02_deconvoluted <- read.csv("sd02_deconvolutedidMSMS.csv", sep=";")
+@
+
+
+\section{Write into msp}
+Convert sd02\_deconvoluted into a file in .msp format. \Rfunction{convert2MSP} 
+creates an entry for each precursor and identifies the m/z and retention time 
+of fragment ions.
+<<eval=FALSE>>=
+## identify precursor mz
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+
+## optional:
+## write finalMSP to .msp
+write.table(finalMSP, file = "idMSMStoMSP.msp", sep=" ", dec=".",
+            row.names=FALSE, col.names=FALSE,quote=FALSE)
+@
+
+\subsection{Tissue}
+\paragraph{Convert \Robject{idMSMStissueproject.csv} to .msp format.} Here, 
+we would like to analyse data from multipl e plant tissues. The data are stored
+in \Robject{idMSMStissueproject.Rdata} as \Robject{tissue}. Often, the data 
+is not in the right format to analyse it, thus we need to bring 
+\Robject{tissue} in the right format to be used for \Rfunction{convert2MSP}.
+\textit{Note bene}, \Rfunction{convert2MSP} expects right column names, too, 
+which will be checked internally.
+
+<<eval=TRUE>>=
+load(system.file("data/idMSMStissueproject.Rdata", 
+                 package = "MetabolomicTools")) 
+
+## change tissue to format that it is compatible with writeMSP 
+## sd02_deconvoluted
+## 1st column: mz, 2nd column: rt, 3rd column: intensity, 
+## 4th column: pcgroup_precursorMZ
+newtissue <- tissue
+newtissue[,2] <- tissue[,3]; colnames(newtissue)[2] <- colnames(tissue)[3]
+newtissue[,3] <- tissue[,2]; colnames(newtissue)[3] <- "intensity"
+newtissue[,4] <- tissue[,7]; colnames(newtissue)[4] <- colnames(tissue)[7]
+newtissue <- newtissue[,1:4]
+tissue <- newtissue
+
+finalMSP <- convert2MSP(tissue, split = "_", splitInd=1)
+@
+
+\section{convert sd02\_deconvoluted precursor ions and sd01\_outputXCMS}
+to a format as in ...\_rawmatrix\_0\_less.txt by allocating precursor ions to canditate
+m/z values based on minimal distance of m/z and deviance of rt based on 
+an objective function \newline
+
+cf. group.nearest: Group peaks together across samples by creating a master 
+peak list and assigning corresponding peaks from all samples. 
+Arguments: mzVsRTbalnce Multiplicator for mz value before calculating the (euclidean) distance
+between two peaks (can we apply this here as we use different gradients?, cf. XCMS vignette: 
+"In most cases, LC/MS files that were acquired under different conditions should not
+be compared.  For instance, positive and negative ionization mode files will have no ions
+in common and should thus be preprocessed separately.  Similarly,  data files acquired
+with different elution gradients should not be processed together")
+mzCheck Maximum tolerated distance for mz
+rtCheck Maximum tolerated distance for RT
+kNN Number of nearest Neighbours to check
+<<eval=FALSE>>=
+uniquePreMZ_cut <- .cutUniquePreMZ(sd02_deconvoluted[,4], splitPattern=" _ ", splitInd=2)
+
+finalCluster <- allocatePrecursor2mz(sd01 = sd01_outputXCMS, sd02 = sd02_deconvoluted, rtCheck = 60, 
+                                    mzVsRTbalance = 1000) 
+
+## write finalCluster 
+write.table(finalCluster, file = "finalCluster.csv", sep=";", dec=".",
+            row.names=FALSE, col.names=TRUE,quote=FALSE)
+@
+
+\section{Binning}
+
+\subsection{for msp files with fragment ions}
+create table with same fragments (binning)
+<<eval=FALSE>>=
+msp <- finalMSP
+
+binnedMSP <- binning(msp, tol = 0.01)
+@
+
+<<eval=FALSE>>=
+## similarity Matrix 
+similarityMat <- createSimilarityMatrix(binnedMSP)
+@
+
+\paragraph{Clustering/Visualisation.}
+<<eval=FALSE>>=
+## Clustering
+library(amap)
+hClustMSP <- hcluster(similarityMat, method = "spearman")
+plot(hClustMSP, labels = FALSE)
+colnames(similarityMat)[hClustMSP$order]
+# hClustMSP2 <- hcluster(similarityMatrix[1:5,1:5], method = "spearman")
+# plot(hClustMSP2, labels = FALSE)
+# plot(hClustMSP2)
+@
+
+<<eval=FALSE>>=
+## order newSim according to order of clustering
+colnames(similarityMat)
+hClustMSP$order
+newSim <- matrix(data=NA, nrow = dim(similarityMat)[1], ncol = dim(similarityMat)[1])
+newColnames <- colnames(similarityMat)[hClustMSP$order]
+colnames(newSim) <- rownames(newSim) <- newColnames
+@
+
+<<eval=FALSE>>=
+for (i in 1:dim(similarityMat)[1]) {
+    newValues <- similarityMat[hClustMSP$order, hClustMSP$order[i]] 
+    if (all(names(newSim[,i]) == names(newValues))) {
+        newSim[,i] <- newValues
+    } else {print("error");break}
+}
+
+write.csv(newSim, "orderedSimilarityMatrix.csv", sep=";", dec=".")
+@
+
+
+\subsection{Neutral losses}
+Convert msp file to msp with functional losses
+<<eval=FALSE>>=
+nlMSP <- msp2FunctionalLossesMSP(finalMSP)
+@
+% 
+% \begin{matrix}
+%     "CH2" & 14.0157 \\
+%     "CH4" & 16.0313 \\
+%     "NH3" &  17.0265 \\
+%     "H2O" & 18.0106 \\
+%     "K+toNH4+" & 20.9293 \\
+%     "Na+toH+" & 21.9819 \\
+%     "C2H2" & 26.0157 \\
+%     "CO" & 27.9949 \\
+%     "C2H4" & 28.0313 \\
+%     "CH3N" & 29.0266 \\
+%     "CH2O" & 30.0106 \\
+%     "CH5N" & 31.0422 \\
+%     "S" & 31.9721 \\
+%     "H2S" & 33.9877 \\
+%     "K+toH+" &  37.9559 \\
+%     "C2H2O" & 42.0106 \\
+%     "C3H6" & 42.0470 \\
+%     "CHNO" & 43.0058 \\
+%     "CO2" & 43.9898 \\
+%     "CH2O2" & 46.0055 \\
+%     "C4H8" & 56.0626 \\
+%     "C3H9N" & 59.0735 \\
+%     "C2H4O2" & 60.0211 \\
+%     "CH4N2O" & 60.0324 \\
+%     "SO2" & 63.9619 \\
+%     "C5H8" & 68.0626 \\
+%     "C3H6O2" & 74.0368 \\
+%     "C6H6" & 78.0470 \\
+%     "SO3" & 79.9568 \\
+%     "C3H2O3" & 86.0004 \\
+%     "C4H8O2" & 88.0517 \\
+%     "C4H12N2" & 88.1000 \\
+%     "H2SO4" & 97.9674 \\
+%     "H3PO4" & 97.9769 \\
+%     "C5H10O2" & 102.0618 \\
+%     "C3H4O4" & 104.0110 \\
+%     "C6H12O2" & 116.0861 \\
+%     "C2H5O4P" & 123.9926 \\
+%     "C5H8O4" & 132.0423 \\
+%     "C7H19N3" & 145.1579 \\
+%     "C6H10O4" & 146.0579 \\
+%     "C6H10O5" & 162.0528 \\
+%     "C6H12O5" & 164.0685 \\ 
+%     "C6H8O6" & 176.0321 \\
+%     "C6H12O6" & 180.0634 \\
+%     "C6H10O7" & 194.0427 \\
+%     "C8H12O6" & 204.0655 \\
+%     "C11H10O4" & 206.0579 \\
+%     "C10H15N3O6S" & 305.0682 \\
+%     "C10H17N3O6S" & 307.0838 \\
+%     "C12H20O10" & 324.1057 \\
+%     "C12H22O11" & 342.1162 
+% \end{matrix}
+
+<<eval=FALSE>>=
+## bin msp file with functional losses, create table with same fragments (binning)
+binnedMSPNL <- binning(nlMSP, tol = 0.01)
+@
+
+<<eval=FALSE>>=
+## similarity Matrix
+similarityMat <- createSimilarityMatrix(binnedMSPNL)
+@
+
+\paragraph{Clustering/Visualisation}
+<<eval=FALSE>>=
+## Clustering
+library(amap)
+hClustMSP <- hcluster(similarityMat, method = "spearman")
+plot(hClustMSP, labels = FALSE)
+colnames(similarityMat)[hClustMSP$order]
+@
+
+<<eval=FALSE>>=
+## order newSim according to order of clustering
+colnames(similarityMat)
+hClustMSP$order
+newSim <- matrix(data=NA, nrow = dim(similarityMat)[1], ncol = dim(similarityMat)[1])
+newColnames <- colnames(similarityMat)[hClustMSP$order]
+colnames(newSim) <- rownames(newSim) <- newColnames
+@
+
+<<eval=FALSE>>=
+for (i in 1:dim(similarityMat)[1]) {
+    newValues <- similarityMat[hClustMSP$order, hClustMSP$order[i]] 
+    if (all(names(newSim[,i]) == names(newValues))) {
+        newSim[,i] <- newValues
+    } else {print("error");break}
+}
+@
+
+\section{Visualisation}
+<<eval=FALSE>>=
+library(circlize); library(scales) ## scales for function alpha
+@
+
+<<eval=FALSE>>=
+namesPrec <- rownames(binnedMSPNL)
+namesPrec <- rownames(binnedMSP)
+set.seed(999)
+## needs to be replaced by group/sector identifier
+compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), replace=TRUE) 
+## yl = young leaf, ol = old leaf, s = stem, r = root
+
+## create vector with new names compartment_mz/rt
+## check if there are any precursors (mz/rt) with identical name and if so  
+## change name
+if (length(unique(namesPrec)) == length(namesPrec)) {
+    namesPrec <- paste(compartment, namesPrec, sep="_")
+} else {
+    namesPrec <- paste(compartment, namesNL, sprintf("%04d", 1:length(namesPrec), sep="_"))
+}
+
+dfNameGroup <- data.frame(group = compartment, name = namesPrec) ## start = 0, end =1, 
+dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] ## order according to compartment
+@
+
+<<eval=FALSE>>=
+## this can possibly be dropped
+## write positions for fragments
+# for(i in levels(df[,"compartment"])) {
+#     ind <- which(df[,"compartment"] == i)
+#     for (j in 1:length(ind)) {
+#         df[ind[j], "start"] <- j - 1
+#         df[ind[j], "end"] <- j
+#     }
+# }
+
+## write continous positions (do not care about sectors)
+#for (i in 1:dim(df)[1]) {
+#    df[,"start"][i] <- i -1
+#    df[,"end"][i] <- i
+#}
+@
+
+
+<<eval=FALSE>>=
+linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold=0.5, dfNameGroup = dfNameGroup)
+@
+
+\section{Visualisation}
+As we have calculated similarity coefficients between precursors, we would
+like to visualise these connections interactively and explore the data. 
+The \Rpackage{MetabolomicTools} package implements \Rfunction{shinyCircos} 
+that allows for such kind of exploration. It is based on the \Rpackage{shiny}
+and on \Rpackage{circlize} framework. Inside of \Rfunction{shinyCircos} 
+information of precursor ions are displayed by hovering over precursors. 
+Precursors can also be permanently selected by clicking on them. The similarity
+coefficients can be thresholded by changing the slider input. Also, on the 
+sidebar panel, the type of link to be displayed can be selected: 
+should only links between groups be displayed, should only links within groups 
+be displayed or should all links be displayed? On exiting the shiny application
+via the the exit button in the sidebar panel, selected precursors will
+be returned which are allocated here to \Robject{selectedFeatures}. 
+\Robject{selectedFeatures} is a vector of the precursor names.
+
+To start the shiny app, run
+<<eval=FALSE>>=
+selectedFeatures <- shinyCircos(dfNameGroup, similarityMat)
+@
+
+To rebuild the figure in a non-interactive environment, run 
+<<eval=FALSE>>=
+plotCircos(dfNameGroup, linkMat, initialize = TRUE, featureNames = TRUE, 
+    cexFeatureNames = 0.2, groupName = TRUE, links = FALSE, highlight = TRUE)
+indSelected <- which(selectedFeatures == dfNameGroup[,"name"])
+highlight(dfNameGroup = dfNameGroup, ind = indSelected, LinkMatrix = linkMat)
+@
+
+
+
+\end{document}
