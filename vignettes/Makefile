@@ -23,6 +23,9 @@ all:
 	
 vignette: MetabolomicTools.Rnw
 	pdflatex MetabolomicTools.tex
+	bibtex MetabolomicTools
+	pdflatex MetabolomicTools.tex
+	pdflatex MetabolomicTools.tex
 
 	
 clean:	

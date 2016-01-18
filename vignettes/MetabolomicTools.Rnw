@@ -67,8 +67,8 @@
 \usepackage[english]{babel}
 \usepackage{color}
 
-%\usepackage[backend=bibtex,natbib,style=authoryear,maxcitenames=2]{biblatex}
-
+\usepackage[backend=bibtex,natbib,style=authoryear,maxcitenames=2]{biblatex}
+\addbibresource{MetabolomicTools-citations}
 
 \usepackage{setspace}
 \onehalfspacing
@@ -184,10 +184,7 @@ with different elution gradients should not be processed together")
 mzCheck Maximum tolerated distance for mz
 rtCheck Maximum tolerated distance for RT
 kNN Number of nearest Neighbours to check
-<<eval=FALSE>>=
-uniquePreMZ_cut <- cutUniquePreMZ(sd02_deconvoluted[,4], splitPattern=" _ ",
-                            splitInd=2)
-
+<<eval=c(1:2),results='hide',message=FALSE>>=
 finalCluster <- allocatePrecursor2mz(sd01 = sd01_outputXCMS, 
     sd02 = sd02_deconvoluted, rtCheck = 60, mzVsRTbalance = 1000) 
 
@@ -199,17 +196,49 @@ write.table(finalCluster, file = "finalCluster.csv", sep=";", dec=".",
 \section{Binning}
 
 \subsection{for msp files with fragment ions}
-create table with same fragments (binning)
+Due to inaccuracies fragments might have m/z values which differ from other 
+fragments even though they are in theory identical. \Rfunction{binning} 
+will bin together fragment ions which are similar (set by the parameter
+\code{tol} for tolerance). \Rfunction{binning} applies the following algorithm: 
+
+\begin{itemize}
+    \item it will first bin together the fragments which are closest together;       
+    \item from these newly binned together cluster it will calculate the 
+        new m/z value and 
+    \item calculates the new distance to neighbour fragments.
+    \item \Rfunction{binning} will then cluster together the next-distant 
+        pair of fragment ions (starting from step 1) until 
+    \item the distance will be greater than the tolerande value \code{tol},
+        where \Rfunction{binning} will return a matrix with binned m/z
+        fragment ion values together with their intensity for all 
+        precursor ions
+\end{itemize}
+
 <<eval=FALSE>>=
 msp <- finalMSP
-
+## create data.frame with binned fragments
 binnedMSP <- binning(msp, tol = 0.01)
 @
+
+\section{Similarity matrix}
+The normalised dot product (NDP) is the similarity coefficient to calculate 
+the similarity between two precursor ions and their fragments, respectively. 
+The NDP uses the m/z value of fragment/precursor ions and their 
+peak intensity, respectively, of two metabolites. The NDP is calculated 
+according to:
+\begin{equation}
+    NDP = \frac{\sum(W_{S1, i} \cdot W_{S2, i}) ^ 2}{ \sum(W_{S1, i} ^ 2) * \sum(W_{S2, i} ^ 2) },
+\end{equation}
+with $W = [ peak intensity] ^{m} \cdot [m/z]^n$
+For further information see \parencite{Li2015}.
+
 
 <<eval=FALSE>>=
 ## similarity Matrix 
 similarityMat <- createSimilarityMatrix(binnedMSP)
 @
+
+
 
 \paragraph{Clustering/Visualisation.}
 <<eval=FALSE>>=
@@ -426,6 +455,6 @@ indSelected <- which(selectedFeatures == dfNameGroup[,"name"])
 highlight(dfNameGroup = dfNameGroup, ind = indSelected, LinkMatrix = linkMat)
 @
 
-
+\printbibliography
 
 \end{document}
