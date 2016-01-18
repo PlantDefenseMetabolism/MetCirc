@@ -1,9 +1,25 @@
 Package: MetabolomicTools
 Type: Package
-Title: What the package does (short line)
-Version: 1.0
+Title: MetabolomicTools is a workflow to analyse metabolomics data
+Version: 0.1
 Date: 2016-01-15
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Authors@R: c(person(given = "Thomas", family = "Naake",
+    email = "naake@stud.uni-heidelberg.de",
+    role = c("aut","cre")),
+  person(given = "Emmanuel", family = "Gaquerel",
+    email = "emmanuel.gaquerel@cos.uni-heidelberg.de", role = "aut"))
+Author: Thomas Naake <naake@stud.uni-heidelberg.de> and Emmanuel Gaquerel
+    <emmanuel.gaquerel@cos.uni-heidelberg.de>
+Maintainer: Thomas Naake <naake@stud.uni-heidelberg.de>
+VignetteBuilder: knitr
+Depends:
+    R (>= 3.1),
+    shiny (>= 0.13.0),
+    circlize (>= 0.3.3),
+    scales
+Suggests:
+    knitr (>= 1.11)
+Description: A workflow to analyse metabolomics data: create MSP, binning,
+    visualise.
+License: GPL-2
+RoxygenNote: 5.0.1
