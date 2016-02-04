@@ -12,6 +12,10 @@ information on linked features}
 
 \item{type}{character, one of "all", "inter" or "intra"}
 }
+\value{
+cutLinkMatrix returns a matrix that gives per each row 
+information on linked features
+}
 \description{
 Create a cut LinkMatrix
 }
@@ -24,7 +28,20 @@ will only contain entries of links which are inside groups and not between
 groups.
 }
 \examples{
-\dontrun{cutLinkMatrix(LinkMatrix, type = c("all", "inter", "intra"))}
+load(system.file("data/sd02_deconvoluted.RData", 
+     package = "MetabolomicTools")) 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+binnedMSP <- binning(msp = finalMSP, tol = 0.01)
+similarityMat <- createSimilarityMatrix(binnedMSP)
+namesPrec <- rownames(binnedMSP)
+compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), 
+     replace=TRUE) 
+namesPrec <- paste(compartment, namesPrec, sep="_")
+dfNameGroup <- data.frame(group = compartment, name = namesPrec)
+dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] 
+linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold = 0.5, 
+     dfNameGroup = dfNameGroup)
+cutLinkMatrix(LinkMatrix = linkMat, type = "all")
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

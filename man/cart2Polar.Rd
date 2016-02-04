@@ -12,7 +12,7 @@ cart2Polar(x, y)
 \item{y}{cartesian y coordinate}
 }
 \value{
-list of r and theta
+\code{cart2Polar} returns a list of colar coordinates r and theta
 }
 \description{
 cart2Polar calculates polar coordinates from cartesian coordinates

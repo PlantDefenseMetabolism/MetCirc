@@ -15,11 +15,31 @@ linked features will not be included}
 
 \item{dfNameGroup}{data.frame, data.frame contains column "group" and "name"}
 }
+\value{
+createLinkMatrix returns a matrix that gives per each row 
+information on linked features
+}
 \description{
 Create a matrix which contains features to link (indices)
 }
+\details{
+Threshold is a numerical value and filters linked precursor ions; 
+filtering is currently based on the normalised dot product.
+}
 \examples{
-\dontrun{createLinkMatrix(similarityMatrix, threshold, dfNameGroup)}
+load(system.file("data/sd02_deconvoluted.RData", 
+     package = "MetabolomicTools")) 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+binnedMSP <- binning(msp = finalMSP, tol = 0.01)
+similarityMat <- createSimilarityMatrix(binnedMSP)
+namesPrec <- rownames(binnedMSP)
+compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), 
+     replace=TRUE) 
+namesPrec <- paste(compartment, namesPrec, sep="_")
+dfNameGroup <- data.frame(group = compartment, name = namesPrec) 
+dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] 
+createLinkMatrix(similarityMatrix = similarityMat, threshold = 0.5, 
+     dfNameGroup = dfNameGroup)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

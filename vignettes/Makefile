@@ -33,6 +33,6 @@ clean:
 	rm -f .Rhistory
 
 	
-allclean: clean
-	rm -rf figure/
-	rm -rf cache/ 
+#allclean: clean
+#	rm -rf figure/
+#	rm -rf cache/ 

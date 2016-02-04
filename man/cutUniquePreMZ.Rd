@@ -4,16 +4,22 @@
 \alias{cutUniquePreMZ}
 \title{Get unique precursor ions}
 \usage{
-cutUniquePreMZ(precursor, splitPattern = splitPattern, splitInd = splitInd, returnCharacter = TRUE)
+cutUniquePreMZ(precursor, splitPattern = splitPattern, 
+     splitInd = splitInd, returnCharacter = TRUE)
 }
 \arguments{
 \item{precursor, }{character with splitPattern}
 
-\item{splitPattern}{character, character vector to use for splitting, see strsplit for further information}
+\item{splitPattern}{character, character vector to use for splitting, 
+see ?strsplit for further information}
 
 \item{splitInd}{numeric, extract precursor mz at position splitInd}
 
-\item{returnCharacter}{logical, if TRUE return character, if FALSE return numeric}
+\item{returnCharacter}{logical, if TRUE return character, if FALSE 
+return numeric}
+}
+\value{
+cutUniquePreMZ returns character as specified by parameters
 }
 \description{
 Get unique precursor ions

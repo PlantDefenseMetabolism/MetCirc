@@ -1,7 +1,7 @@
 Package: MetabolomicTools
 Type: Package
 Title: MetabolomicTools is a workflow to analyse metabolomics data
-Version: 0.1
+Version: 0.98.0
 Date: 2016-01-15
 Authors@R: c(person(given = "Thomas", family = "Naake",
     email = "naake@stud.uni-heidelberg.de",
@@ -13,12 +13,16 @@ Author: Thomas Naake <naake@stud.uni-heidelberg.de> and Emmanuel Gaquerel
 Maintainer: Thomas Naake <naake@stud.uni-heidelberg.de>
 VignetteBuilder: knitr
 Depends:
-    R (>= 3.1),
-    shiny (>= 0.13.0),
+    R (>= 3.2),
     circlize (>= 0.3.3),
-    scales
+    grDevices (>= 3.2),
+    graphics (>= 3.2),
+    scales (>= 0.3.0),
+    shiny (>= 0.13.0)
 Suggests:
-    knitr (>= 1.11)
+    amap (>= 0.8),
+    knitr (>= 1.11)    
+biocViews: Metabolomics, MassSpectrometry, Visualization
 Description: A workflow to analyse metabolomics data: create MSP, binning,
     visualise.
 License: GPL-2

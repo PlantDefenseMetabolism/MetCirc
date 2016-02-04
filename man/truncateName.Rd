@@ -13,19 +13,22 @@ truncateName(dfNameGroup, roundDigits = 2, nameGroup = FALSE)
 
 \item{nameGroup}{logical, if TRUE name contains group name (e.g. "a_123/456")}
 }
+\value{
+\code{truncateName} returns dfNameGroup with truncated names
+}
 \description{
 A function to truncate names
 }
 \details{
-The column \code{name} of \code{dfNameGroup} is a vector of \code{character} 
-     strings of type consisting of retention time and m/z value. It is 
-     cumbersome to display such strings. \code{truncateName} truncates 
-     these strings by rounding retention time and m/z values by 
+The column \code{name} of \code{dfNameGroup} is a vector of 
+     \code{character} strings of type consisting of retention time and m/z 
+     value. It is cumbersome to display such strings. \code{truncateName} 
+     truncates these strings by rounding retention time and m/z values by 
      digits given by \code{roundDigits}. \code{truncateName} is an 
      internal function.
 }
 \examples{
-\dontrun{truncateName(dfNameGroup, roundDigits = 2, nameGroup = FALSE)}
+     \dontrun{truncateName(dfNameGroup, roundDigits = 2, nameGroup = FALSE)}
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

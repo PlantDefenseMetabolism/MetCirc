@@ -1,33 +1,49 @@
-## precursor e.g. sd02_deconvoluted
-## 1 - 183 (predefined)
 #' @name allocatePrecursor2mz
 #' @title allocatePrecursor2mz: Join two data sources
 #' @description Allocates precursor ions to candidate m / z values based on 
 #' minimal distance of m / z and deviance of rt based on an objective function
-#' @usage allocatePrecursor2mz(sd01, sd02, kNN = 10, mzCheck = 1, rtCheck = 30, mzVsRTbalance = 10000)
-#' @param sd01 has 
-#' @param sd02 has four columns, the first column contains the m/z 
-#'  value, the second column the rt, the third column the intensity, the fourth
-#'  column the pcgroup_precursorMZ
+#' @usage allocatePrecursor2mz(sd01, sd02, kNN = 10, mzCheck = 1, rtCheck = 30, 
+#'      mzVsRTbalance = 10000)
+#' @param sd01 is the output of the \code{XCMS} and \code{CAMERA} 
+#' processing and statistical analysis and \code{XCMS} and \code{CAMERA} 
+#' scripts (see Li et al. 2015 and vignette for further information)
+#' @param sd02 is a data.frame with idMS/MS deconvoluted spectra with fragment 
+#' ions (m/z, retention time, relative intensity in \%) and the corresponding 
+#' principal component group with the precursor ion. sd02 
+#' has four columns, the first column contains the m/z 
+#' value, the second column the rt, the third column the intensity, the fourth
+#' column the pcgroup_precursorMZ
 #' @param kNN numerical, number of k-nearest neighbours based on deviation
-#' from m/z (i.e. the kNN entries with the smallest deviation)
-#' @param mzCheck numerical, maximum tolerated distance for m/z (strong criterion here)
+#' from m/z (i.e. the k entries with the smallest deviation)
+#' @param mzCheck numerical, maximum tolerated distance for m/z (strong 
+#'      criterion here)
 #' @param rtCheck numerical, maximum tolerated distance for retention time
 #' @param mzVsRTbalance numerical, multiplicator for mz value before calculating 
 #' the (euclidean) distance between two peaks, high value means that there is 
 #' a strong weight on the deviation m/z value 
 #' @details This condition combines different data sources. However, this may 
-#' not be recommended in most cases, when files were aquired under different 
-#' conditions. 
-#' @value allocatePrecursor2mz returns a data.frame containing average retention
-#' time, average mz, metabolite name, adduct ion name, spectrum refereh
+#' not be recommended in most cases, when files were acquired under different 
+#' conditions. 1 - 183 is currently predefined.
+#' @return allocatePrecursor2mz returns a data.frame containing average 
+#'      retention time, average mz, metabolite name, adduct ion name, 
+#'      spectrum refereh
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples \dontrun{allocatePrecursor2mz(sd01, sd02, kNN = 10, mzCheck = 1, rtCheck = 30, mzVsRTbalance = 10000)}
+#' @references Li et al. (2015): Navigating natural variation in 
+#' herbivory-induced secondary metabolism in coyote tobacco populations using 
+#' MS/MS structural analysis. PNAS, 112, E4147--E4155, 10.1073/pnas.1503106112.
+#' @examples 
+#' load(system.file("data/sd01_outputXCMS.RData", 
+#'      package = "MetabolomicTools")) 
+#' load(system.file("data/sd02_deconvoluted.RData", 
+#'      package = "MetabolomicTools")) 
+#' allocatePrecursor2mz(sd01 = sd01_outputXCMS, sd02 = sd02_deconvoluted, 
+#'      kNN = 10, mzCheck = 1, rtCheck = 30, mzVsRTbalance = 10000)
 #' @export
-allocatePrecursor2mz <- function(sd01, sd02, kNN = 10, mzCheck = 1, rtCheck = 30, mzVsRTbalance = 10000) {
-    ## Multiplicator for mz value before calculating the (euclidean) distance between two peaks
-    ## high value means that there is a strong weight on the dev m/z value
-    ## mzVsRTbalance
+allocatePrecursor2mz <- function(sd01, sd02, kNN = 10, mzCheck = 1, 
+                                 rtCheck = 30, mzVsRTbalance = 10000) {
+    ## Multiplicator for mz value before calculating the (euclidean) distance 
+    ## between two peaks high value means that there is a strong weight on the 
+    ## dev m/z value mzVsRTbalance
     if (kNN < 0) break
     if (mzCheck < 0) break
     if (rtCheck < 0) break
@@ -35,14 +51,16 @@ allocatePrecursor2mz <- function(sd01, sd02, kNN = 10, mzCheck = 1, rtCheck = 30
     
     precursor <- sd02[,4]
     
-    ## isolated mz values from e.g. pcgroup_precursorMZ column in sd02_deconvoluted
+    ## isolated mz values from e.g. pcgroup_precursorMZ column in 
+    ## sd02_deconvoluted
     uniquePrecursor <- cutUniquePreMZ(precursor, splitPattern=" _ ", splitInd=2)
 
     ## create finalCluster, which is the data.frame to store data
     finalCluster <- matrix(nrow = length(uniquePrecursor), ncol = (5 + 183 + 4))
     colnames(finalCluster) <- c("Average Rt(min)", "Average mz", "Metabolite Name",
-                                "Adduct ion name", "Spectrum reference file name", as.character(1:183), 
-                                "check RT", "dev RT", "check mz", "deviation m/z")
+                "Adduct ion name", "Spectrum reference file name", 
+                as.character(1:183), "check RT", "dev RT", "check mz", 
+                "deviation m/z")
     finalCluster <- as.data.frame(finalCluster)
     
     uniquePreMZ <- unique(precursor)
@@ -74,7 +92,8 @@ allocatePrecursor2mz <- function(sd01, sd02, kNN = 10, mzCheck = 1, rtCheck = 30
             devmz <- devmz[devmz <= mzCheck]
             ToleranceCheckMZ <- TRUE
         } else {
-            print (c(i,"Deviation of m/z is greater than tolerance value. I won't truncate the kNN."))
+            print (c(i,"Deviation of m/z is greater than tolerance value. 
+                     I won't truncate the kNN."))
             devmz <- devmz
             ToleranceCheckMZ <- FALSE
         }
@@ -92,13 +111,15 @@ allocatePrecursor2mz <- function(sd01, sd02, kNN = 10, mzCheck = 1, rtCheck = 30
         devrt <- abs(sd02rt - sd01rt)
         
         if (any(devrt <= rtCheck)) {
-            ## truncate devmz and devrt that it is included in the tolerance value
+            ## truncate devmz and devrt that it is included in the tolerance 
+            ## value
             devmz <- devmz[devrt <= rtCheck] 
             devrt <- devrt[devrt <= rtCheck]
             ToleranceCheckRT <- TRUE
             objective <- mzVsRTbalance * devmz + devrt
         } else {
-            print(c(i, "Deviation of rt is greater than tolerance value. I won't use rt as a criterion."))
+            print(c(i, "Deviation of rt is greater than tolerance value. 
+                    I won't use rt as a criterion."))
             ToleranceCheckRT <- FALSE
             objective <- devmz ## use only devmz
         }
@@ -117,7 +138,8 @@ allocatePrecursor2mz <- function(sd01, sd02, kNN = 10, mzCheck = 1, rtCheck = 30
         entry[, "Average Rt(min)"] <- sd02rt
         entry[, "Average mz"] <- uniquePrecursor[i]
         entry[, "Metabolite Name"] <- "Unknown"
-        entry[, "Adduct ion name"] <- if(nchar(as.character(XCMS[, "adduct"]) == 0)) "Unknown" else XCMS[,"adduct"]
+        entry[, "Adduct ion name"] <- 
+            if (nchar(as.character(XCMS[, "adduct"]) == 0)) "Unknown" else XCMS[,"adduct"]
         
         entry[, "Spectrum reference file name"] <- "Unknown"
         

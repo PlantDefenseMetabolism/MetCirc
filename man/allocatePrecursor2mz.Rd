@@ -4,19 +4,26 @@
 \alias{allocatePrecursor2mz}
 \title{allocatePrecursor2mz: Join two data sources}
 \usage{
-allocatePrecursor2mz(sd01, sd02, kNN = 10, mzCheck = 1, rtCheck = 30, mzVsRTbalance = 10000)
+allocatePrecursor2mz(sd01, sd02, kNN = 10, mzCheck = 1, rtCheck = 30, 
+     mzVsRTbalance = 10000)
 }
 \arguments{
-\item{sd01}{has}
+\item{sd01}{is the output of the \code{XCMS} and \code{CAMERA} 
+processing and statistical analysis and \code{XCMS} and \code{CAMERA} 
+scripts (see Li et al. 2015 and vignette for further information)}
 
-\item{sd02}{has four columns, the first column contains the m/z 
+\item{sd02}{is a data.frame with idMS/MS deconvoluted spectra with fragment 
+ions (m/z, retention time, relative intensity in \%) and the corresponding 
+principal component group with the precursor ion. sd02 
+has four columns, the first column contains the m/z 
 value, the second column the rt, the third column the intensity, the fourth
 column the pcgroup_precursorMZ}
 
 \item{kNN}{numerical, number of k-nearest neighbours based on deviation
-from m/z (i.e. the kNN entries with the smallest deviation)}
+from m/z (i.e. the k entries with the smallest deviation)}
 
-\item{mzCheck}{numerical, maximum tolerated distance for m/z (strong criterion here)}
+\item{mzCheck}{numerical, maximum tolerated distance for m/z (strong 
+criterion here)}
 
 \item{rtCheck}{numerical, maximum tolerated distance for retention time}
 
@@ -24,19 +31,34 @@ from m/z (i.e. the kNN entries with the smallest deviation)}
 the (euclidean) distance between two peaks, high value means that there is 
 a strong weight on the deviation m/z value}
 }
+\value{
+allocatePrecursor2mz returns a data.frame containing average 
+     retention time, average mz, metabolite name, adduct ion name, 
+     spectrum refereh
+}
 \description{
 Allocates precursor ions to candidate m / z values based on 
 minimal distance of m / z and deviance of rt based on an objective function
 }
 \details{
 This condition combines different data sources. However, this may 
-not be recommended in most cases, when files were aquired under different 
-conditions.
+not be recommended in most cases, when files were acquired under different 
+conditions. 1 - 183 is currently predefined.
 }
 \examples{
-\dontrun{allocatePrecursor2mz(sd01, sd02, kNN = 10, mzCheck = 1, rtCheck = 30, mzVsRTbalance = 10000)}
+load(system.file("data/sd01_outputXCMS.RData", 
+     package = "MetabolomicTools")) 
+load(system.file("data/sd02_deconvoluted.RData", 
+     package = "MetabolomicTools")) 
+allocatePrecursor2mz(sd01 = sd01_outputXCMS, sd02 = sd02_deconvoluted, 
+     kNN = 10, mzCheck = 1, rtCheck = 30, mzVsRTbalance = 10000)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+}
+\references{
+Li et al. (2015): Navigating natural variation in 
+herbivory-induced secondary metabolism in coyote tobacco populations using 
+MS/MS structural analysis. PNAS, 112, E4147--E4155, 10.1073/pnas.1503106112.
 }
 

@@ -7,11 +7,17 @@
 highlight(dfNameGroup, ind, LinkMatrix)
 }
 \arguments{
-\item{dfNameGroup}{data.frame , data.frame with group and unique idenfier (name)}
+\item{dfNameGroup}{data.frame , data.frame with group and unique idenfier 
+(name)}
 
 \item{ind}{numerical, indices which will be highlighted}
 
-\item{LinkMatrix}{matrix, in each row there is information about features to be connected}
+\item{LinkMatrix}{matrix, in each row there is information about features 
+to be connected}
+}
+\value{
+The function will update an existing plot by highlighting a 
+ specified sector and connected links.
 }
 \description{
 A function to add links and highlight sectors to an initialised
@@ -21,7 +27,27 @@ A function to add links and highlight sectors to an initialised
 Internal use for shiny app.
 }
 \examples{
-\dontrun{plotCircosName(dfNameGroup, LinkMatrix, initialize = TRUE, featureNames = TRUE, groupName = TRUE, links = FALSE, highlight = FALSE); highlight(dfNameGroup, ind, LinkMatrix)}
+load(system.file("data/sd02_deconvoluted.RData", 
+     package = "MetabolomicTools")) 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+binnedMSP <- binning(msp = finalMSP, tol = 0.01)
+similarityMat <- createSimilarityMatrix(binnedMSP)
+namesPrec <- rownames(binnedMSP)
+compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), 
+     replace=TRUE) 
+namesPrec <- paste(compartment, namesPrec, sep="_")
+dfNameGroup <- data.frame(group = compartment, name = namesPrec) 
+dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] 
+linkMat <- createLinkMatrix(similarityMatrix = similarityMat, 
+     threshold = 0.5, dfNameGroup = dfNameGroup)
+linkMat_cut <- cutLinkMatrix(LinkMatrix = linkMat, type = "all")
+circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
+     track.margin = c(0.0, 0))
+plotCircos(dfNameGroup = dfNameGroup, linkMat = linkMat_cut, 
+     initialize = TRUE, featureNames = TRUE, cexFeatureNames = 0.2, 
+     groupName = TRUE, links = TRUE, highlight = TRUE)
+ highlight(dfNameGroup = dfNameGroup, ind = c(1, 101, 201, 301), 
+     LinkMatrix = linkMat_cut)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

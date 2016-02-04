@@ -5,15 +5,16 @@
 \title{Circular plot to visualise similarity}
 \usage{
 plotCircos(dfNameGroup, linkMat, initialize = c(TRUE, FALSE), 
- featureNames = c(TRUE, FALSE), cexFeatureNames = 0.2, 
- groupName = c(TRUE, FALSE), links = c(TRUE, FALSE), highlight = c(TRUE, FALSE))
+     featureNames = c(TRUE, FALSE), cexFeatureNames = 0.2, 
+     groupName = c(TRUE, FALSE), links = c(TRUE, FALSE), 
+     highlight = c(TRUE, FALSE))
 }
 \arguments{
 \item{dfNameGroup}{data.frame containing column "group" and "name", which is 
 a unique identifier of the feature}
 
-\item{linkMat}{data.frame containing linked features in each row, has five columns 
-(group1, name1, group2, name2, NDP)}
+\item{linkMat}{data.frame containing linked features in each row, has 
+five columns (group1, name1, group2, name2, NDP)}
 
 \item{initialize}{logical, should plot be initialized?}
 
@@ -21,11 +22,16 @@ a unique identifier of the feature}
 
 \item{cexFeatureNames}{numerical, size of feature names}
 
-\item{groupName}{logical, should group names (e.g. compartment names or individual names) be displayed?}
+\item{groupName}{logical, should group names (e.g. compartment names or 
+individual names) be displayed?}
 
 \item{links}{logical, should links be plotted?}
 
 \item{highlight}{logical, are we in highlighting mode?}
+}
+\value{
+The function will initialize a circlize plot and/or will plot 
+features of a circlize plot.
 }
 \description{
 Circular plot to visualise similarity
@@ -34,8 +40,25 @@ Circular plot to visualise similarity
 Internal use for shiny app
 }
 \examples{
-\dontrun{plotCircos(dfNameGroup, linkMat, initialize = TRUE, featureNames = TRUE, 
-cexFeatureNames = 0.2, groupName = TRUE, links = TRUE)}
+load(system.file("data/sd02_deconvoluted.RData", 
+     package = "MetabolomicTools")) 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+binnedMSP <- binning(msp = finalMSP, tol = 0.01)
+similarityMat <- createSimilarityMatrix(binnedMSP)
+namesPrec <- rownames(binnedMSP)
+compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), 
+     replace=TRUE) 
+namesPrec <- paste(compartment, namesPrec, sep="_")
+dfNameGroup <- data.frame(group = compartment, name = namesPrec) 
+dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] 
+linkMat <- createLinkMatrix(similarityMatrix = similarityMat, 
+     threshold = 0.5, dfNameGroup = dfNameGroup)
+linkMat_cut <- cutLinkMatrix(LinkMatrix = linkMat, type = "all")
+circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
+     track.margin = c(0.0, 0))
+plotCircos(dfNameGroup = dfNameGroup, linkMat = linkMat_cut, 
+     initialize = TRUE, featureNames = TRUE, cexFeatureNames = 0.2, 
+     groupName = TRUE, links = TRUE, highlight = FALSE)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

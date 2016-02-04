@@ -11,23 +11,28 @@ convert2MSP(mm, splitPattern = "_", splitInd = 1)
 value, the second column the rt, the third column the intensity, the fourth
 column the pcgroup_precursorMZ}
 
-\item{splitPattern}{character, splitPattern is the pattern which separates elements
-and precursor m/z}
+\item{splitPattern}{character, splitPattern is the pattern which separates 
+elements and precursor m/z}
 
-\item{splitInd}{numeric, the position of the precursor m/z concerning separation 
-by splitPattern}
+\item{splitInd}{numeric, the position of the precursor m/z concerning 
+separation by splitPattern}
+}
+\value{
+convert2MSP returns a data.frame in .msp file format
 }
 \description{
 Convert deconvoluted matrix into MSP format
 }
 \details{
 Creates a data entry for each precursor ion. Each entry in the 
-return object has the following information: NAME, RETENTIONTIME, PRECURSORMZ, 
-METABOLITENAME, ADDUCTIONNAME, Num Peaks and a list of fragments together 
-with their intensities.
+return object has the following information: NAME, RETENTIONTIME, 
+     PRECURSORMZ, METABOLITENAME, ADDUCTIONNAME, Num Peaks and a list of 
+     fragments together with their intensities.
 }
 \examples{
-\dontrun{convert2MSP(mm, splitPattern = "_", splitInd = 1)}
+load(system.file("data/sd02_deconvoluted.RData", 
+     package = "MetabolomicTools")) 
+convert2MSP(mm = sd01_outputXCMS, splitPattern = "_", splitInd = 1)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

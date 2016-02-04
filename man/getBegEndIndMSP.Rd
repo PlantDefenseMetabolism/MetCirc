@@ -10,6 +10,10 @@ getBegEndIndMSP(msp)
 \arguments{
 \item{msp}{data.frame in msp format, see ?convert2MSP for further information}
 }
+\value{
+getBegEndIndMSP returns a list of length 2 where the first entry
+contains the start indices and the second the end indices
+}
 \description{
 Get beginning and end indices of each entry in a data.frame in 
 msp format

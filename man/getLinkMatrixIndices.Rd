@@ -9,7 +9,12 @@ getLinkMatrixIndices(dfInd, LinkMatrix)
 \arguments{
 \item{dfInd}{row entry of data.frame dfNameGroup (selected feature)}
 
-\item{LinkMatrix}{matrix, in each row there is information about features to be connected}
+\item{LinkMatrix}{matrix, in each row there is information about features 
+to be connected}
+}
+\value{
+\code{getLinkMatrixIndices} returns indices concerning LinkMatrix to 
+     which dfInd connects
 }
 \description{
 Gets indices in LinkMatrix of feature

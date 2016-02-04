@@ -9,7 +9,16 @@ binning(msp, tol = 0.01)
 \arguments{
 \item{msp}{data.frame in msp format, see ?convert2MSP for further information}
 
-\item{tol}{numerical, boundary value until which neighboured peaks will be joined together}
+\item{tol}{numerical, boundary value until which neighboured peaks will be 
+joined together}
+}
+\value{
+binning returns a matrix where rownames are precursor ions
+(m/z / retention time) and colnames are newly calculated m/z values which 
+were binned. The algorithm which is currently implemented joins the 
+two nearest m / z values (here the m / z values can also be joined by 
+several fragment ions) and recalculates the new m / z by weighing for the 
+number of m / z fragments.
 }
 \description{
 Bin m/z values
@@ -18,7 +27,10 @@ Bin m/z values
 The functions bins fragments together by calculating
 }
 \examples{
-\dontrun{binning(msp, tol = 0.01)}
+load(system.file("data/sd02_deconvoluted.RData", 
+package = "MetabolomicTools")) 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+binning(msp = finalMSP, tol = 0.01)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

@@ -22,12 +22,15 @@ it is the second feature to compare}
 \item{mass}{character vector or numerical vector, vector with all masses 
 which occur in the data set}
 }
+\value{
+NDP returns a numeric similarity coefficient between 0 and 1
+}
 \description{
 Calculate the normalised dot product (NDP)
 }
 \details{
 The NDP is calculated according to the following formula: 
- \eqn{NDP = \frac{\sum(W_{S1, i} \cdot W_{S2, i}) ^ 2}{ \sum(W_{S1, i} ^ 2) * \sum(W_{S2, i} ^ 2) }},
+ \deqn{NDP = \frac{\sum(W_{S1, i} \cdot W_{S2, i}) ^ 2}{ \sum(W_{S1, i} ^ 2) * \sum(W_{S2, i} ^ 2) }}{\sum(W_{S1, i} \cdot W_{S2, i}) ^ 2 \sum(W_{S1, i} ^ 2) * \sum(W_{S2, i} ^ 2)},
  with \eqn{W = [ peak intensity] ^{m} \cdot [m/z]^n}. For further information 
  see Li et al. (2015): Navigating natural variation in herbivory-induced
  secondary metabolism in coyote tobacco populations using MS/MS structural analysis. 
@@ -36,7 +39,12 @@ indicates no similarity between the two precursors, while 1 indicates
 a strong similarity between the two precursors.
 }
 \examples{
-\dontrun{NDP(mat, row1 = 1, row2 = 2, m = 0.5, n = 2)}
+load(system.file("data/sd02_deconvoluted.RData", 
+     package = "MetabolomicTools")) 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+binnedMSP <- binning(msp = finalMSP, tol = 0.01)
+NDP(matrow1 = binnedMSP[1,], matrow2 = binnedMSP[2,], m = 0.5, n = 2,
+ mass = colnames(binnedMSP))
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

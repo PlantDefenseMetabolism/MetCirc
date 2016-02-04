@@ -9,11 +9,17 @@ getRT(msp)
 \arguments{
 \item{msp}{data.frame in msp format, see ?convert2MSP for further information}
 }
+\value{
+getRT returns a character vector with all retention time values
+}
 \description{
 Get precursor RT values of a data.frame in msp format
 }
 \details{
 Internal use to retrieve retention time values.
+}
+\examples{
+\dontrun{getRT(msp)}
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

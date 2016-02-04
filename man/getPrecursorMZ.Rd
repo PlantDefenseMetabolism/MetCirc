@@ -9,6 +9,10 @@ getPrecursorMZ(msp)
 \arguments{
 \item{msp}{data.frame in msp format, see ?convert2MSP for further information}
 }
+\value{
+getPrecursorMZ returns a character vector with all precursor 
+values
+}
 \description{
 Get precursor m/z values of a data.frame in msp format
 }

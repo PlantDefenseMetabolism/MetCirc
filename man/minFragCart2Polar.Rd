@@ -14,6 +14,12 @@ minFragCart2Polar(x, y, degreeOfFeatures)
 
 \item{degreeOfFeatures}{list of positions of features}
 }
+\value{
+\code{minFragCart2Polar} returns the index of the feature that has the
+ smallest distance to the given coordinates. As \code{minFragCart2Polar} is 
+ used in \code{shinyCircos} for the track 1 only polar r coordinates between
+ 0.8 and 1 will be used to find the feature with smallest distance.
+}
 \description{
 Calculates the nearest feature in polar coordinates given 
  cartesian coordinates

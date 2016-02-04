@@ -8,8 +8,8 @@ createSimilarityMatrix(mm)
 }
 \arguments{
 \item{mm}{matrix, colnames are all fragments which occur in the dataset, 
-rownames are m/z / rt values, entries of mm are intensity values corresponding
-to the mass}
+rownames are m/z / rt values, entries of mm are intensity values 
+corresponding to the mass}
 }
 \value{
 createSimilarityMatrix returns a similarity matrix that contains the 
@@ -24,10 +24,15 @@ createSimilarityMatrix calls a function to calculate the
 NDP between all precursors in the data set. For further
 information on how the NDP is calculated see ?NDP and Li et al. (2015): 
 Navigating natural variation in herbivory-induced secondary metabolism in 
-coyote tobacco populations using MS/MS structural analysis. PNAS, E4147--E4155.
+coyote tobacco populations using MS/MS structural analysis. PNAS, 
+E4147--E4155.
 }
 \examples{
-\dontrun{createSimilarityMatrix(mm)}
+load(system.file("data/sd02_deconvoluted.RData", 
+     package = "MetabolomicTools")) 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+binnedMSP <- binning(msp = finalMSP, tol = 0.01)
+similarityMat <- createSimilarityMatrix(binnedMSP)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

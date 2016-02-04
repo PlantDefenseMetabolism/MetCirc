@@ -1,13 +1,16 @@
 #' @name cutUniquePreMZ
 #' @title Get unique precursor ions
 #' @description Get unique precursor ions
-#' @usage cutUniquePreMZ(precursor, splitPattern = splitPattern, splitInd = splitInd, returnCharacter = TRUE)
+#' @usage cutUniquePreMZ(precursor, splitPattern = splitPattern, 
+#'      splitInd = splitInd, returnCharacter = TRUE)
 #' @param precursor, character with splitPattern
-#' @param splitPattern character, character vector to use for splitting, see strsplit for further information
+#' @param splitPattern character, character vector to use for splitting, 
+#'      see ?strsplit for further information
 #' @param splitInd numeric, extract precursor mz at position splitInd
-#' @param returnCharacter logical, if TRUE return character, if FALSE return numeric
+#' @param returnCharacter logical, if TRUE return character, if FALSE 
+#'      return numeric
 #' @details Internal function.
-#' @value returns character as specified by parameters
+#' @return cutUniquePreMZ returns character as specified by parameters
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples \dontrun{cutUniquePreMZ(precursor, splitPattern = splitPattern, 
 #'      splitInd = splitInd, returnCharacter = TRUE)}
@@ -38,24 +41,28 @@ cutUniquePreMZ <- function(precursor, splitPattern = splitPattern,
 #' @param mm matrix, mm has four columns, the first column contains the m/z 
 #'  value, the second column the rt, the third column the intensity, the fourth
 #'  column the pcgroup_precursorMZ
-#' @param splitPattern character, splitPattern is the pattern which separates elements
-#' and precursor m/z
-#' @param splitInd numeric, the position of the precursor m/z concerning separation 
-#' by splitPattern
+#' @param splitPattern character, splitPattern is the pattern which separates 
+#'      elements and precursor m/z
+#' @param splitInd numeric, the position of the precursor m/z concerning 
+#'      separation by splitPattern
 #' @details Creates a data entry for each precursor ion. Each entry in the 
-#' return object has the following information: NAME, RETENTIONTIME, PRECURSORMZ, 
-#' METABOLITENAME, ADDUCTIONNAME, Num Peaks and a list of fragments together 
-#' with their intensities.
-#' @value data.frame
+#' return object has the following information: NAME, RETENTIONTIME, 
+#'      PRECURSORMZ, METABOLITENAME, ADDUCTIONNAME, Num Peaks and a list of 
+#'      fragments together with their intensities.
+#' @return convert2MSP returns a data.frame in .msp file format
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples \dontrun{convert2MSP(mm, splitPattern = "_", splitInd = 1)}
+#' @examples 
+#' load(system.file("data/sd02_deconvoluted.RData", 
+#'      package = "MetabolomicTools")) 
+#' convert2MSP(mm = sd01_outputXCMS, splitPattern = "_", splitInd = 1)
 #' @export
 convert2MSP <- function (mm, splitPattern = "_", splitInd = 1) {
     
     colNames <- colnames(mm)
     if (colNames[1] != "mz") stop("name of first colomn is not mz")
     if (colNames[2] != "rt") stop("name of second column is not rt")
-    if (colNames[3] != "intensity") stop("name of third column is not intensity")
+    if (colNames[3] != "intensity") 
+                            stop("name of third column is not intensity")
     
     
     ## if (colNames[4] != "pcgroup_precursorMZ") break
@@ -64,14 +71,16 @@ convert2MSP <- function (mm, splitPattern = "_", splitInd = 1) {
     precursor <- as.character(precursor)
     
     uniquePreMZ <- unique(precursor)
-    uniquePreMZ_cut <- cutUniquePreMZ(precursor = precursor, splitPattern = splitPattern, splitInd = splitInd)
+    uniquePreMZ_cut <- cutUniquePreMZ(precursor = precursor, 
+            splitPattern = splitPattern, splitInd = splitInd)
     lenUniquePreMZ <- length(uniquePreMZ_cut)
     
     ## add PrecursorMZ to deconvoluted idMSMS
     ## mm <- cbind(mm, PrecursorMZ)
     
     ## create data frame for MSP file
-    finalMSP <- matrix(data = NA, nrow = 7 * lenUniquePreMZ + dim(mm)[1], ncol = 2) ## 7 new entries + all fragment ion entries
+    finalMSP <- matrix(data = NA, nrow = 7 * lenUniquePreMZ + dim(mm)[1], 
+            ncol = 2) ## 7 new entries + all fragment ion entries
     finalMSP <- as.data.frame(finalMSP)
     
     ## write to data frame
@@ -106,11 +115,15 @@ convert2MSP <- function (mm, splitPattern = "_", splitInd = 1) {
 #' @param msp data.frame, a data.frame in msp format (with fragments)
 #' @details msp2FunctionalLosses can be used when you want to calculate 
 #' the similarity based on neutral losses instead of fragments
-#' @value data.frame in msp format
 #' @return msp2FunctionalLossesMSP returns a data.frame in msp format 
 #' (with neutral losses).
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples \dontrun{msp2FunctionalLossesMSP(msp)}
+#' load(system.file("data/sd02_deconvoluted.RData", 
+#'      package = "MetabolomicTools")) 
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' finalMSPNL <- msp2FunctionalLossesMSP(msp = finalMSP)
+#' @export
 msp2FunctionalLossesMSP <- function(msp) {
     precmz <- getPrecursorMZ(msp)
     rt <- getRT(msp)
@@ -127,7 +140,8 @@ msp2FunctionalLossesMSP <- function(msp) {
         indBeg <- indBegL[i]
         indEnd <- indEndL[i]
         
-        neutralLoss <- - (as.numeric(precmz[i]) - as.numeric(msp[indBeg:indEnd,1]))
+        neutralL <- (as.numeric(precmz[i]) - as.numeric(msp[indBeg:indEnd,1]))
+        neutralL <- -1 * neutralL
         
         entry <- rbind(
             c("NAME: ", "Unknown"),
@@ -136,7 +150,7 @@ msp2FunctionalLossesMSP <- function(msp) {
             c("METABOLITENAME: ", "Unknown"),
             c("ADDUCTIONNAME: ", "Unknown"),
             c("Num Losses: ", length(indBeg:indEnd)),
-            matrix(c(neutralLoss, msp[indBeg:indEnd,2]), ncol = 2),
+            matrix(c(neutralL, msp[indBeg:indEnd,2]), ncol = 2),
             c(" ", " ")
         )
         entry <- as.matrix(entry)

@@ -3,10 +3,8 @@
 #' @description Get precursor m/z values of a data.frame in msp format
 #' @usage getPrecursorMZ(msp)
 #' @param msp data.frame in msp format, see ?convert2MSP for further information
-#' @param 
-#' @param 
 #' @details Internal use to retrieve precursor m/z values.
-#' @value getPrecursorMZ returns a character vector with all precursor 
+#' @return getPrecursorMZ returns a character vector with all precursor 
 #' values
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples \dontrun{getPrecursorMZ(msp)}
@@ -21,14 +19,12 @@ getPrecursorMZ <- function (msp) {
 #' @name getRT
 #' @title Get precursor RT values
 #' @description Get precursor RT values of a data.frame in msp format
-#' @usage 
+#' @usage getRT(msp)
 #' @param msp data.frame in msp format, see ?convert2MSP for further information
-#' @param 
-#' @param 
 #' @details Internal use to retrieve retention time values.
-#' @value 
+#' @return getRT returns a character vector with all retention time values
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples 
+#' @examples \dontrun{getRT(msp)}
 getRT <- function (msp) {
     ## get indices with rt
     IndRT <- which(msp[,1] == "RETENTIONTIME: ")
@@ -46,7 +42,7 @@ getRT <- function (msp) {
 #' @usage getBegEndIndMSP(msp)
 #' @param msp data.frame in msp format, see ?convert2MSP for further information
 #' @details Internal use to retrieve indices when fragments start and end. 
-#' @value getBegEndIndMSP returns a list of length 2 where the first entry
+#' @return getBegEndIndMSP returns a list of length 2 where the first entry
 #' contains the start indices and the second the end indices
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples \dontrun{getBegEndIndMSP(msp)}
@@ -72,18 +68,23 @@ getBegEndIndMSP <- function(msp) {
 #' @description Bin m/z values
 #' @usage binning(msp, tol = 0.01)
 #' @param msp data.frame in msp format, see ?convert2MSP for further information
-#' @param tol numerical, boundary value until which neighboured peaks will be joined together
+#' @param tol numerical, boundary value until which neighboured peaks will be 
+#'      joined together
+#' @param compartment character, to which compartment does the entry belong to
 #' @details The functions bins fragments together by calculating 
-#' @value binning returns a matrix where rownames are precursor ions
+#' @return binning returns a matrix where rownames are precursor ions
 #' (m/z / retention time) and colnames are newly calculated m/z values which 
 #' were binned. The algorithm which is currently implemented joins the 
 #' two nearest m / z values (here the m / z values can also be joined by 
 #' several fragment ions) and recalculates the new m / z by weighing for the 
 #' number of m / z fragments.
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples \dontrun{binning(msp, tol = 0.01)}
+#' @examples load(system.file("data/sd02_deconvoluted.RData", 
+#' package = "MetabolomicTools")) 
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' binning(msp = finalMSP, tol = 0.01)
 #' @export
-binning <- function(msp, tol = 0.01) { 
+binning <- function(msp, tol = 0.01, compartment) { 
     
     
     ## msp is .msp file
@@ -129,8 +130,8 @@ binning <- function(msp, tol = 0.01) {
     conv <- numeric(length(mapping)) 
     x <- 1
     
-    ## for mz values which have distance of 0 create a identifier Mx, where x is an
-    ## increasing number to be able to trace back same mz
+    ## for mz values which have distance of 0 create a identifier Mx, where x 
+    ## is an increasing number to be able to trace back same mz
     for (i in 1:length(mapping)) {
         if (mapping[i] != i & conv[i] == "0") {
             conv[i] <- paste("M", x, sep="")
@@ -168,9 +169,11 @@ binning <- function(msp, tol = 0.01) {
                 conv[which(conv[indGreater0Min] == conv)] <- str
             }
             conv[indGreater0Min + 1] <- str   
-        } else { ## if conv[indGreater0min + 1] != 0, i.e. if it is Mx, then use "old" Mx
-            if (conv[indGreater0Min] == 0) {conv[indGreater0Min] <- conv[indGreater0Min + 1 ]}
-            else {
+        } else { ## if conv[indGreater0min + 1] != 0, i.e. if it is Mx, 
+            ## then use "old" Mx
+            if (conv[indGreater0Min] == 0) {
+                conv[indGreater0Min] <- conv[indGreater0Min + 1 ]
+            } else {
                 conv[which(conv[indGreater0Min] == conv)] <- conv[indGreater0Min + 1 ]}
         }
         ## calculate new mean for all instances with Mx+1
@@ -180,8 +183,9 @@ binning <- function(msp, tol = 0.01) {
         for (i in indAdapt) distAdapt[[i]][1] <- newMean
         ## calculate new distances and write new distances
         distAdaptOld <- distAdapt
-        for (i in 1:length(distAdapt)) { ## calculate for all elements in the list (this can be 
-            ## changed, so that we only calculate distance for elements before and after Mx+1)
+        for (i in 1:length(distAdapt)) { ## calculate for all elements in the 
+            ## list (this can be changed, so that we only calculate distance for 
+            ## elements before and after Mx+1)
             if (i != length(distAdapt)) {
                 distAdapt[[i]] <- c(distAdaptOld[[i]][1], distAdaptOld[[i+1]][1] - distAdaptOld[[i]][1])
             } else distAdapt[[i]] <- c(distAdaptOld[[i]][1], Inf)
@@ -200,7 +204,8 @@ binning <- function(msp, tol = 0.01) {
         str <- unlist(strsplit(unique(conv),split="M"))
         str <- str[which(str != "")]
         if (0 %in% str) str <- str[which(str != "0")] 
-        str <- max(as.numeric(str)) + 1 ## find highest x and create new one (+1)
+        ## find highest x and create new one (+1)
+        str <- max(as.numeric(str)) + 1 
         str <- paste("M", str, sep="")
         conv[i] <- str ## allocate Mx+1 to conv[i]
     }
@@ -227,13 +232,17 @@ binning <- function(msp, tol = 0.01) {
         ## get corresponding rt
         correspPrecRT <- rt[max(which(IndPrecMZ < indFragMM))]
         ## get unique row identifier
-        rowInd <- which(paste(correspPrecMZ, correspPrecRT, sep="/") == rownames(mm))
+        uniqueIden <- paste(correspPrecMZ, correspPrecRT, sep="/")
+        rowInd <- which(uniqueIden == rownames(mm))
         ## get col index 
         colInd <- which(distAdapt[[i]][1] == colnames(mm))
         ## write 
         mm[rowInd,colInd] <- msp[indFragMM, 2]
     }
-
+    
+    rNames <- rownames(mm)
+    rownames(mm) <- paste(compartment, rNames, sep="_")
+    ## was rownames(mm) <- paste(compartment, sprintf("%04d", 1:length(rNames)), rNames, sep="_")
     return(mm)
 }
 
