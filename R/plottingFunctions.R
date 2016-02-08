@@ -47,7 +47,9 @@
 plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE), 
         featureNames = c(TRUE, FALSE), cexFeatureNames = 0.2, 
         groupName = c(TRUE, FALSE), links = c(TRUE, FALSE), 
-        highlight = c(TRUE, FALSE), order = c("retentionTime", "mz", "clustering")) {
+        highlight = c(TRUE, FALSE), order = c("retentionTime", "mz", "clustering"), ...) {
+    
+    dfNameGroup <- dfNameGroup[order(dfNameGroup[,2]), ]
     
     order <- match.arg(order)
     
@@ -58,15 +60,10 @@ plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE),
     if (!is.logical(links)) stop("links is not logical")
     if (!is.logical(highlight)) stop("highlight is not logical")
 
-    dfNameGroupOrder <- orderNames(dfNameGroup, similarityMatrix, order = order)
-    orderInd <- dfNameGroupOrder[[2]]
-    dfNameGroupOrder <- dfNameGroupOrder[[1]]
     
     dfDim <- dim(dfNameGroup)
     dfName <- as.character(dfNameGroup$name)
-    if (groupName) dfGroup <- as.character(dfNameGroup$group)
-    
-    ##dfName <- paste(sprintf("%04d", 1:length(dfName), sep="_"), dfName, sep="_")
+    dfGroup <- as.character(dfNameGroup$group)
     
     if (initialize) {
         circos.initialize(dfName,
@@ -102,6 +99,47 @@ plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE),
         }
     }
     
+#     if (dendrogram) {
+#         if (is.null(similarityMatrix)) stop("no similarity matrix")
+#         if (rownames(similarityMatrix) != dfName) stop("no correct feature names")
+#         dfGroupLevel <- unique(dfGroup)
+#         for (i in dfGroupLevel) {
+#             inds <- which(dfGroup == i)
+#             dfNameGroupLevel <- dfNameGroup[inds,]
+#             simMatI <- similarityMatrix[inds, inds]
+#             hClust <- hcluster(simMatI, method = "spearman") 
+#             hClust <- as.dendrogram(hClust)
+#             circos.initialize(dfNameGroupLevel[,1],xlim=c(1,0))
+#             circos.dendrogram(hClust, facing="outside")
+#         }
+#     }
+# 
+#     load(paste0(system.file(package = "circlize"), "/extdata/bird.orders.RData"))
+#     
+#     labels = hc$labels  # name of birds
+#     ct = cutree(hc, 6)  # cut tree into 6 pieces
+#     n = length(labels)  # number of bird species
+#     dend = as.dendrogram(hc)
+#     
+#     circos.par(cell.padding = c(0, 0, 0, 0))
+#     circos.initialize(factors = "a", xlim = c(0, n)) # only one sector
+#     max_height = attr(dend, "height")  # maximum height of the trees
+#     circos.trackPlotRegion(ylim = c(0, 1), bg.border = NA, track.height = 0.3, 
+#                            panel.fun = function(x, y) {
+#                                for(i in seq_len(n)) {
+#                                    circos.text(i-0.5, 0, labels[i], adj = c(0, 0.5), 
+#                                                facing = "clockwise", niceFacing = TRUE,
+#                                                col = ct[labels[i]], cex = 0.7)
+#                                }
+#                            })
+#     
+#     require(dendextend)
+#     dend = color_branches(dend, k = 6, col = 1:6)
+#     
+#     circos.trackPlotRegion(ylim = c(0, max_height), bg.border = NA, 
+#                            track.height = 0.4, panel.fun = function(x, y) {
+#                                circos.dendrogram(dend, max_height = max_height)
+#                            })
     ## plot links
     if (links) {
         colourLink <- if (highlight) {
@@ -158,22 +196,19 @@ plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE),
 #'      LinkMatrix = linkMat_cut)
 #' @export
 highlight <- function(dfNameGroup, ind, LinkMatrix) {
+    
     dfDim <- dim(dfNameGroup)
     
-    ## dfNameGroup[,"name"] <- paste(sprintf("%04d", 1:length(dfName), sep="_"), dfNameGroup[,"name"], sep="_")
     dfInd <- dfNameGroup[ind,]
     lMatName1 <- LinkMatrix[,"name1"]
     lMatName2 <- LinkMatrix[,"name2"]
     
     for (h in 1:length(ind)) {
         circlize::highlight.sector(sector.index = as.character(dfInd[h,"name"]), 
-            col = alpha(palette()[as.numeric(dfInd[h,"group"]) + 1], 0.4))
+            col = alpha(palette()[as.numeric(as.factor(dfNameGroup[,"group"])[ind])[h] + 1], 0.4))
     }
     
     ## get indices in LinkMatrix of selected features 
-    #LinkMatrixInd <- which(LinkMatrix == as.character(dfInd[,"name"]), 
-    ## arr.ind = TRUE)[,1]
-    
     LinkMatrixInd <- getLinkMatrixIndices(dfInd, LinkMatrix)
 
     #######
@@ -183,7 +218,7 @@ highlight <- function(dfNameGroup, ind, LinkMatrix) {
                     lMatName2[i], 0.5,
                     lwd = 0.5,
                     ## transparency
-                    col = alpha("black", 0.03))
+                    col = alpha("black", 0.1))
     }
     #######
     
@@ -241,7 +276,7 @@ truncateName <- function (dfNameGroup, roundDigits = 2, nameGroup = FALSE) {
     
     if (nameGroup) {
         truncateL <- strsplit(names, split = "_")
-        truncateL <- lapply(truncateL, "[", 2)
+        truncateL <- lapply(truncateL, "[", 3)
         names <- unlist(truncateL)
     }
     
@@ -313,7 +348,9 @@ cart2Polar(1, -1)
 ##
 
 ## order
-orderNames <- function(dfNameGroup, similarityMatrix = NULL, order = c("retentionTime", "mz","clustering")) {
+orderNames <- function(dfNameGroup, similarityMatrix = NULL, 
+                       order = c("retentionTime", "mz","clustering")) {##}, 
+                       ##initialize = TRUE) {
     
     order <- match.arg(order)
     if (order == "clustering" & is.null(similarityMatrix)) stop("no similarity matrix")
@@ -326,8 +363,17 @@ orderNames <- function(dfNameGroup, similarityMatrix = NULL, order = c("retentio
     
     dfName <- as.character(dfNameGroup[,2])
     dfNameSplit <- strsplit(dfName, split = "_")
-    
+    #######
+    ##if (!initialize) {
+    ##    dfNameSplit <- lapply(dfNameSplit, function(x) x[c(1,3)])
+    ##    dfName <- lapply(dfNameSplit, function(x) paste(x[1], x[2], sep="_"))
+    ##    dfName <- unlist(dfName)
+    ##    dfNameGroup[,2] <- dfName
+    ##}
+    ########
     orderInd <- numeric(dim(dfNameGroup)[1])
+    
+    newDfNameGroup <- dfNameGroup
     
     if (order == "retentionTime") {
         for (i in dfGroupLevels) {
@@ -375,7 +421,7 @@ orderNames <- function(dfNameGroup, similarityMatrix = NULL, order = c("retentio
             newDfNameGroup[inds, ] <- dfNameGroupI
             
             ## vector which bears order
-            orderInd[inds] <- order(rt)
+            orderInd[inds] <- order(mz)
         }
     }
     
@@ -395,7 +441,7 @@ orderNames <- function(dfNameGroup, similarityMatrix = NULL, order = c("retentio
             newDfNameGroup[inds, ] <- dfNameGroupI
             
             ## vector which bears order
-            orderInd[inds] <- order(rt)
+            orderInd[inds] <- hClust$order
         }
     }
     
@@ -405,7 +451,10 @@ orderNames <- function(dfNameGroup, similarityMatrix = NULL, order = c("retentio
     return(list(newDfNameGroup, orderInd))
     
 }
+
     
+##test <- orderNames(dfNameGroup, similarityMatrix = similarityMat, order = "clustering", initialize = TRUE)[[1]]
+##test <- orderNames(test, order = "mz", initialize = FALSE)[[1]]
 
 #plot(x = as.numeric(msp[7:12, 1]), y = as.numeric(msp[7:12,2]), type = "h", col = "black", ylim = c(-100, 100))
 #lines(x = (as.numeric(msp[7:12, 1]) + 0.0), y = - as.numeric(msp[7:12,2]), type = "h", col = "blue")

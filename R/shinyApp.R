@@ -23,23 +23,47 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp) {
     circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
             track.margin = c(0.0, 0))
     
-    plotCircos(dfNameGroup, NULL, initialize=TRUE, featureNames = TRUE, 
+    ## create plots and assign to objects by recordPlot
+    ## rt
+    dfNameGroupRT <- orderNames(dfNameGroup, order = "retentionTime")[[1]]
+    simMatRT <- createOrderedSimMatShiny(dfNameGroupRT, similarityMatrix)
+    plotCircos(dfNameGroupRT, NULL, initialize=TRUE, featureNames = TRUE, 
             groupName = TRUE, links = FALSE, highlight = FALSE)
-    PlotFilled <- recordPlot()
+    PlotFilledRT <- recordPlot()
     plot.new()
-    
-    plotCircos(dfNameGroup, NULL, initialize=TRUE, featureNames = TRUE, 
+     
+    plotCircos(dfNameGroupRT, NULL, initialize=TRUE, featureNames = TRUE, 
             groupName = TRUE, links = FALSE, highlight = TRUE)
-    PlotHighlight <- recordPlot()
+    PlotHighlightRT <- recordPlot()
     plot.new()
     
-    ## get degree of features
-    features <- as.character( dfNameGroup[,"name"] )
-    degreeFeatures <- lapply(features, 
-            function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
+    ## mz
+    dfNameGroupMZ <- orderNames(dfNameGroup, order = "mz")[[1]]
+    simMatMZ <- createOrderedSimMatShiny(dfNameGroupMZ, similarityMatrix)
+    plotCircos(dfNameGroupMZ, NULL, initialize=TRUE, featureNames = TRUE, 
+               groupName = TRUE, links = FALSE, highlight = FALSE)
+    PlotFilledMZ <- recordPlot()
+    plot.new()
     
-    ## calculateLink0Matrix
-    link0Matrix <- createLink0Matrix(similarityMatrix, dfNameGroup)
+    plotCircos(dfNameGroupMZ, NULL, initialize=TRUE, featureNames = TRUE, 
+               groupName = TRUE, links = FALSE, highlight = TRUE)
+    PlotHighlightMZ <- recordPlot()
+    plot.new()
+    
+    ## clustering
+    dfNameGroupCluster <- orderNames(dfNameGroup, 
+        similarityMatrix = similarityMatrix, order = "clustering")[[1]]
+    simMatClustering <- createOrderedSimMatShiny(dfNameGroupCluster, similarityMatrix)
+    plotCircos(dfNameGroupCluster, NULL, initialize=TRUE, featureNames = TRUE, 
+               groupName = TRUE, links = FALSE, highlight = FALSE)
+    PlotFilledCluster <- recordPlot()
+    plot.new()
+    
+    plotCircos(dfNameGroupCluster, NULL, initialize=TRUE, featureNames = TRUE, 
+               groupName = TRUE, links = FALSE, highlight = TRUE)
+    PlotHighlightCluster <- recordPlot()
+    plot.new()
+    
     
     ui <- fluidPage(
         sidebarPanel(
@@ -49,6 +73,9 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp) {
                 selected = "all"),
             sliderInput("threshold", "Threshold for similarity to display",
                 min = 0, max = 1, value = 0.75),
+            radioButtons("order", "order within groups",
+                        choices = c("retention time" = "retentionTime",
+                        "m/z" = "mz", "clustering" = "clustering")),
             actionButton("resetClickIndices", "Reset features"),
             actionButton("stop", "Stop and export \n selected features")
         ),
@@ -56,31 +83,57 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp) {
             plotOutput("circos",
                 click = "circosClick",
                 #dblclick = "circosDblClick",
-                hover = hoverOpts(id = "circosHover", delay = 400, clip = TRUE,
+                hover = hoverOpts(id = "circosHover", delay = 250, clip = TRUE,
                         nullOutside = FALSE)),
                 #brush = brushOpts(id = "circosBrush",
                 #                  resetOnNew = TRUE)),
             textOutput("hoverConnectedFeature"),
+            ##textOutput("test"),
             verbatimTextOutput("clickFeature"))
     )
+    
     server <- function(input, output, session) {
+        
+        ## use predefined similarityMatrix
+        simMat <- reactive({
+            if (input$order == "mz") simMat <- simMatMZ
+            if (input$order == "retentionTime") simMat <- simMatRT
+            if (input$order == "clustering") simMat <- simMatClustering
+            simMat
+        })
+            
+        
+        ## ordering of features, use specific predefined dfNameGroup object
+        dfNG <- reactive({
+            if (input$order == "mz") dfNG <- dfNameGroupMZ
+            if (input$order == "retentionTime") dfNG <- dfNameGroupRT
+            if (input$order == "clustering") dfNG <- dfNameGroupCluster
+            dfNG
+        })
+
+        ##output$test <- renderText(c("df", dfNG()[1:10,2]))
+
+        
+        ## get degree of features
+        features <- reactive(as.character( dfNG()[,"name"] ))
+        degreeFeatures <- reactive(lapply(features(), 
+            function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")])))
+        
+        ########################
+        ## calculateLink0Matrix
+        link0Matrix <- reactive(createLink0Matrix(simMat(), dfNG()))
+        
         ## create reactive expression for LinkMatrix
         ## create reactive expression for LinkMatrix which is cut according to 
         ## set radioButton (input$choiceLinks)
-        LinkMatrix_cut <- reactive(cutLinkMatrix(link0Matrix, 
+        LinkMatrix_cut <- reactive(cutLinkMatrix(link0Matrix(), 
                                                  type = input$choiceLinks))
         
         ## threshold linkMatrix_cut
-        LinkMatrix_threshold <- reactive(thresholdLinkMatrix(LinkMatrix_cut(), input$threshold))
+        LinkMatrix_threshold <- reactive(thresholdLinkMatrix(LinkMatrix_cut(), 
+                                                             input$threshold))
         
-        ## deprecated
-        ##LinkMatrix <- reactive(createLinkMatrix(similarityMatrix, 
-        ##        input$threshold, dfNameGroup))
-        ## create reactive expression for LinkMatrix which is cut according to 
-        ## set radioButton (input$choiceLinks)
-        ##LinkMatrix_cut <- reactive(cutLinkMatrix(LinkMatrix(), 
-        ##        type = input$choiceLinks))
-        
+        ## reactiveValues for hover Coordinates
         CoordinatesNewHover <- reactiveValues(X = 0, Y = 0)
         CoordinatesOldHover <- reactiveValues(X = 0, Y = 0)
         
@@ -115,7 +168,7 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp) {
             if (!is.null(input$circosHover$x))
                 indHover$ind <- minFragCart2Polar(input$circosHover$x, 
                                                   input$circosHover$y, 
-                                                  degreeFeatures) 
+                                                  degreeFeatures()) 
             
         })
         
@@ -142,7 +195,7 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp) {
                 
                 indClick$new <- minFragCart2Polar(input$circosClick$x, 
                                             input$circosClick$y, 
-                                            degreeFeatures) 
+                                            degreeFeatures()) 
                 if (isolate(indClick$new %in% indClick$ind))
                     indClick$ind <- isolate(indClick$ind[-which(indClick$new == indClick$ind)])
                 else 
@@ -157,41 +210,92 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp) {
         })
 
         ## plotting
+        initializePlot <- reactive(plotCircos(dfNG(), NULL, initialize = TRUE, 
+                                featureNames = FALSE, groupName = FALSE,
+                                links = FALSE, highlight = FALSE))
         output$circos <- renderPlot({
-                if (onCircle$is) {
-                   # replayPlot(PlotFilled)
-                    replayPlot(PlotHighlight)
-                    highlight(dfNameGroup, c(indHover$ind, indClick$ind), 
-                            LinkMatrix_threshold()) }
-            else { ## if not onCircle$is
+            initializePlot()
+            ##if (!is.null(PlotFilled2)) {
+            if (onCircle$is) {
+                if (input$order == "mz") {
+                    replayPlot(PlotHighlightMZ)
+                    highlight(dfNameGroupMZ, c(indHover$ind, indClick$ind), 
+                              LinkMatrix_threshold())  
+                }
+                        
+                if (input$order == "retentionTime") {
+                    replayPlot(PlotHighlightRT)
+                    highlight(dfNameGroupRT, c(indHover$ind, indClick$ind), 
+                              LinkMatrix_threshold())    
+                }
+                    
+                if (input$order == "clustering") {
+                    replayPlot(PlotHighlightCluster)
+                    highlight(dfNameGroupCluster, c(indHover$ind, indClick$ind), 
+                              LinkMatrix_threshold())  
+                }
+            } else { ## if not onCircle$is
                 if (length(indClick$ind) > 0) {
-                    replayPlot(PlotHighlight)
-                    highlight(dfNameGroup, c(indClick$ind), LinkMatrix_threshold())
+                    if (input$order == "mz") {
+                        replayPlot(PlotHighlightMZ)
+                        highlight(dfNameGroupMZ, c(indClick$ind), LinkMatrix_threshold()) 
+                    }
+                    
+                    if (input$order == "retentionTime") {
+                        replayPlot(PlotHighlightRT)
+                        highlight(dfNameGroupRT, c(indClick$ind), LinkMatrix_threshold()) 
+                    }
+                    
+                    if (input$order == "clustering") {
+                        replayPlot(PlotHighlightCluster)
+                        highlight(dfNameGroupCluster, c(indClick$ind), LinkMatrix_threshold()) 
+                    }
+                    
                 } else {
-                    replayPlot(PlotFilled)
-                    plotCircos(dfNameGroup, LinkMatrix_threshold(), initialize=FALSE, 
-                            featureNames = FALSE, groupName = FALSE, 
-                            links = TRUE, highlight = FALSE)
+                    ##PlotFilled2()
+                    if (input$order == "mz") {
+                        replayPlot(PlotFilledMZ)
+                        plotCircos(dfNameGroupMZ, LinkMatrix_threshold(), initialize=FALSE, 
+                                   featureNames = FALSE, groupName = FALSE, 
+                                   links = TRUE, highlight = FALSE)
+                    }
+                        
+                        
+                    if (input$order == "retentionTime") {
+                        replayPlot(PlotFilledRT)
+                        plotCircos(dfNameGroupRT, LinkMatrix_threshold(), initialize=FALSE, 
+                                   featureNames = FALSE, groupName = FALSE, 
+                                   links = TRUE, highlight = FALSE)
+                    }
+                    
+                    if (input$order == "clustering") {
+                        replayPlot(PlotFilledCluster)
+                        plotCircos(dfNameGroupCluster, LinkMatrix_threshold(), 
+                                   initialize = FALSE, featureNames = FALSE,
+                                   groupName = FALSE, links = TRUE, 
+                                   highlight = FALSE)
+                    }
                 }
             }
+            ##}
             
         })
         
         ## show when hovering the feature which connects to it
         linkMatIndsHover <- reactive({
-            getLinkMatrixIndices(dfNameGroup[indHover$ind,], LinkMatrix_threshold())
+            getLinkMatrixIndices(dfNG()[indHover$ind,], LinkMatrix_threshold())
         })
         
         output$hoverConnectedFeature <- renderText({
             if (onCircle$is) {
                 if (length(linkMatIndsHover() > 0))
-                    c(as.character(dfNameGroup[indHover$ind,"name"]), 
+                    c(as.character(dfNG()[indHover$ind,"name"]), 
                         "connects to", 
                         ## remove first column because it contains the precursor
                         unique(as.vector(LinkMatrix_threshold()[linkMatIndsHover(), c("name1","name2")]))[-1]
                       )
                 else 
-                    c(as.character(dfNameGroup[indHover$ind,"name"]), 
+                    c(as.character(dfNG()[indHover$ind,"name"]), 
                         "does not connect to any feature")
             }
         })
@@ -199,7 +303,7 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp) {
         output$clickFeature <- renderText({
             if (length(indClick$ind) > 0)
                 c("selected features: ", 
-                    as.character(dfNameGroup[indClick$ind, "name"]))
+                    as.character(dfNG()[indClick$ind, "name"]))
             else "no features selected"
         })
         
@@ -209,7 +313,7 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp) {
                 return()
             else {
                 circos.clear()
-                stopApp(as.character(dfNameGroup[indClick$ind, "name"]))
+                stopApp(as.character(dfNG()[indClick$ind, "name"]))
             }
         })
         
@@ -223,4 +327,20 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp) {
 ##order within sectors according to rt or hierarchical clustering
 ## second simmat for neutral losses
 
+## helper function in shiny app
+createOrderedSimMatShiny <- function(dfNameGroup, similarityMatrix) {
+    dfNameGroupName <- dfNameGroup[,"name"]
+    dfNameGroupName <- as.character(dfNameGroupName)
+    ## crop name
+    dfNameSplit <- strsplit(dfNameGroupName, "_") 
+    dfNameSplit <- lapply(dfNameSplit, function(x) x[c(1, 3)])
+    dfName <- lapply(dfNameSplit, 
+                     function(x) paste(x[1], x[2], sep="_"))
+    dfName <- unlist(dfName)
+    ## order according to cropped name
+    simM <- similarityMatrix[dfName, dfName]
+    rownames(simM) <- colnames(simM) <- dfNameGroupName
+    
+    return(simM)
+}
 ##b <- shinyCircos(dfNameGroup, similarityMat, msp = finalMSP)

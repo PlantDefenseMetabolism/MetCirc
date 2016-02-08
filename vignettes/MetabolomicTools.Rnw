@@ -448,7 +448,7 @@ set.seed(999)
 ##}
 
 ##namesPrec <- paste(compartment, namesPrec, sep="_")
-dfNameGroup <- data.frame(group = compartment, name = namesPrec) 
+dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec) 
 ## order according to compartment
 dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
 ##dfNameGroup[,"name"] <- paste(
@@ -456,7 +456,7 @@ dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),]
 @
 
 \Rfunction{shinyCircos} uses the function \Rfunction{createLinkMatrix} which 
-comprises per row these precursor ions which is linked by a normalised dot 
+comprises per row these precursor ions which are linked by a normalised dot 
 product $\geq$ \Robject{threshold} to the precursor ion in the same row.
 <<eval=TRUE>>=
 linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold=0.5,
@@ -490,28 +490,39 @@ support to export figures as they can be easily rebuilt outside of
 \Rfunction{shinyCircos}; this also promotes reproducibility of such figures.
 To rebuild the figure in a non-interactive environment, run 
 <<circos,eval=TRUE,results='hide',message=FALSE,fig.show='hide'>>=
+## order according to retention time and create object dfNameGroupRT
+dfNameGroupRT <- orderNames(dfNameGroup, similarityMat, order = "clustering",
+                                           initialize = TRUE)[[1]]
+## create a new similarity matrix with updated rownames
+simM <- createOrderedSimMatShiny(dfNameGroupRT, similarityMat)
+
 ## create link matrix
-linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold=0.95,
-                            dfNameGroup = dfNameGroup)
+## create link matrix
+linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.95,
+                            dfNameGroup = dfNameGroupRT)
 ## cut link matrix (here: only display links between groups)
 linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
+
+
 ## set circlize paramters
 circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
             track.margin = c(0.0, 0))
+
 ## here set selectedFeatures arbitrarily
 selectedFeatures <- as.character(dfNameGroup[c(1,101,201,301),2])
 
 ## actual plotting
-plotCircos(dfNameGroup, linkMat_cut, initialize = TRUE, featureNames = TRUE, 
+plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, featureNames = TRUE, 
     cexFeatureNames = 0.2, groupName = TRUE, links = FALSE, highlight = TRUE)
 indSelected <- mapply(function(x) which(x == dfNameGroup$name), 
             selectedFeatures)
-highlight(dfNameGroup = dfNameGroup, ind = indSelected, LinkMatrix = 
-            linkMat_cut)
+highlight(dfNameGroup = dfNameGroupRT, ind = indSelected, LinkMatrix = 
+            LinkMatrix_threshold)
 
 ## plot without highlighting
-plotCircos(dfNameGroup, linkMat_cut, initialize = TRUE, featureNames = TRUE, 
+plotCircos(dfNameGroup, LinkMatrix_cut, initialize = TRUE, featureNames = TRUE, 
     cexFeatureNames = 0.2, groupName = TRUE, links = TRUE, highlight = FALSE, order = "retentionTime")
+
 @
 
 \begin{figure}[h!]
