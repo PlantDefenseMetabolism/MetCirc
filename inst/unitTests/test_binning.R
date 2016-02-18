@@ -1,5 +1,5 @@
 ## START unit test getPrecursorMZ
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+finalMSP <- MetabolomicTools::convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
 
 test_getPrecursorMZ <- function() {
     checkEquals(length(MetabolomicTools:::getPrecursorMZ(finalMSP)), 360)

@@ -31,7 +31,7 @@ test_convert2MSP <- function() {
 ## END unit test convert2MSP
 
 ## START unit test msp2FunctionalLossesMSP
-testMSPNL <- msp2FunctionalLossesMSP(testMSP)
+testMSPNL <- MetabolomicsTools::msp2FunctionalLossesMSP(testMSP)
 test_msp2FunctionalLossesMSP <- function() {
     checkTrue(is.data.frame(testMSPNL))
     checkEquals(dim(testMSPNL), c(7263, 2))
