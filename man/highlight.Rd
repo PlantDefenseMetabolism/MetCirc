@@ -27,27 +27,42 @@ A function to add links and highlight sectors to an initialised
 Internal use for shiny app.
 }
 \examples{
-load(system.file("data/sd02_deconvoluted.RData", 
-     package = "MetabolomicTools")) 
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-binnedMSP <- binning(msp = finalMSP, tol = 0.01)
-similarityMat <- createSimilarityMatrix(binnedMSP)
-namesPrec <- rownames(binnedMSP)
-compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), 
-     replace=TRUE) 
-namesPrec <- paste(compartment, namesPrec, sep="_")
-dfNameGroup <- data.frame(group = compartment, name = namesPrec) 
-dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] 
-linkMat <- createLinkMatrix(similarityMatrix = similarityMat, 
-     threshold = 0.5, dfNameGroup = dfNameGroup)
-linkMat_cut <- cutLinkMatrix(LinkMatrix = linkMat, type = "all")
-circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
-     track.margin = c(0.0, 0))
-plotCircos(dfNameGroup = dfNameGroup, linkMat = linkMat_cut, 
-     initialize = TRUE, featureNames = TRUE, cexFeatureNames = 0.2, 
-     groupName = TRUE, links = TRUE, highlight = TRUE)
- highlight(dfNameGroup = dfNameGroup, ind = c(1, 101, 201, 301), 
-     LinkMatrix = linkMat_cut)
+ ## load binnedMSP
+ load(system.file("data/binnedMSP.RData", package = "MetabolomicTools"))
+ load(system.file("data/similarityMat.RData", package = "MetabolomicTools"))
+ namesPrec <- rownames(binnedMSP)
+
+ dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
+     name = namesPrec) 
+ 
+ ## order according to compartment
+ dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
+ dfNameGroupRT <- orderNames(dfNameGroup = dfNameGroup, 
+     similarityMatrix = NULL, order = "retentionTime")
+     
+ ## create a new similarity matrix with updated rownames
+ simM <- createOrderedSimMat(dfNameGroupRT, similarityMat)
+ ## create link matrix
+ ## create link matrix
+ linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.95,
+     dfNameGroup = dfNameGroupRT)
+ ## cut link matrix (here: only display links between groups)
+ linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
+ ## set circlize paramters
+ circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
+         track.margin = c(0.0, 0))
+ ## here set selectedFeatures arbitrarily
+ selectedFeatures <- as.character(dfNameGroupRT[c(1,101,201,301),2])
+ 
+ ## actual plotting
+ plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, 
+     featureNames = TRUE, cexFeatureNames = 0.2, groupName = TRUE, 
+     links = FALSE, highlight = TRUE)
+ indSelected <- mapply(function(x) which(x == dfNameGroupRT$name), 
+         selectedFeatures)
+ ## highlight
+ highlight(dfNameGroup = dfNameGroupRT, ind = indSelected, LinkMatrix = 
+         linkMat_cut)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

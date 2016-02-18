@@ -29,7 +29,7 @@ Calculates the nearest feature in polar coordinates given
  the smallest distance from given cartesian coordinates.
 }
 \examples{
-\dontrun{minFragCart2Polar(x, y, degreeOfFeatures)}
+minFragCart2Polar(x, y, degreeOfFeatures)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

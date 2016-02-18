@@ -9,7 +9,8 @@
 #' @param dfNameGroup data.frame, data.frame contains column "group" and "name"
 #' @param removeDuplicates logical, whether to remove duplicate entries or not
 #' @details createLink0Matrix creates a matrix from a similarityMatrix which 
-#' includes all connections between features in the similarityMatrix
+#' includes all connections between features in the similarityMatrix, but 
+#' exclude links which have a similarity of exactly 0.
 #' @return createLink0Matrix returns a matrix that gives per each row 
 #' information on linked features
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
@@ -38,8 +39,13 @@ createLink0Matrix <- function(similarityMatrix, dfNameGroup) { ## }, removeDupli
     if (!all(colnames(dfNameGroup) == c("group", "name"))) {
         stop("colnames of argument dfNameGroup are not group and name")
     }
+    
 
     dfName <- dfNameGroup[,2]
+    
+    if (!all(sort(colnames(similarityMatrix)) == sort(dfName))) {
+        stop("colnames/rownames of similarityMatrix are not identical to names in dfNameGroup")
+    }
     
 #     dfNameTruncate <- strsplit(dfNameGroup[,2], split = "_")
 #     if (all(unlist(lapply(dfNameTruncate, function(x){ length(x) == 2}))))
@@ -154,8 +160,17 @@ createLink0Matrix <- function(similarityMatrix, dfNameGroup) { ## }, removeDupli
 #' @export
 thresholdLinkMatrix <- function(linkMatrix, threshold) {
     
+    if (!all(colnames(linkMatrix) == c("group1", "name1",  "group2", "name2",  "NDP")))
+        stop("linkMatrix does not have right colnames")
+    
+    ndp <- as.numeric(linkMatrix[, "NDP"])
+    
+    if (threshold > max(ndp)) 
+        stop("threshold greater than max NDP value in linkMatrix")
+    
     ## which rows have a coefficient >= threshold?
-    indThreshold <- which(as.numeric(linkMatrix[, "NDP"]) >= threshold)
+    indThreshold <- which(ndp >= threshold)
+    
     ## cut linkMatrix
     if (length(indThreshold) <= 1) {
         thresholdLinkMatrix <- matrix(NA, ncol = ncol(linkMatrix), nrow = length(indThreshold))

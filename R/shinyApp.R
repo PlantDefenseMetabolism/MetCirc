@@ -25,8 +25,8 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp) {
     
     ## create plots and assign to objects by recordPlot
     ## rt
-    dfNameGroupRT <- orderNames(dfNameGroup, order = "retentionTime")[[1]]
-    simMatRT <- createOrderedSimMatShiny(dfNameGroupRT, similarityMatrix)
+    dfNameGroupRT <- orderNames(dfNameGroup, order = "retentionTime")
+    simMatRT <- createOrderedSimMat(dfNameGroupRT, similarityMatrix)
     plotCircos(dfNameGroupRT, NULL, initialize=TRUE, featureNames = TRUE, 
             groupName = TRUE, links = FALSE, highlight = FALSE)
     PlotFilledRT <- recordPlot()
@@ -38,8 +38,8 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp) {
     plot.new()
     
     ## mz
-    dfNameGroupMZ <- orderNames(dfNameGroup, order = "mz")[[1]]
-    simMatMZ <- createOrderedSimMatShiny(dfNameGroupMZ, similarityMatrix)
+    dfNameGroupMZ <- orderNames(dfNameGroup, order = "mz")
+    simMatMZ <- createOrderedSimMat(dfNameGroupMZ, similarityMatrix)
     plotCircos(dfNameGroupMZ, NULL, initialize=TRUE, featureNames = TRUE, 
                groupName = TRUE, links = FALSE, highlight = FALSE)
     PlotFilledMZ <- recordPlot()
@@ -52,8 +52,8 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp) {
     
     ## clustering
     dfNameGroupCluster <- orderNames(dfNameGroup, 
-        similarityMatrix = similarityMatrix, order = "clustering")[[1]]
-    simMatClustering <- createOrderedSimMatShiny(dfNameGroupCluster, similarityMatrix)
+        similarityMatrix = similarityMatrix, order = "clustering")
+    simMatClustering <- createOrderedSimMat(dfNameGroupCluster, similarityMatrix)
     plotCircos(dfNameGroupCluster, NULL, initialize=TRUE, featureNames = TRUE, 
                groupName = TRUE, links = FALSE, highlight = FALSE)
     PlotFilledCluster <- recordPlot()
@@ -324,11 +324,49 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp) {
     
 }
 ## to do
-##order within sectors according to rt or hierarchical clustering
 ## second simmat for neutral losses
 
-## helper function in shiny app
-createOrderedSimMatShiny <- function(dfNameGroup, similarityMatrix) {
+#' @name createOrderedSimMat
+#' @title Update a similarity matrix according to order of name column in 
+#' dfNameGroup
+#' @description Internal function for shiny application. May also be used 
+#' outside of shiny to reconstruct figures.
+#' @usage createOrderedSimMat(dfNameGroup, similarityMatrix)
+#' @param dfNameGroup data.frame which contains columns "group" and "name"
+#' @param similarityMatrix matrix, similarityMatrix contains pair-wise 
+#' similarity coefficients which give information about the similarity between
+#' precursors
+#' @details createOrderSimMat takes a dfNameGroup data.frame and a 
+#' similarity matrix as arguments. It will then reorder rows and columns of 
+#' the similarityMatrix object such, that it matches the order of the 
+#' column name in dfNameGroup. createOrderSimMat is used in the shinyCircos 
+#' function to create similarityMatrix objects which will allow to switch
+#' between different types of ordering in between groups (sectors) in the 
+#' circos plot. It may be used as well externally, to reproduce plots outside
+#' of the reactive environment (see vignette for a workflow).
+#' @return createOrderedSimMat returns a similarity matrix with ordered
+#' rownames according to the name column of dfNameGroup
+#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @examples 
+#' load(system.file("data/binnedMSP.RData", package = "MetabolomicTools"))
+#' load(system.file("data/similarityMat.RData", package = "MetabolomicTools"))
+#' namesPrec <- rownames(binnedMSP)
+#' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
+#'  name = namesPrec) 
+#' ## order according to compartment
+#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
+#' ## order according to retention time and create object dfNameGroupRT
+#' dfNameGroupRT <- orderNames(dfNameGroup, NULL, order = "retentionTime")
+#' createOrderedSimMat(dfNameGroupRT, similarityMat)
+#' @export
+createOrderedSimMat <- function(dfNameGroup, similarityMatrix) {
+    
+    if (!("name" %in% colnames(dfNameGroup))) 
+        stop("dfNameGroup does not have column 'name'")
+    
+    ## order according to group
+    dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] 
+    
     dfNameGroupName <- dfNameGroup[,"name"]
     dfNameGroupName <- as.character(dfNameGroupName)
     ## crop name

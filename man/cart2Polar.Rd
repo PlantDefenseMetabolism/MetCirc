@@ -23,7 +23,7 @@ cart2Polar calculates polar coordinates from cartesian coordinates
  using hovering and clicking features.
 }
 \examples{
-\dontrun{x <- 1; y <- 1; cart2Polar(x, y)}
+x <- 1; y <- 1; cart2Polar(x, y)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

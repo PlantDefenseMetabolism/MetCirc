@@ -21,38 +21,48 @@
 #' @param highlight logical, are we in highlighting mode?
 #' @details Internal use for shiny app
 #' @return The function will initialize a circlize plot and/or will plot 
-#' features of a circlize plot. 
+#'  features of a circlize plot. 
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#' load(system.file("data/sd02_deconvoluted.RData", 
-#'      package = "MetabolomicTools")) 
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-#' binnedMSP <- binning(msp = finalMSP, tol = 0.01)
-#' similarityMat <- createSimilarityMatrix(binnedMSP)
-#' namesPrec <- rownames(binnedMSP)
-#' compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), 
-#'      replace=TRUE) 
-#' namesPrec <- paste(compartment, namesPrec, sep="_")
-#' dfNameGroup <- data.frame(group = compartment, name = namesPrec) 
-#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] 
-#' linkMat <- createLinkMatrix(similarityMatrix = similarityMat, 
-#'      threshold = 0.5, dfNameGroup = dfNameGroup)
-#' linkMat_cut <- cutLinkMatrix(LinkMatrix = linkMat, type = "all")
-#' circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
-#'      track.margin = c(0.0, 0))
-#' plotCircos(dfNameGroup = dfNameGroup, linkMat = linkMat_cut, 
-#'      initialize = TRUE, featureNames = TRUE, cexFeatureNames = 0.2, 
-#'      groupName = TRUE, links = TRUE, highlight = FALSE)
+#'  #'  ## load binnedMSP
+#'  load(system.file("data/binnedMSP.RData", package = "MetabolomicTools"))
+#'  load(system.file("data/similarityMat.RData", package = "MetabolomicTools"))
+#'  namesPrec <- rownames(binnedMSP)
+#' 
+#'  dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
+#'      name = namesPrec) 
+#'  
+#'  ## order according to compartment
+#'  dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
+#'  dfNameGroupRT <- orderNames(dfNameGroup = dfNameGroup, 
+#'      similarityMatrix = NULL, order = "retentionTime")
+#'      
+#'  ## create a new similarity matrix with updated rownames
+#'  simM <- createOrderedSimMat(dfNameGroupRT, similarityMat)
+#'  ## create link matrix
+#'  ## create link matrix
+#'  linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.95,
+#'      dfNameGroup = dfNameGroupRT)
+#'  ## cut link matrix (here: only display links between groups)
+#'  linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
+#'  ## set circlize paramters
+#'  circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
+#'          track.margin = c(0.0, 0))
+#'  ## here set selectedFeatures arbitrarily
+#'  selectedFeatures <- as.character(dfNameGroupRT[c(1,101,201,301),2])
+#'  
+#'  ## actual plotting
+#'  plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, 
+#'      featureNames = TRUE, cexFeatureNames = 0.2, groupName = TRUE, 
+#'      links = FALSE, highlight = FALSE)
 #' @export
 plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE), 
         featureNames = c(TRUE, FALSE), cexFeatureNames = 0.2, 
         groupName = c(TRUE, FALSE), links = c(TRUE, FALSE), 
-        highlight = c(TRUE, FALSE), order = c("retentionTime", "mz", "clustering"), ...) {
+        highlight = c(TRUE, FALSE), ...) {
     
-    dfNameGroup <- dfNameGroup[order(dfNameGroup[,2]), ]
-    
-    order <- match.arg(order)
-    
+    dfNameGroup <- dfNameGroup[order(dfNameGroup[, "name"]), ]
+
     if (!is.numeric(cexFeatureNames)) stop("cexFeatureNames is not numeric")
     if (!is.logical(initialize)) stop("initialize is not logical")
     if (!is.logical(featureNames)) stop("featureNames is not logical")
@@ -173,27 +183,42 @@ plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE),
 #'  specified sector and connected links.
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#' load(system.file("data/sd02_deconvoluted.RData", 
-#'      package = "MetabolomicTools")) 
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-#' binnedMSP <- binning(msp = finalMSP, tol = 0.01)
-#' similarityMat <- createSimilarityMatrix(binnedMSP)
-#' namesPrec <- rownames(binnedMSP)
-#' compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), 
-#'      replace=TRUE) 
-#' namesPrec <- paste(compartment, namesPrec, sep="_")
-#' dfNameGroup <- data.frame(group = compartment, name = namesPrec) 
-#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] 
-#' linkMat <- createLinkMatrix(similarityMatrix = similarityMat, 
-#'      threshold = 0.5, dfNameGroup = dfNameGroup)
-#' linkMat_cut <- cutLinkMatrix(LinkMatrix = linkMat, type = "all")
-#' circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
-#'      track.margin = c(0.0, 0))
-#' plotCircos(dfNameGroup = dfNameGroup, linkMat = linkMat_cut, 
-#'      initialize = TRUE, featureNames = TRUE, cexFeatureNames = 0.2, 
-#'      groupName = TRUE, links = TRUE, highlight = TRUE)
-#'  highlight(dfNameGroup = dfNameGroup, ind = c(1, 101, 201, 301), 
-#'      LinkMatrix = linkMat_cut)
+#'  ## load binnedMSP
+#'  load(system.file("data/binnedMSP.RData", package = "MetabolomicTools"))
+#'  load(system.file("data/similarityMat.RData", package = "MetabolomicTools"))
+#'  namesPrec <- rownames(binnedMSP)
+#' 
+#'  dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
+#'      name = namesPrec) 
+#'  
+#'  ## order according to compartment
+#'  dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
+#'  dfNameGroupRT <- orderNames(dfNameGroup = dfNameGroup, 
+#'      similarityMatrix = NULL, order = "retentionTime")
+#'      
+#'  ## create a new similarity matrix with updated rownames
+#'  simM <- createOrderedSimMat(dfNameGroupRT, similarityMat)
+#'  ## create link matrix
+#'  ## create link matrix
+#'  linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.95,
+#'      dfNameGroup = dfNameGroupRT)
+#'  ## cut link matrix (here: only display links between groups)
+#'  linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
+#'  ## set circlize paramters
+#'  circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
+#'          track.margin = c(0.0, 0))
+#'  ## here set selectedFeatures arbitrarily
+#'  selectedFeatures <- as.character(dfNameGroupRT[c(1,101,201,301),2])
+#'  
+#'  ## actual plotting
+#'  plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, 
+#'      featureNames = TRUE, cexFeatureNames = 0.2, groupName = TRUE, 
+#'      links = FALSE, highlight = TRUE)
+#'  indSelected <- mapply(function(x) which(x == dfNameGroupRT$name), 
+#'          selectedFeatures)
+#'  ## highlight
+#'  highlight(dfNameGroup = dfNameGroupRT, ind = indSelected, LinkMatrix = 
+#'          linkMat_cut)
 #' @export
 highlight <- function(dfNameGroup, ind, LinkMatrix) {
     
@@ -232,26 +257,29 @@ highlight <- function(dfNameGroup, ind, LinkMatrix) {
     }
 }
 
-
 #' @name getLinkMatrixIndices
 #' @title Get indices in LinkMatrix of feature 
 #' @description Gets indices in LinkMatrix of feature 
-#' @usage getLinkMatrixIndices(dfInd, LinkMatrix)
+#' @usage getLinkMatrixIndices(dfInd, linkMatrix)
 #' @param dfInd row entry of data.frame dfNameGroup (selected feature)
-#' @param LinkMatrix matrix, in each row there is information about features 
+#' @param linkMatrix matrix, in each row there is information about features 
 #'      to be connected 
 #' @details Internal use for function highlight.
-#' @return \code{getLinkMatrixIndices} returns indices concerning LinkMatrix to 
+#' @return \code{getLinkMatrixIndices} returns indices concerning linkMatrix to 
 #'      which dfInd connects
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples \dontrun{getLinkMatrixIndices(dfInd, LinkMatrix)}
-getLinkMatrixIndices <- function(dfInd, LinkMatrix) {
-    LinkMatrixInd <- lapply(as.character(dfInd[, "name"]), 
-                            function(x) which(LinkMatrix == x, arr.ind = TRUE))
+#' @examples \dontrun{getLinkMatrixIndices(dfInd, linkMatrix)}
+getLinkMatrixIndices <- function(dfInd, linkMatrix) {
+    
+    linkMatrixInd <- lapply(as.character(dfInd[, "name"]), 
+                            function(x) which(linkMatrix == x, arr.ind = TRUE))
     ## select only first column
-    LinkMatrixInd <- lapply(LinkMatrixInd, function(x) x[,1])  
-    LinkMatrixInd <- unlist(LinkMatrixInd) 
-    return(LinkMatrixInd)
+    linkMatrixInd <- lapply(linkMatrixInd, function(x) x[,1])  
+    linkMatrixInd <- unlist(linkMatrixInd) 
+    
+    linkMatrixInd <- as.numeric(linkMatrixInd)
+    
+    return(linkMatrixInd)
 }
 
 #' @name truncateName
@@ -277,6 +305,12 @@ truncateName <- function (dfNameGroup, roundDigits = 2, nameGroup = FALSE) {
     if (nameGroup) {
         truncateL <- strsplit(names, split = "_")
         truncateL <- lapply(truncateL, "[", 3)
+        names <- unlist(truncateL)
+    }
+    
+    if (!nameGroup) {
+        truncateL <- strsplit(names, split = "_") 
+        truncateL <- lapply(truncateL, "[", 2)
         names <- unlist(truncateL)
     }
     
@@ -306,7 +340,7 @@ truncateName <- function (dfNameGroup, roundDigits = 2, nameGroup = FALSE) {
 #'  used in \code{shinyCircos} for the track 1 only polar r coordinates between
 #'  0.8 and 1 will be used to find the feature with smallest distance.
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples \dontrun{minFragCart2Polar(x, y, degreeOfFeatures)}
+#' @examples minFragCart2Polar(x, y, degreeOfFeatures)
 minFragCart2Polar <- function(x, y, degreeOfFeatures) {
     polar <- cart2Polar(x, y)
     minInd <- NA
@@ -326,7 +360,7 @@ minFragCart2Polar <- function(x, y, degreeOfFeatures) {
 #'  using hovering and clicking features.
 #' @return \code{cart2Polar} returns a list of colar coordinates r and theta
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples \dontrun{x <- 1; y <- 1; cart2Polar(x, y)}
+#' @examples x <- 1; y <- 1; cart2Polar(x, y)
 cart2Polar <- function(x, y) {
     r <- sqrt( x ^ 2 + y ^ 2)
     thetaP <- atan( y/x ) * 180 / pi
@@ -338,19 +372,51 @@ cart2Polar <- function(x, y) {
     
     return(list(r=r, theta=theta))
 }
-## test
-cart2Polar(0, 0)
-cart2Polar(1, 1)
-cart2Polar(0, 1)
-cart2Polar(-1, 1)
-cart2Polar(-1, -1)
-cart2Polar(1, -1)
-##
+
 
 ## order
+#' @import amap
+#' @name orderNames
+#' @title Reorder names in dfNameGroup according to retention time, m/z or 
+#' cluster analysis
+#' @description orderNames will order the entries of the column name of the 
+#' dfNameGroup object according to a given sorting instruction.
+#' @usage orderNames(dfNameGroup, similarityMatrix = NULL, 
+#'      order = c("retentionTime", "mz", "clustering"))
+#' @param dfNameGroup data.frame containing column "group" and "name", which is 
+#' a unique identifier of the feature
+#' @param similarityMatrix matrix, a similarity matrix that contains the 
+#' NDP similarity measure between all precursors in the data set
+#' @param order character, has to be one of "retentionTime", "mz" or 
+#'  "clustering"
+#' @details orderNames takes dfNameGroup, similarityMatrix (only needed
+#' when order = "clustering") and order as arguments. It will rearrange the 
+#' order in dfNameGroup according to the retention time, m/z or 
+#' cluster analysis (based on similarity between fragmentation given by 
+#' entries in the similarityMatrix) and return a reordered dfNameGroup object.
+#' It will manipulate the entries in the name column of dfNameGroup by 
+#' adding consecutively numbered names according to the given order argument. 
+#' orderNames will extract the retention time and mz from the entries of the 
+#' column of dfNameGroup as these entries are composed via the pattern
+#' group_mz/rt. orderNames is used in the shinyCircos function, but can also 
+#' be used externally to reconstruct circos plots outside the reactive 
+#' environment (see vignette for further details).
+#' @return dfNameGroup object (data.frame) with updated (ordered) column 
+#' name
+#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @examples 
+#' load(system.file("data/binnedMSP.RData", package = "MetabolomicTools"))
+#' namesPrec <- rownames(binnedMSP)
+#' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
+#'      name = namesPrec) 
+#' ## order according to compartment
+#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
+#' ## order according to retention time
+#' dfNameGroupRT <- orderNames(dfNameGroup, similarityMat, 
+#'  order = "retentionTime")
+#' @export
 orderNames <- function(dfNameGroup, similarityMatrix = NULL, 
-                       order = c("retentionTime", "mz","clustering")) {##}, 
-                       ##initialize = TRUE) {
+                       order = c("retentionTime", "mz","clustering")) {
     
     order <- match.arg(order)
     if (order == "clustering" & is.null(similarityMatrix)) stop("no similarity matrix")
@@ -363,15 +429,6 @@ orderNames <- function(dfNameGroup, similarityMatrix = NULL,
     
     dfName <- as.character(dfNameGroup[,2])
     dfNameSplit <- strsplit(dfName, split = "_")
-    #######
-    ##if (!initialize) {
-    ##    dfNameSplit <- lapply(dfNameSplit, function(x) x[c(1,3)])
-    ##    dfName <- lapply(dfNameSplit, function(x) paste(x[1], x[2], sep="_"))
-    ##    dfName <- unlist(dfName)
-    ##    dfNameGroup[,2] <- dfName
-    ##}
-    ########
-    orderInd <- numeric(dim(dfNameGroup)[1])
     
     newDfNameGroup <- dfNameGroup
     
@@ -380,12 +437,13 @@ orderNames <- function(dfNameGroup, similarityMatrix = NULL,
             inds <- which(dfGroup == i)
             dfNameGroupLevel <- dfNameGroup[inds,]
             dfNameSplitLevel <- dfNameSplit[inds]
-            dfNameSplitLevelMZRT <- lapply(dfNameSplitLevel, function(x) strsplit(x[2], split="/"))
+            dfNameSplitLevelMZRT <- lapply(dfNameSplitLevel, 
+                    function(x) strsplit(x[2], split="/"))
             mzrt <- lapply(dfNameSplitLevelMZRT, "[[", 1)
             rt <- lapply(mzrt, "[[", 2)
             rt <- unlist(rt)
             rt <- as.numeric(rt)
-            ##lapply(1:86, function(x) c(i, "_", order(rt)[x], "_", mzrt[[x]][1], "/", mzrt[[x]][2] ))
+            
             dfNameGroupI <- dfNameGroupLevel[order(rt), ]
             dfNameNew <- as.character(dfNameGroupI[,2])
             lDfNameNew <- strsplit(dfNameNew, "_")
@@ -395,8 +453,6 @@ orderNames <- function(dfNameGroup, similarityMatrix = NULL,
             dfNameGroupI[,2] <- unlist(dfNameNew)
             newDfNameGroup[inds, ] <- dfNameGroupI
             
-            ## vector which bears order
-            orderInd[inds] <- order(rt)
         }
     }
     
@@ -405,12 +461,13 @@ orderNames <- function(dfNameGroup, similarityMatrix = NULL,
             inds <- which(dfGroup == i)
             dfNameGroupLevel <- dfNameGroup[inds,]
             dfNameSplitLevel <- dfNameSplit[inds]
-            dfNameSplitLevelMZRT <- lapply(dfNameSplitLevel, function(x) strsplit(x[2], split="/"))
+            dfNameSplitLevelMZRT <- lapply(dfNameSplitLevel, 
+                function(x) strsplit(x[2], split="/"))
             mzrt <- lapply(dfNameSplitLevelMZRT, "[[", 1)
             mz <- lapply(mzrt, "[[", 1)
             mz <- unlist(mz)
             mz <- as.numeric(mz)
-            ##lapply(1:86, function(x) c(i, "_", order(rt)[x], "_", mzrt[[x]][1], "/", mzrt[[x]][2] ))
+            
             dfNameGroupI <- dfNameGroupLevel[order(mz), ]
             dfNameNew <- as.character(dfNameGroupI[,2])
             lDfNameNew <- strsplit(dfNameNew, "_")
@@ -419,9 +476,7 @@ orderNames <- function(dfNameGroup, similarityMatrix = NULL,
                 paste(lDfNameNew[[x]][1], ordered[x], lDfNameNew[[x]][2], sep="_"))
             dfNameGroupI[,2] <- unlist(dfNameNew)
             newDfNameGroup[inds, ] <- dfNameGroupI
-            
-            ## vector which bears order
-            orderInd[inds] <- order(mz)
+
         }
     }
     
@@ -430,7 +485,7 @@ orderNames <- function(dfNameGroup, similarityMatrix = NULL,
             inds <- which(dfGroup == i)
             dfNameGroupLevel <- dfNameGroup[inds,]
             simMatI <- similarityMatrix[inds, inds]
-            hClust <- hcluster(simMatI, method = "spearman") 
+            hClust <- amap::hcluster(simMatI, method = "spearman") 
             dfNameGroupI <- dfNameGroupLevel[hClust$order,]
             dfNameNew <- as.character(dfNameGroupI[,2])
             lDfNameNew <- strsplit(dfNameNew, "_")
@@ -439,24 +494,12 @@ orderNames <- function(dfNameGroup, similarityMatrix = NULL,
                 paste(lDfNameNew[[x]][1], ordered[x], lDfNameNew[[x]][2], sep="_"))
             dfNameGroupI[,2] <- unlist(dfNameNew)
             newDfNameGroup[inds, ] <- dfNameGroupI
-            
-            ## vector which bears order
-            orderInd[inds] <- hClust$order
         }
     }
     
     newDfNameGroup <- newDfNameGroup[order(newDfNameGroup[,2]),]
     
     
-    return(list(newDfNameGroup, orderInd))
+    return(newDfNameGroup)
     
 }
-
-    
-##test <- orderNames(dfNameGroup, similarityMatrix = similarityMat, order = "clustering", initialize = TRUE)[[1]]
-##test <- orderNames(test, order = "mz", initialize = FALSE)[[1]]
-
-#plot(x = as.numeric(msp[7:12, 1]), y = as.numeric(msp[7:12,2]), type = "h", col = "black", ylim = c(-100, 100))
-#lines(x = (as.numeric(msp[7:12, 1]) + 0.0), y = - as.numeric(msp[7:12,2]), type = "h", col = "blue")
-#lines(x = (as.numeric(msp[7:12, 1]) + 0.1), y = - as.numeric(msp[7:12,2]), type = "h", col = "red")
-#lines(x = (as.numeric(msp[7:12, 1]) + 0.2), y = - as.numeric(msp[7:12,2]), type = "h", col = "green")

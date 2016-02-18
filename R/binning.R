@@ -14,6 +14,9 @@ getPrecursorMZ <- function (msp) {
     ## get precursor mz
     precmz <- msp[IndPrecMZ,2]
     
+    ## change to numeric
+    precmz <- as.numeric(precmz)
+    
     return(precmz)
 }
 #' @name getRT
@@ -30,6 +33,9 @@ getRT <- function (msp) {
     IndRT <- which(msp[,1] == "RETENTIONTIME: ")
     ## get rt 
     rt <- msp[IndRT,2]
+    
+    ## change to numeric
+    rt <- as.numeric(rt)
     
     return(rt)
 }
@@ -86,11 +92,13 @@ getBegEndIndMSP <- function(msp) {
 #' @export
 binning <- function(msp, tol = 0.01, compartment) { 
     
-    
     ## msp is .msp file
     ## tol is tolerance value for binning
     precmz <- getPrecursorMZ(msp)
     rt <- getRT(msp)
+    
+    if (length(precmz) != length(compartment)) 
+        stop("length of precursor ions != length(compartment)")
     
     indices <- getBegEndIndMSP(msp)
     indBeg <- indices[[1]]
@@ -222,6 +230,7 @@ binning <- function(msp, tol = 0.01, compartment) {
     fragMM <- unlist(l)
     ## write to mm 
     
+    
     IndPrecMZ <- match(precmz, msp[,2])
     
     for (i in 1:length(fragMM)) {
@@ -239,9 +248,15 @@ binning <- function(msp, tol = 0.01, compartment) {
         ## write 
         mm[rowInd,colInd] <- msp[indFragMM, 2]
     }
-    
+
     rNames <- rownames(mm)
     rownames(mm) <- paste(compartment, rNames, sep="_")
+    
+    class(mm) <- "numeric"
+    
+    #rownames(mm) <- paste(compartment, rNames, sep="_")
+    ## convoluted MZ is column names
+    
     ## was rownames(mm) <- paste(compartment, sprintf("%04d", 1:length(rNames)), rNames, sep="_")
     return(mm)
 }

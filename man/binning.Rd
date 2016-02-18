@@ -11,6 +11,8 @@ binning(msp, tol = 0.01)
 
 \item{tol}{numerical, boundary value until which neighboured peaks will be 
 joined together}
+
+\item{compartment}{character, to which compartment does the entry belong to}
 }
 \value{
 binning returns a matrix where rownames are precursor ions

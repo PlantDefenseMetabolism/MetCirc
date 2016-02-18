@@ -114,13 +114,13 @@ intensity in \%) and the corresponding principal component group with the
 precursor ion.
 <<eval=TRUE,echo=c(1:3)>>=
 ## load data
-load(system.file("data/sd01_outputXCMS.RData", package = "MetabolomicTools")) 
-load(system.file("data/sd02_deconvoluted.RData", package = "MetabolomicTools"))
+data("sd01_outputXCMS", package = "MetabolomicTools")
+data("sd02_deconvoluted", package = "MetabolomicTools")
 
 ## load binnedMSP
-load(system.file("data/binnedMSP.RData", package = "MetabolomicTools"))
+data("binnedMSP", package = "MetabolomicTools")
 ## load similarityMat
-load(system.file("data/similarityMat.RData", package = "MetabolomicTools"))
+data("similarityMat", package = "MetabolomicTools")
 @
 
 
@@ -431,7 +431,7 @@ precursor ions between and/or inside of groups.
 <<eval=TRUE>>=
 ## namesPrec <- rownames(binnedMSPNL) ## for neutral losses
 namesPrec <- rownames(binnedMSP)
-set.seed(999)
+
 ## needs to be replaced by group/sector identifier
 ##compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), 
 ##                      replace=TRUE) 
@@ -448,7 +448,8 @@ set.seed(999)
 ##}
 
 ##namesPrec <- paste(compartment, namesPrec, sep="_")
-dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec) 
+dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
+                                                "[[", 1)), name = namesPrec) 
 ## order according to compartment
 dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
 ##dfNameGroup[,"name"] <- paste(
@@ -491,10 +492,10 @@ support to export figures as they can be easily rebuilt outside of
 To rebuild the figure in a non-interactive environment, run 
 <<circos,eval=TRUE,results='hide',message=FALSE,fig.show='hide'>>=
 ## order according to retention time and create object dfNameGroupRT
-dfNameGroupRT <- orderNames(dfNameGroup, similarityMat, order = "clustering",
-                                           initialize = TRUE)[[1]]
+dfNameGroupRT <- orderNames(dfNameGroup = dfNameGroup, 
+    similarityMatrix = NULL, order = "retentionTime")
 ## create a new similarity matrix with updated rownames
-simM <- createOrderedSimMatShiny(dfNameGroupRT, similarityMat)
+simM <- createOrderedSimMat(dfNameGroupRT, similarityMat)
 
 ## create link matrix
 ## create link matrix
@@ -503,26 +504,24 @@ linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.95,
 ## cut link matrix (here: only display links between groups)
 linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
 
-
 ## set circlize paramters
 circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
             track.margin = c(0.0, 0))
 
 ## here set selectedFeatures arbitrarily
-selectedFeatures <- as.character(dfNameGroup[c(1,101,201,301),2])
+selectedFeatures <- as.character(dfNameGroupRT[c(1,101,201,301),2])
 
 ## actual plotting
 plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, featureNames = TRUE, 
     cexFeatureNames = 0.2, groupName = TRUE, links = FALSE, highlight = TRUE)
-indSelected <- mapply(function(x) which(x == dfNameGroup$name), 
+indSelected <- mapply(function(x) which(x == dfNameGroupRT$name), 
             selectedFeatures)
 highlight(dfNameGroup = dfNameGroupRT, ind = indSelected, LinkMatrix = 
-            LinkMatrix_threshold)
+            linkMat_cut)
 
 ## plot without highlighting
-plotCircos(dfNameGroup, LinkMatrix_cut, initialize = TRUE, featureNames = TRUE, 
-    cexFeatureNames = 0.2, groupName = TRUE, links = TRUE, highlight = FALSE, order = "retentionTime")
-
+plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, featureNames = TRUE, 
+    cexFeatureNames = 0.2, groupName = TRUE, links = TRUE, highlight = FALSE)
 @
 
 \begin{figure}[h!]

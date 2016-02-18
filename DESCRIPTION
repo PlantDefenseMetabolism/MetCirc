@@ -17,10 +17,10 @@ Depends:
     circlize (>= 0.3.3),
     grDevices (>= 3.2),
     graphics (>= 3.2),
+    amap (>= 0.8),
     scales (>= 0.3.0),
     shiny (>= 0.13.0)
 Suggests:
-    amap (>= 0.8),
     knitr (>= 1.11)    
 biocViews: Metabolomics, MassSpectrometry, Visualization
 Description: A workflow to analyse metabolomics data: create MSP, binning,
