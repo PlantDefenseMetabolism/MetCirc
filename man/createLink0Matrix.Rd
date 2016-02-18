@@ -24,7 +24,8 @@ matrix with another.
 }
 \details{
 createLink0Matrix creates a matrix from a similarityMatrix which 
-includes all connections between features in the similarityMatrix
+includes all connections between features in the similarityMatrix, but 
+exclude links which have a similarity of exactly 0.
 }
 \examples{
 load(system.file("data/sd02_deconvoluted.RData", 

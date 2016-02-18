@@ -4,16 +4,16 @@
 \alias{getLinkMatrixIndices}
 \title{Get indices in LinkMatrix of feature}
 \usage{
-getLinkMatrixIndices(dfInd, LinkMatrix)
+getLinkMatrixIndices(dfInd, linkMatrix)
 }
 \arguments{
 \item{dfInd}{row entry of data.frame dfNameGroup (selected feature)}
 
-\item{LinkMatrix}{matrix, in each row there is information about features 
+\item{linkMatrix}{matrix, in each row there is information about features 
 to be connected}
 }
 \value{
-\code{getLinkMatrixIndices} returns indices concerning LinkMatrix to 
+\code{getLinkMatrixIndices} returns indices concerning linkMatrix to 
      which dfInd connects
 }
 \description{
@@ -23,7 +23,7 @@ Gets indices in LinkMatrix of feature
 Internal use for function highlight.
 }
 \examples{
-\dontrun{getLinkMatrixIndices(dfInd, LinkMatrix)}
+\dontrun{getLinkMatrixIndices(dfInd, linkMatrix)}
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

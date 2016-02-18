@@ -18,6 +18,6 @@ data.frame
 This data set contains the object \code{convertExampleDF}.
 }
 \author{
-T. Naake
+Thomas Naake, \email{naake@stud.uni-heidelberg.de}
 }
 
