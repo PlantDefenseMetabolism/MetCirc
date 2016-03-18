@@ -4,7 +4,7 @@
 \alias{binning}
 \title{Bin m/z values}
 \usage{
-binning(msp, tol = 0.01)
+binning(msp, tol = 0.01, group)
 }
 \arguments{
 \item{msp}{data.frame in msp format, see ?convert2MSP for further information}
@@ -12,7 +12,7 @@ binning(msp, tol = 0.01)
 \item{tol}{numerical, boundary value until which neighboured peaks will be 
 joined together}
 
-\item{compartment}{character, to which compartment does the entry belong to}
+\item{group}{character vector, to which group does the entry belong to}
 }
 \value{
 binning returns a matrix where rownames are precursor ions
@@ -29,10 +29,9 @@ Bin m/z values
 The functions bins fragments together by calculating
 }
 \examples{
-load(system.file("data/sd02_deconvoluted.RData", 
-package = "MetabolomicTools")) 
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-binning(msp = finalMSP, tol = 0.01)
+data("idMSMStoMSP", package = "MetabolomicTools")
+group <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), replace=TRUE) 
+binning(msp = finalMSP, tol = 0.01, group = group)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

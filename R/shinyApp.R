@@ -3,22 +3,25 @@
 #' @name shinyCircos
 #' @title Interactive visualisation of similar precursors
 #' @description Visualise similar precursors.
-#' @usage shinyCircos(dfNameGroup, similarityMatrix, msp)
+#' @usage shinyCircos(dfNameGroup, similarityMatrix, msp, size = 400)
 #' @param dfNameGroup data.frame which contains columns "group" and "name"
 #' @param similarityMatrix matrix, similarityMatrix contains pair-wise 
 #' similarity coefficients which give information about the similarity between
 #' precursors
-#' @param msp data.frame, a data.frame in msp file format for information about the hovered feature
+#' @param msp data.frame, a data.frame in msp file format for information about 
+#' the hovered feature
+#' @param size numerical, image width/height in pixels
 #' @details The function is based on the shiny and circlize package. Choose
 #' interactively thresholds, type of links, hover over precursors, select 
 #' precursors.
 #' @return shinyCircos returns a character vector with the selected 
 #' precursors
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples \dontrun{shinyCircos(dfNameGroup, similarityMatrix, msp)}
+#' @examples \dontrun{shinyCircos(dfNameGroup, similarityMatrix, msp, size = 400)}
 #' @export
-shinyCircos <- function(dfNameGroup, similarityMatrix, msp) {
+shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
     
+    if (!is.numeric(size)) stop("size is not numerical")
     ## circlize parameters
     circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
             track.margin = c(0.0, 0))
@@ -84,7 +87,8 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp) {
                 click = "circosClick",
                 #dblclick = "circosDblClick",
                 hover = hoverOpts(id = "circosHover", delay = 250, clip = TRUE,
-                        nullOutside = FALSE)),
+                        nullOutside = FALSE),
+                width = size, height = size),
                 #brush = brushOpts(id = "circosBrush",
                 #                  resetOnNew = TRUE)),
             textOutput("hoverConnectedFeature"),
@@ -357,7 +361,7 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp) {
 #' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
 #' ## order according to retention time and create object dfNameGroupRT
 #' dfNameGroupRT <- orderNames(dfNameGroup, NULL, order = "retentionTime")
-#' createOrderedSimMat(dfNameGroupRT, similarityMat)
+#' createOrderedSimMat(dfNameGroupRT, similarityMatrix = similarityMat)
 #' @export
 createOrderedSimMat <- function(dfNameGroup, similarityMatrix) {
     

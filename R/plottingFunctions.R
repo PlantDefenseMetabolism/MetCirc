@@ -59,7 +59,7 @@
 plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE), 
         featureNames = c(TRUE, FALSE), cexFeatureNames = 0.2, 
         groupName = c(TRUE, FALSE), links = c(TRUE, FALSE), 
-        highlight = c(TRUE, FALSE), ...) {
+        highlight = c(TRUE, FALSE)) {
     
     dfNameGroup <- dfNameGroup[order(dfNameGroup[, "name"]), ]
 
@@ -340,9 +340,22 @@ truncateName <- function (dfNameGroup, roundDigits = 2, nameGroup = FALSE) {
 #'  used in \code{shinyCircos} for the track 1 only polar r coordinates between
 #'  0.8 and 1 will be used to find the feature with smallest distance.
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples minFragCart2Polar(x, y, degreeOfFeatures)
+#' @examples 
+#' data("binnedMSP", package = "MetabolomicTools")
+#' namesPrec <- rownames(binnedMSP)
+#' dfNameGroup <- data.frame(
+#'     group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
+#' ## order according to compartment
+#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
+#' MetabolomicTools::plotCircos(dfNameGroup, NULL, initialize = TRUE,
+#'  featureNames = FALSE, groupName = FALSE, links = FALSE, highlight = FALSE)
+#' x <- 1
+#' y <- 0
+#' degreeFeatures <- lapply(dfNameGroup$name, 
+#'  function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
+#' MetabolomicTools:::minFragCart2Polar(x, y, degreeOfFeatures = degreeFeatures)
 minFragCart2Polar <- function(x, y, degreeOfFeatures) {
-    polar <- cart2Polar(x, y)
+    polar <- MetabolomicTools:::cart2Polar(x, y)
     minInd <- NA
     if (polar$r <= 1 & polar$r >= 0.8) 
         minInd <- which.min(abs(polar$theta - unlist(degreeOfFeatures)))
@@ -360,7 +373,9 @@ minFragCart2Polar <- function(x, y, degreeOfFeatures) {
 #'  using hovering and clicking features.
 #' @return \code{cart2Polar} returns a list of colar coordinates r and theta
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples x <- 1; y <- 1; cart2Polar(x, y)
+#' @examples 
+#' x <- 1; y <- 1
+#' MetabolomicTools:::cart2Polar(x, y)
 cart2Polar <- function(x, y) {
     r <- sqrt( x ^ 2 + y ^ 2)
     thetaP <- atan( y/x ) * 180 / pi
@@ -374,7 +389,7 @@ cart2Polar <- function(x, y) {
 }
 
 
-## order
+
 #' @import amap
 #' @name orderNames
 #' @title Reorder names in dfNameGroup according to retention time, m/z or 
@@ -405,7 +420,8 @@ cart2Polar <- function(x, y) {
 #' name
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#' load(system.file("data/binnedMSP.RData", package = "MetabolomicTools"))
+#' data("binnedMSP", package = "MetabolomicTools")
+#' data("similarityMat", package = "MetabolomicTools")
 #' namesPrec <- rownames(binnedMSP)
 #' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
 #'      name = namesPrec) 

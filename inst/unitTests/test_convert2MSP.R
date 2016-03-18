@@ -18,29 +18,44 @@ test_cutUniquePreMZ <- function() {
 testMSP <- MetabolomicTools::convert2MSP(sd02_deconvoluted, 
     splitPattern = " _ ", splitInd = 2)
 test_convert2MSP <- function() {
-    checkTrue(is.data.frame(testMSP))
-    checkEquals(dim(testMSP), c(7263, 2))
-    checkTrue(is.data.frame(testMSP))
-    checkEquals(as.numeric(table(testMSP[,1])["ADDUCTIONNAME: "]), 360)
-    checkEquals(as.numeric(table(testMSP[,1])["METABOLITENAME: "]), 360)
-    checkEquals(as.numeric(table(testMSP[,1])["NAME: "]), 360)
-    checkEquals(as.numeric(table(testMSP[,1])["Num Peaks: "]), 360)
-    checkEquals(as.numeric(table(testMSP[,1])["PRECURSORMZ: "]), 360)
-    checkEquals(as.numeric(table(testMSP[,1])["RETENTIONTIME: "]), 360)
+    checkTrue(class(testMSP) == "MSP")
+    checkEquals(length(testMSP), 360)
+    checkTrue(is.data.frame(testMSP@msp))
+    checkEquals(dim(testMSP@msp), c(7263, 2))
+    checkEquals(as.numeric(
+        table(testMSP@msp[,1])["ADDUCTIONNAME: "]), 360)
+    checkEquals(as.numeric(
+        table(testMSP@msp[,1])["METABOLITENAME: "]), 360)
+    checkEquals(as.numeric(
+        table(testMSP@msp[,1])["NAME: "]), 360)
+    checkEquals(as.numeric(
+        table(testMSP@msp[,1])["Num Peaks: "]), 360)
+    checkEquals(as.numeric(
+        table(testMSP@msp[,1])["PRECURSORMZ: "]), 360)
+    checkEquals(as.numeric(
+        table(testMSP@msp[,1])["RETENTIONTIME: "]), 360)
 }
 ## END unit test convert2MSP
 
 ## START unit test msp2FunctionalLossesMSP
-testMSPNL <- MetabolomicsTools::msp2FunctionalLossesMSP(testMSP)
+testMSPNL <- MetabolomicTools::msp2FunctionalLossesMSP(testMSP)
 test_msp2FunctionalLossesMSP <- function() {
-    checkTrue(is.data.frame(testMSPNL))
-    checkEquals(dim(testMSPNL), c(7263, 2))
-    checkTrue(is.data.frame(testMSPNL))
-    checkEquals(as.numeric(table(testMSPNL[,1])["ADDUCTIONNAME: "]), 360)
-    checkEquals(as.numeric(table(testMSPNL[,1])["METABOLITENAME: "]), 360)
-    checkEquals(as.numeric(table(testMSPNL[,1])["NAME: "]), 360)
-    checkEquals(as.numeric(table(testMSPNL[,1])["Num Losses: "]), 360)
-    checkEquals(as.numeric(table(testMSPNL[,1])["PRECURSORMZ: "]), 360)
-    checkEquals(as.numeric(table(testMSPNL[,1])["RETENTIONTIME: "]), 360)
+    checkTrue(class(testMSPNL) == "MSP")
+    checkEquals(length(testMSPNL), 360)
+    checkTrue(is.data.frame(testMSPNL@msp))
+    checkEquals(dim(testMSPNL@msp), c(7263, 2))
+    checkTrue(is.data.frame(testMSPNL@msp))
+    checkEquals(as.numeric(
+        table(testMSPNL@msp[,1])["ADDUCTIONNAME: "]), 360)
+    checkEquals(as.numeric(
+        table(testMSPNL@msp[,1])["METABOLITENAME: "]), 360)
+    checkEquals(as.numeric(
+        table(testMSPNL@msp[,1])["NAME: "]), 360)
+    checkEquals(as.numeric(
+        table(testMSPNL@msp[,1])["Num Losses: "]), 360)
+    checkEquals(as.numeric(
+        table(testMSPNL@msp[,1])["PRECURSORMZ: "]), 360)
+    checkEquals(as.numeric(
+        table(testMSPNL@msp[,1])["RETENTIONTIME: "]), 360)
 }
 ## END unit test msp2FunctionalLossesMSP

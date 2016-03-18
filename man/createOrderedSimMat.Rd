@@ -42,7 +42,7 @@ dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 
 dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
 ## order according to retention time and create object dfNameGroupRT
 dfNameGroupRT <- orderNames(dfNameGroup, NULL, order = "retentionTime")
-createOrderedSimMat(dfNameGroupRT, similarityMat)
+createOrderedSimMat(dfNameGroupRT, similarityMatrix = similarityMat)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

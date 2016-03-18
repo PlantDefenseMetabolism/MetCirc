@@ -1,5 +1,12 @@
 ## START unit test createLink0Matrix
-link0Matrix <- MetabolomicTools::createLink0Matrix(similarityMatrix = similarityMat, dfNameGroup = dfNameGroup)
+namesPrec <- rownames(binnedMSP)
+dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
+                                                "[[", 1)), name = namesPrec)
+## order according to compartment
+dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
+
+link0Matrix <- MetabolomicTools::createLink0Matrix(
+    similarityMatrix = similarityMat, dfNameGroup = dfNameGroup)
 ndps <- as.numeric(link0Matrix[,"NDP"])
 
 test_createLink0Matrix <- function() {
@@ -7,8 +14,8 @@ test_createLink0Matrix <- function() {
         MetabolomicTools::createLink0Matrix(similarityMat, dfNameGroup[1:10,]))
     checkEquals(dim(link0Matrix)[2], 5)
     checkTrue(is.matrix(link0Matrix))
-    checkTrue(
-        colnames(link0Matrix) == c("group1", "name1", "group2", "name2", "NDP"))
+    checkTrue(all(
+        colnames(link0Matrix) == c("group1", "name1", "group2", "name2", "NDP")))
     checkTrue(
         all(unique(c(link0Matrix[,"group1"], link0Matrix[,"group2"])) %in% unique(dfNameGroup[,"group"])))
     checkTrue(

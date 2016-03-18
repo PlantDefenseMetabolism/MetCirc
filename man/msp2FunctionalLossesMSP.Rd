@@ -23,8 +23,7 @@ the similarity based on neutral losses instead of fragments
 }
 \examples{
 \dontrun{msp2FunctionalLossesMSP(msp)}
-load(system.file("data/sd02_deconvoluted.RData", 
-     package = "MetabolomicTools")) 
+data("sd02_deconvoluted", package = "MetabolomicTools")
 finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
 finalMSPNL <- msp2FunctionalLossesMSP(msp = finalMSP)
 }

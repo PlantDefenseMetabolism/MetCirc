@@ -29,7 +29,19 @@ Calculates the nearest feature in polar coordinates given
  the smallest distance from given cartesian coordinates.
 }
 \examples{
-minFragCart2Polar(x, y, degreeOfFeatures)
+data("binnedMSP", package = "MetabolomicTools")
+namesPrec <- rownames(binnedMSP)
+dfNameGroup <- data.frame(
+    group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
+## order according to compartment
+dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
+MetabolomicTools::plotCircos(dfNameGroup, NULL, initialize = TRUE,
+ featureNames = FALSE, groupName = FALSE, links = FALSE, highlight = FALSE)
+x <- 1
+y <- 0
+degreeFeatures <- lapply(dfNameGroup$name, 
+ function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
+MetabolomicTools:::minFragCart2Polar(x, y, degreeOfFeatures = degreeFeatures)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

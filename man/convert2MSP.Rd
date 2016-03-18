@@ -18,7 +18,7 @@ elements and precursor m/z}
 separation by splitPattern}
 }
 \value{
-convert2MSP returns a data.frame in .msp file format
+convert2MSP returns an object of class MSP
 }
 \description{
 Convert deconvoluted matrix into MSP format
@@ -30,9 +30,8 @@ return object has the following information: NAME, RETENTIONTIME,
      fragments together with their intensities.
 }
 \examples{
-load(system.file("data/sd02_deconvoluted.RData", 
-     package = "MetabolomicTools")) 
-convert2MSP(mm = sd01_outputXCMS, splitPattern = "_", splitInd = 1)
+data("sd02_deconvoluted", package = "MetabolomicTools")
+convert2MSP(mm = sd02_deconvoluted, splitPattern = "_", splitInd = 1)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

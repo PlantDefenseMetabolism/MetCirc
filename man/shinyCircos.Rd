@@ -4,7 +4,7 @@
 \alias{shinyCircos}
 \title{Interactive visualisation of similar precursors}
 \usage{
-shinyCircos(dfNameGroup, similarityMatrix, msp)
+shinyCircos(dfNameGroup, similarityMatrix, msp, size = 400)
 }
 \arguments{
 \item{dfNameGroup}{data.frame which contains columns "group" and "name"}
@@ -13,7 +13,10 @@ shinyCircos(dfNameGroup, similarityMatrix, msp)
 similarity coefficients which give information about the similarity between
 precursors}
 
-\item{msp}{data.frame, a data.frame in msp file format for information about the hovered feature}
+\item{msp}{data.frame, a data.frame in msp file format for information about 
+the hovered feature}
+
+\item{size}{numerical, image width/height in pixels}
 }
 \value{
 shinyCircos returns a character vector with the selected 
@@ -28,7 +31,7 @@ interactively thresholds, type of links, hover over precursors, select
 precursors.
 }
 \examples{
-\dontrun{shinyCircos(dfNameGroup, similarityMatrix, msp)}
+\dontrun{shinyCircos(dfNameGroup, similarityMatrix, msp, size = 400)}
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

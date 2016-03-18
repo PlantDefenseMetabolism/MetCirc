@@ -3,11 +3,10 @@
 #' @title Create a link matrix 
 #' @description Create a link matrix which links every feature in similarity
 #' matrix with another. 
-#' @usage createLink0Matrix(similarityMatrix, dfNameGroup, removeDuplicates)
+#' @usage createLink0Matrix(similarityMatrix, dfNameGroup)
 #' @param similarityMatrix matrix, a similarity matrix that contains the 
 #' NDP similarity measure between all precursors in the data set
 #' @param dfNameGroup data.frame, data.frame contains column "group" and "name"
-#' @param removeDuplicates logical, whether to remove duplicate entries or not
 #' @details createLink0Matrix creates a matrix from a similarityMatrix which 
 #' includes all connections between features in the similarityMatrix, but 
 #' exclude links which have a similarity of exactly 0.
@@ -15,21 +14,17 @@
 #' information on linked features
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#' load(system.file("data/sd02_deconvoluted.RData", 
-#'      package = "MetabolomicTools")) 
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-#' binnedMSP <- binning(msp = finalMSP, tol = 0.01)
+#' data("binnedMSP", package = "MetabolomicTools")
+#' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
 #' namesPrec <- rownames(binnedMSP)
-#' compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), 
-#'      replace=TRUE) 
-#' namesPrec <- paste(compartment, namesPrec, sep="_")
-#' dfNameGroup <- data.frame(group = compartment, name = namesPrec) 
-#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] 
+#' dfNameGroup <- data.frame(group = unlist(
+#'  lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
+#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
 #' createLink0Matrix(similarityMatrix = similarityMat,  
 #'      dfNameGroup = dfNameGroup)
 #' @export
-createLink0Matrix <- function(similarityMatrix, dfNameGroup) { ## }, removeDuplicates = TRUE) {
+createLink0Matrix <- function(similarityMatrix, dfNameGroup) { 
     
     name <- rownames(similarityMatrix)
     if (!all(colnames(similarityMatrix) == name)) {
@@ -47,17 +42,6 @@ createLink0Matrix <- function(similarityMatrix, dfNameGroup) { ## }, removeDupli
         stop("colnames/rownames of similarityMatrix are not identical to names in dfNameGroup")
     }
     
-#     dfNameTruncate <- strsplit(dfNameGroup[,2], split = "_")
-#     if (all(unlist(lapply(dfNameTruncate, function(x){ length(x) == 2}))))
-#         dfNameTruncate <- unlist(lapply(dfNameTruncate, "[", 2))
-#     else
-#         dfNameTruncate <- unlist(dfNameTruncate)
-#     
-#     if (!all(sort(dfNameTruncate) == sort(name))) {
-#         stop("dfNameGroup[,'name'] != colnames(similarityMatrix) ")
-#     }
-#     
-#     dfName <- dfNameTruncate
     mat <- matrix(data = NA, ncol = 5, 
                     nrow = (length(name)^ 2 - length(name)) / 2)
     colnames(mat) <- c("group1", "name1", "group2", "name2", "NDP") 
@@ -88,44 +72,6 @@ createLink0Matrix <- function(similarityMatrix, dfNameGroup) { ## }, removeDupli
     lastIndex <- min(which(is.na(mat[,1]))) - 1
     mat <- mat[1:lastIndex, ]
     
-#     for (i in 1:length(name)) {
-#         nameI <- name[i]
-#         compartmentI <- dfNameGroup[which(nameI == dfName),1]
-#         compartmentI <- as.character(compartmentI)
-#         entryI <- matrix(data = c(compartmentI,nameI, NA, NA, NA), ncol = 5, nrow = length(name) - 1, byrow=TRUE)
-#         
-#         newName <- name[-which(as.character(nameI) == name)]
-#         ## group of second feature
-#         indComp <- match(newName, dfName)
-#         entryI[,3] <- as.character(dfNameGroup[indComp,1])
-#         ## m/z / retention time of second feature
-#         entryI[,4] <- newName
-#         ## similarity
-#         entryI[,5] <- as.numeric(similarityMat[nameI,newName])
-#         ## write to mat
-#         mat[((length(name)-1) * (i - 1) + 1):((length(name)-1)*i),] <- entryI
-#     }
-#     ###########################
-#     if (removeDuplicates) {
-#         ## create vector which connects mz and rt for connected features
-#         nameCompound <- paste(mat[,2], mat[,4], sep = "_")
-#         ## create vector which connects mz and rt for connected features (reverse)
-#         nameCompoundrev <- paste(mat[,4], mat[,2], sep = "_")
-#         ## create list where indices refer to indices of nameCompound and 
-#         ## entries link to indices of nameCompoundrev
-#         double <- lapply(nameCompound, function(nameI) match(nameI, nameCompoundrev))
-#         ## set double entries NA
-#         
-#         for (i in 1:length(double)) {
-#             if (!is.na(double[[i]])) {
-#                 if (!is.na(double[[double[[i]]]]) & double[[double[[i]]]] == i) 
-#                     double[[i]] <- NA                
-#             }
-#         }
-#         ## unlist double and create mat with no double values
-#         double <- unlist(double)
-#         mat <- mat[double[!is.na(double)],]
-#     }
     return(mat)
 }
 
@@ -143,17 +89,13 @@ createLink0Matrix <- function(similarityMatrix, dfNameGroup) { ## }, removeDupli
 #' information on linked features which are linked above a certain threshold
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#' load(system.file("data/sd02_deconvoluted.RData", 
-#'      package = "MetabolomicTools")) 
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-#' binnedMSP <- binning(msp = finalMSP, tol = 0.01)
+#' data("binnedMSP", package = "MetabolomicTools")
+#' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
 #' namesPrec <- rownames(binnedMSP)
-#' compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), 
-#'      replace=TRUE) 
-#' namesPrec <- paste(compartment, namesPrec, sep="_")
-#' dfNameGroup <- data.frame(group = compartment, name = namesPrec) 
-#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] 
+#' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
+#'                              "[[", 1)), name = namesPrec)
+#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
 #' linkMatrix <- createLink0Matrix(similarityMatrix = similarityMat,  
 #'      dfNameGroup = dfNameGroup)
 #' thresholdLinkMatrix(linkMatrix = linkMatrix, threshold = 0.5)
@@ -189,7 +131,7 @@ thresholdLinkMatrix <- function(linkMatrix, threshold) {
 #' @name createLinkMatrix
 #' @title Create a matrix which contains features to link (indices)
 #' @description Create a matrix which contains features to link (indices)
-#' @usage createLinkMatrix(similarityMatrix, threshold, dfNameGroup)
+#' @usage createLinkMatrix(similarityMatrix, dfNameGroup, threshold)
 #' @param similarityMatrix matrix, a similarity matrix that contains the 
 #' NDP similarity measure between all precursors in the data set
 #' @param dfNameGroup data.frame, data.frame contains column "group" and "name"
@@ -201,19 +143,15 @@ thresholdLinkMatrix <- function(linkMatrix, threshold) {
 #' information on linked features
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#' load(system.file("data/sd02_deconvoluted.RData", 
-#'      package = "MetabolomicTools")) 
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-#' binnedMSP <- binning(msp = finalMSP, tol = 0.01)
+#' data("binnedMSP", package = "MetabolomicTools")
+#' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
 #' namesPrec <- rownames(binnedMSP)
-#' compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), 
-#'      replace=TRUE) 
-#' namesPrec <- paste(compartment, namesPrec, sep="_")
-#' dfNameGroup <- data.frame(group = compartment, name = namesPrec) 
-#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] 
-#' createLinkMatrix(similarityMatrix = similarityMat, threshold = 0.5, 
-#'      dfNameGroup = dfNameGroup)
+#' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
+#'                              "[[", 1)), name = namesPrec)
+#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
+#' createLinkMatrix(similarityMatrix = similarityMat, dfNameGroup = dfNameGroup,
+#'      threshold = 0.5)
 #' @export
 createLinkMatrix <- function(similarityMatrix, dfNameGroup, threshold) {
     ## first create a link0Matrix
@@ -224,43 +162,6 @@ createLinkMatrix <- function(similarityMatrix, dfNameGroup, threshold) {
                         threshold = threshold)
      return(thresholdLinkMatrix)
 }
-## deprecated
-## createLinkMatrix <- function(similarityMatrix, threshold, dfNameGroup) {
-##     
-##     if (!is.numeric(threshold)) stop("threshold is not numeric")
-##     
-##     if (!all(colnames(similarityMatrix) == rownames(similarityMatrix))) {
-##         stop("colnames(similarityMatrix) != rownames(similarityMatrix)")
-##         
-##     } 
-##     
-##     ##links <- which(similarityMatrix >= threshold, arr.ind = TRUE)
-##     links <- links[which(links[,1] != links[,2]),] 
-##     ## filter all feature which are in the diagonal
-##     ## create matrix which contains linking information in the format
-##     ## group1 position1 group2 position2 NDP
-##     linkMat <- matrix(data = NA, ncol = 5, nrow = dim(links)[1] )
-##     colnames(linkMat) <- c("group1", "name1", "group2", "name2", "NDP") 
-##     colnames(similarityMatrix) <- as.character(dfNameGroup[,"name"]) # new 
-##     rownames(similarityMatrix) <- as.character(dfNameGroup[,"name"]) # new
-##     
-##     for (i in 1:dim(links)[1]) {
-##         feature <- links[i,]
-##         rowFeature <- rownames(similarityMatrix)[feature][1]
-##         colFeature <- colnames(similarityMatrix)[feature][2]
-##         
-##         dfRowFeature <- dfNameGroup[which(rowFeature == dfNameGroup[, "name"]),]
-##         dfColFeature <- dfNameGroup[which(colFeature == dfNameGroup[, "name"]),]
-##         iEntry <- c(as.character(dfRowFeature[["group"]]),
-##                     as.character(dfRowFeature[["name"]]), 
-##                     as.character(dfColFeature[["group"]]),
-##                     as.character(dfColFeature[["name"]]), 
-##                     similarityMatrix[feature["row"], feature["col"]])
-##         linkMat[i, ] <- iEntry
-##     }
-##     return(linkMat)
-## }
-
 
 #' @name cutLinkMatrix
 #' @title Create a cut LinkMatrix 
@@ -279,17 +180,16 @@ createLinkMatrix <- function(similarityMatrix, dfNameGroup, threshold) {
 #' information on linked features
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#' load(system.file("data/sd02_deconvoluted.RData", 
-#'      package = "MetabolomicTools")) 
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-#' binnedMSP <- binning(msp = finalMSP, tol = 0.01)
+#' data("binnedMSP", package = "MetabolomicTools")
+#' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
 #' namesPrec <- rownames(binnedMSP)
-#' compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), 
-#'      replace=TRUE) 
-#' namesPrec <- paste(compartment, namesPrec, sep="_")
-#' dfNameGroup <- data.frame(group = compartment, name = namesPrec)
-#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] 
+#' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
+#'                              "[[", 1)), name = namesPrec)
+#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
+#' linkMatrix <- createLink0Matrix(similarityMatrix = similarityMat,  
+#'      dfNameGroup = dfNameGroup)
+#' thresholdLinkMatrix(linkMatrix = linkMatrix, threshold = 0.5)
 #' linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold = 0.5, 
 #'      dfNameGroup = dfNameGroup)
 #' cutLinkMatrix(LinkMatrix = linkMat, type = "all")

@@ -21,7 +21,8 @@ Depends:
     scales (>= 0.3.0),
     shiny (>= 0.13.0)
 Suggests:
-    knitr (>= 1.11)    
+    knitr (>= 1.11),
+    methods (>= 3.2)
 biocViews: Metabolomics, MassSpectrometry, Visualization
 Description: A workflow to analyse metabolomics data: create MSP, binning,
     visualise.

@@ -31,8 +31,5 @@ vignette: MetabolomicTools.Rnw
 clean:	
 	rm -f $(LATEXFILES)
 	rm -f .Rhistory
-
-	
-#allclean: clean
-#	rm -rf figure/
-#	rm -rf cache/ 
+	rm -rf figure/
+	rm -rf cache/

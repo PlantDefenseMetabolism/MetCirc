@@ -2,18 +2,27 @@
 namesPrec <- rownames(binnedMSP)
 dfNameGroup <- data.frame(
     group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
-dfNameGroupRT <- orderNames(dfNameGroup = dfNameGroup, 
+## order according to compartment
+dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
+dfNameGroupRT <- MetabolomicTools::orderNames(dfNameGroup = dfNameGroup, 
                             similarityMatrix = NULL, order = "retentionTime")
 linkMat <- MetabolomicTools::createLinkMatrix(similarityMatrix = similarityMat, 
                 threshold=0.95, dfNameGroup = dfNameGroup)
 
 ## START unit test for plotCircos
+circos.clear()
+circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
+           track.margin = c(0.0, 0))
 test_plotCircos <- function() {
-    checkException(MetabolomicTools::plotCircos(dfNameGroup, NULL, initialize = TRUE, links = TRUE))
-    checkException(MetabolomicTools::plotCircos(dfNameGroupRT, NULL, initialize = FALSE, 
-                    links = FALSE, featureNames = TRUE, groupName = FALSE))
-    checkException(MetabolomicTools::plotCircos(dfNameGroupRT, linkMat, initialize = TRUE, 
-                              links = TRUE)) ## names are different
+    checkException(MetabolomicTools::plotCircos(dfNameGroup, NULL, 
+        initialize = TRUE, featureNames = FALSE, groupName = FALSE, 
+        links = TRUE, highlight = FALSE))
+    checkException(MetabolomicTools::plotCircos(dfNameGroupRT, NULL, 
+        initialize = FALSE, featureNames = TRUE, groupName = FALSE,
+                    links = FALSE, highlight = FALSE))
+    checkException(MetabolomicTools::plotCircos(dfNameGroupRT, linkMat, 
+        initialize = TRUE, featureNames = FALSE, groupName = FALSE, 
+        links = TRUE, highlight = FALSE)) ## names are different
 }
 ## END unit test for plotCircos
 
@@ -27,6 +36,12 @@ test_highlight <- function() {
 ## END unit test for highlight
 
 ## START unit test for getLinkMatrixIndices
+circos.clear()
+## set circlize paramters
+circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
+           track.margin = c(0.0, 0))
+MetabolomicTools::plotCircos(dfNameGroup, NULL, initialize = TRUE, 
+    featureNames = FALSE, groupName = FALSE, links = FALSE, highlight = FALSE)
 test_getLinkMatrixIndices <- function() {
     checkEquals(MetabolomicTools:::getLinkMatrixIndices(dfNameGroup[1,], linkMat), 1)
     checkEquals(MetabolomicTools:::getLinkMatrixIndices(dfNameGroup[2,], linkMat), integer())
@@ -47,7 +62,7 @@ test_truncateName <- function() {
         as.character(MetabolomicTools:::truncateName(dfNameGroup[1,], 2, nameGroup=FALSE)[2]), 
         "132.08/74.81")
     checkEquals(dim(MetabolomicTools:::truncateName(dfNameGroup, 2, nameGroup = FALSE)), 
-                dim(dfNameGroup))s
+                dim(dfNameGroup))
     checkEquals(as.character(MetabolomicTools:::truncateName(dfNameGroup[1,], 2, nameGroup = TRUE)[2]),
                 "NA/NA")
     checkEquals(

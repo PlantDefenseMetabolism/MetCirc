@@ -4,15 +4,13 @@
 \alias{createLink0Matrix}
 \title{Create a link matrix}
 \usage{
-createLink0Matrix(similarityMatrix, dfNameGroup, removeDuplicates)
+createLink0Matrix(similarityMatrix, dfNameGroup)
 }
 \arguments{
 \item{similarityMatrix}{matrix, a similarity matrix that contains the 
 NDP similarity measure between all precursors in the data set}
 
 \item{dfNameGroup}{data.frame, data.frame contains column "group" and "name"}
-
-\item{removeDuplicates}{logical, whether to remove duplicate entries or not}
 }
 \value{
 createLink0Matrix returns a matrix that gives per each row 
@@ -28,17 +26,13 @@ includes all connections between features in the similarityMatrix, but
 exclude links which have a similarity of exactly 0.
 }
 \examples{
-load(system.file("data/sd02_deconvoluted.RData", 
-     package = "MetabolomicTools")) 
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-binnedMSP <- binning(msp = finalMSP, tol = 0.01)
+data("binnedMSP", package = "MetabolomicTools")
+namesPrec <- rownames(binnedMSP)
 similarityMat <- createSimilarityMatrix(binnedMSP)
 namesPrec <- rownames(binnedMSP)
-compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), 
-     replace=TRUE) 
-namesPrec <- paste(compartment, namesPrec, sep="_")
-dfNameGroup <- data.frame(group = compartment, name = namesPrec) 
-dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] 
+dfNameGroup <- data.frame(group = unlist(
+ lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
+dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
 createLink0Matrix(similarityMatrix = similarityMat,  
      dfNameGroup = dfNameGroup)
 }

@@ -49,12 +49,11 @@ cutUniquePreMZ <- function(precursor, splitPattern = splitPattern,
 #' return object has the following information: NAME, RETENTIONTIME, 
 #'      PRECURSORMZ, METABOLITENAME, ADDUCTIONNAME, Num Peaks and a list of 
 #'      fragments together with their intensities.
-#' @return convert2MSP returns a data.frame in .msp file format
+#' @return convert2MSP returns an object of class MSP
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#' load(system.file("data/sd02_deconvoluted.RData", 
-#'      package = "MetabolomicTools")) 
-#' convert2MSP(mm = sd01_outputXCMS, splitPattern = "_", splitInd = 1)
+#' data("sd02_deconvoluted", package = "MetabolomicTools")
+#' convert2MSP(mm = sd02_deconvoluted, splitPattern = "_", splitInd = 1)
 #' @export
 convert2MSP <- function (mm, splitPattern = "_", splitInd = 1) {
     
@@ -104,7 +103,7 @@ convert2MSP <- function (mm, splitPattern = "_", splitInd = 1) {
         finalMSP[newstart:newend,] <- entry
     }
     
-    return(finalMSP)
+    return(MSP(msp = finalMSP))
 }
 
 #' @name msp2FunctionalLossesMSP
@@ -119,12 +118,16 @@ convert2MSP <- function (mm, splitPattern = "_", splitInd = 1) {
 #' (with neutral losses).
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples \dontrun{msp2FunctionalLossesMSP(msp)}
-#' load(system.file("data/sd02_deconvoluted.RData", 
-#'      package = "MetabolomicTools")) 
+#' data("sd02_deconvoluted", package = "MetabolomicTools")
 #' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
 #' finalMSPNL <- msp2FunctionalLossesMSP(msp = finalMSP)
 #' @export
 msp2FunctionalLossesMSP <- function(msp) {
+    
+    if (!is(msp) == "MSP") stop("msp is not of class MSP")
+    
+    msp <- msp@msp
+    
     precmz <- getPrecursorMZ(msp)
     rt <- getRT(msp)
     indices <- getBegEndIndMSP(msp)
@@ -160,6 +163,75 @@ msp2FunctionalLossesMSP <- function(msp) {
         newend <- newstart + dim(entry)[1] - 1
         finalMSP[newstart:newend,] <- entry
     }
+
     
-    return(finalMSP)
+    return(MSP(msp = finalMSP))
 }
+
+#' @name MSP
+#' @title MSP-class
+#' @aliases MSP-class
+#' @description MSP class for msp data.frame. Allows easy computation of 
+#' length of entries by entering length(msp), where msp is of class MSP.
+#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @param msp a data.frame in msp format
+#' @export
+MSP <- setClass("MSP", slots = c(msp = "data.frame"))
+
+#' @name length
+#' @rdname length-method
+#' @aliases length,MSP-method
+####usage length(x)
+#' @title length method for MSP class
+#' @return numerical
+#' @description Gives the number of entries in the MSP object.
+#' @param x object of class MSP
+####examples
+####data("sd02_deconvoluted", package = "MetabolomicTools")
+####finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+####length(finalMSP)
+#' @docType methods
+#' @export
+setMethod("length", signature = "MSP", 
+          definition = function(x) {
+              length(getPrecursorMZ(x@msp))
+})
+
+##setGeneric("show", function(object) standardGeneric("show"))
+#' @name show
+#' @rdname show-method
+#' @aliases show,MSP-method
+#' @title show method for MSP class
+#' @return character
+#' @description Prints information on the MSP class (number of entries).
+#' @param object object of class MSP
+#' @docType methods
+#' @export
+setMethod("show", signature = "MSP", 
+          definition = function(object) {
+              cat("An object of class", class(object), "with", 
+                  length(getPrecursorMZ(object@msp)), "entries.", sep = " ")
+})
+
+##### usage show(object)
+###
+#### examples
+#### data("sd02_deconvoluted", package = "MetabolomicTools")
+#### finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#### show(finalMSP)
+
+##setGeneric("as.data.frame", function(x, ...) standardGeneric("as.data.frame"))
+### name as.data.frame-methods
+### rdname as.data.frame-methods
+### aliases as.data.frame.MSP,data.frame,MSP-method,ANY-method
+### usage as.data.frame(x)
+### title  method for MSP class
+### description Accessor for the msp data.frame of an object of class MSP.
+### param x object of class MSP
+### examples
+### data("sd02_deconvoluted", package = "MetabolomicTools")
+### finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+### as.data.frame(finalMSP)
+### docType methods
+### export
+##setMethod("as.data.frame", signature = "MSP", definition = function(x, row.names = NULL) x@msp)

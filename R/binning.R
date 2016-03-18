@@ -72,11 +72,11 @@ getBegEndIndMSP <- function(msp) {
 #' @name binning
 #' @title Bin m/z values
 #' @description Bin m/z values
-#' @usage binning(msp, tol = 0.01)
+#' @usage binning(msp, tol = 0.01, group)
 #' @param msp data.frame in msp format, see ?convert2MSP for further information
 #' @param tol numerical, boundary value until which neighboured peaks will be 
 #'      joined together
-#' @param compartment character, to which compartment does the entry belong to
+#' @param group character vector, to which group does the entry belong to
 #' @details The functions bins fragments together by calculating 
 #' @return binning returns a matrix where rownames are precursor ions
 #' (m/z / retention time) and colnames are newly calculated m/z values which 
@@ -85,20 +85,27 @@ getBegEndIndMSP <- function(msp) {
 #' several fragment ions) and recalculates the new m / z by weighing for the 
 #' number of m / z fragments.
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples load(system.file("data/sd02_deconvoluted.RData", 
-#' package = "MetabolomicTools")) 
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-#' binning(msp = finalMSP, tol = 0.01)
+#' @examples data("idMSMStoMSP", package = "MetabolomicTools")
+#' group <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), replace=TRUE) 
+#' binning(msp = finalMSP, tol = 0.01, group = group)
 #' @export
-binning <- function(msp, tol = 0.01, compartment) { 
+binning <- function(msp, tol = 0.01, group = NULL) { 
     
+    if (!is(msp) == "MSP") stop("msp is not of class MSP.")
+    
+    msp <- msp@msp
+    
+    if (is.null(group)) {
+        print("argument group is not specified, will create dummy group")
+        group <- rep("a", length(MetabolomicTools:::getPrecursorMZ(msp)))
+    }
     ## msp is .msp file
     ## tol is tolerance value for binning
     precmz <- getPrecursorMZ(msp)
     rt <- getRT(msp)
     
-    if (length(precmz) != length(compartment)) 
-        stop("length of precursor ions != length(compartment)")
+    if (length(precmz) != length(group)) 
+        stop("length of precursor ions != length(group)")
     
     indices <- getBegEndIndMSP(msp)
     indBeg <- indices[[1]]
@@ -250,14 +257,14 @@ binning <- function(msp, tol = 0.01, compartment) {
     }
 
     rNames <- rownames(mm)
-    rownames(mm) <- paste(compartment, rNames, sep="_")
+    rownames(mm) <- paste(group, rNames, sep="_")
     
     class(mm) <- "numeric"
     
-    #rownames(mm) <- paste(compartment, rNames, sep="_")
+    #rownames(mm) <- paste(group, rNames, sep="_")
     ## convoluted MZ is column names
     
-    ## was rownames(mm) <- paste(compartment, sprintf("%04d", 1:length(rNames)), rNames, sep="_")
+    ## was rownames(mm) <- paste(group, sprintf("%04d", 1:length(rNames)), rNames, sep="_")
     return(mm)
 }
 

@@ -4,7 +4,7 @@
 \alias{createLinkMatrix}
 \title{Create a matrix which contains features to link (indices)}
 \usage{
-createLinkMatrix(similarityMatrix, threshold, dfNameGroup)
+createLinkMatrix(similarityMatrix, dfNameGroup, threshold)
 }
 \arguments{
 \item{similarityMatrix}{matrix, a similarity matrix that contains the 
@@ -27,19 +27,15 @@ threshold is a numerical value and filters linked precursor ions;
 filtering is currently based on the normalised dot product.
 }
 \examples{
-load(system.file("data/sd02_deconvoluted.RData", 
-     package = "MetabolomicTools")) 
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-binnedMSP <- binning(msp = finalMSP, tol = 0.01)
+data("binnedMSP", package = "MetabolomicTools")
+namesPrec <- rownames(binnedMSP)
 similarityMat <- createSimilarityMatrix(binnedMSP)
 namesPrec <- rownames(binnedMSP)
-compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), 
-     replace=TRUE) 
-namesPrec <- paste(compartment, namesPrec, sep="_")
-dfNameGroup <- data.frame(group = compartment, name = namesPrec) 
-dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] 
-createLinkMatrix(similarityMatrix = similarityMat, threshold = 0.5, 
-     dfNameGroup = dfNameGroup)
+dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
+                             "[[", 1)), name = namesPrec)
+dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
+createLinkMatrix(similarityMatrix = similarityMat, dfNameGroup = dfNameGroup,
+     threshold = 0.5)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

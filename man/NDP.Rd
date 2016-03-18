@@ -39,10 +39,11 @@ indicates no similarity between the two precursors, while 1 indicates
 a strong similarity between the two precursors.
 }
 \examples{
-load(system.file("data/sd02_deconvoluted.RData", 
-     package = "MetabolomicTools")) 
+data("sd02_deconvoluted", package = "MetabolomicTools") 
 finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-binnedMSP <- binning(msp = finalMSP, tol = 0.01)
+compartment <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), 
+     replace=TRUE) 
+binnedMSP <- binning(msp = finalMSP, tol = 0.01, group = compartment)
 NDP(matrow1 = binnedMSP[1,], matrow2 = binnedMSP[2,], m = 0.5, n = 2,
  mass = colnames(binnedMSP))
 }

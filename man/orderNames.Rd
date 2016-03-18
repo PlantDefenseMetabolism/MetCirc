@@ -41,7 +41,8 @@ be used externally to reconstruct circos plots outside the reactive
 environment (see vignette for further details).
 }
 \examples{
-load(system.file("data/binnedMSP.RData", package = "MetabolomicTools"))
+data("binnedMSP", package = "MetabolomicTools")
+data("similarityMat", package = "MetabolomicTools")
 namesPrec <- rownames(binnedMSP)
 dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
      name = namesPrec) 

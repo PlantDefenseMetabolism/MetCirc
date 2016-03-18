@@ -28,17 +28,16 @@ will only contain entries of links which are inside groups and not between
 groups.
 }
 \examples{
-load(system.file("data/sd02_deconvoluted.RData", 
-     package = "MetabolomicTools")) 
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-binnedMSP <- binning(msp = finalMSP, tol = 0.01)
+data("binnedMSP", package = "MetabolomicTools")
+namesPrec <- rownames(binnedMSP)
 similarityMat <- createSimilarityMatrix(binnedMSP)
 namesPrec <- rownames(binnedMSP)
-compartment <- sample(c("yl", "ol", "s","r"), size = length(namesPrec), 
-     replace=TRUE) 
-namesPrec <- paste(compartment, namesPrec, sep="_")
-dfNameGroup <- data.frame(group = compartment, name = namesPrec)
-dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] 
+dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
+                             "[[", 1)), name = namesPrec)
+dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
+linkMatrix <- createLink0Matrix(similarityMatrix = similarityMat,  
+     dfNameGroup = dfNameGroup)
+thresholdLinkMatrix(linkMatrix = linkMatrix, threshold = 0.5)
 linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold = 0.5, 
      dfNameGroup = dfNameGroup)
 cutLinkMatrix(LinkMatrix = linkMat, type = "all")
