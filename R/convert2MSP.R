@@ -186,10 +186,6 @@ MSP <- setClass("MSP", slots = c(msp = "data.frame"))
 #' @return numerical
 #' @description Gives the number of entries in the MSP object.
 #' @param x object of class MSP
-####examples
-####data("sd02_deconvoluted", package = "MetabolomicTools")
-####finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-####length(finalMSP)
 #' @docType methods
 #' @export
 setMethod("length", signature = "MSP", 
@@ -197,7 +193,7 @@ setMethod("length", signature = "MSP",
               length(getPrecursorMZ(x@msp))
 })
 
-##setGeneric("show", function(object) standardGeneric("show"))
+
 #' @name show
 #' @rdname show-method
 #' @aliases show,MSP-method
@@ -213,12 +209,7 @@ setMethod("show", signature = "MSP",
                   length(getPrecursorMZ(object@msp)), "entries.", sep = " ")
 })
 
-##### usage show(object)
-###
-#### examples
-#### data("sd02_deconvoluted", package = "MetabolomicTools")
-#### finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-#### show(finalMSP)
+
 
 ##setGeneric("as.data.frame", function(x, ...) standardGeneric("as.data.frame"))
 ### name as.data.frame-methods
