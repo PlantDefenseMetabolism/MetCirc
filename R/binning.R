@@ -8,6 +8,7 @@
 #' values
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples \dontrun{getPrecursorMZ(msp)}
+#' @export
 getPrecursorMZ <- function (msp) {
     ## get indices with precursor mz
     IndPrecMZ <- which(msp[,1] == "PRECURSORMZ: ")
@@ -28,6 +29,7 @@ getPrecursorMZ <- function (msp) {
 #' @return getRT returns a character vector with all retention time values
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples \dontrun{getRT(msp)}
+#' @export
 getRT <- function (msp) {
     ## get indices with rt
     IndRT <- which(msp[,1] == "RETENTIONTIME: ")
@@ -52,6 +54,7 @@ getRT <- function (msp) {
 #' contains the start indices and the second the end indices
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples \dontrun{getBegEndIndMSP(msp)}
+#' @export
 getBegEndIndMSP <- function(msp) {
     
     ## beginning 
@@ -93,11 +96,11 @@ binning <- function(msp, tol = 0.01, group = NULL) {
     
     if (!is(msp) == "MSP") stop("msp is not of class MSP.")
     
-    msp <- msp@msp
+    msp <- getMSP(msp)
     
     if (is.null(group)) {
         print("argument group is not specified, will create dummy group")
-        group <- rep("a", length(MetabolomicTools:::getPrecursorMZ(msp)))
+        group <- rep("a", length(getPrecursorMZ(msp)))
     }
     ## msp is .msp file
     ## tol is tolerance value for binning
@@ -238,26 +241,38 @@ binning <- function(msp, tol = 0.01, group = NULL) {
     ## write to mm 
     
     
-    IndPrecMZ <- match(precmz, msp[,2])
-    
-    for (i in 1:length(fragMM)) {
-        ## which frag is put first? second? ...
-        indFragMM <- fragMM[frag_order][i]
-        ## get corresponding Precursor MZ
-        correspPrecMZ <- precmz[max(which(IndPrecMZ < indFragMM))]
-        ## get corresponding rt
-        correspPrecRT <- rt[max(which(IndPrecMZ < indFragMM))]
-        ## get unique row identifier
-        uniqueIden <- paste(correspPrecMZ, correspPrecRT, sep="/")
-        rowInd <- which(uniqueIden == rownames(mm))
-        ## get col index 
-        colInd <- which(distAdapt[[i]][1] == colnames(mm))
-        ## write 
-        mm[rowInd,colInd] <- msp[indFragMM, 2]
+    ## new
+    for (i in 1:length(l)) {
+        entry <- l[[i]]    
+        for (j in 1:length(entry)) {
+            entryJ <- as.numeric(msp[entry[j],])
+            colIND <- which.min(abs(as.numeric(entryJ[1]) - uniqueMZ))
+            intensity <- entryJ[2]
+            mm[i, colIND] <- intensity
+        }
     }
+    
+    ## new ende
+    
+    ##IndPrecMZ <- match(precmz, msp[,2])
+    
+#     for (i in 1:length(fragMM)) {
+#         ## which frag is put first? second? ...
+#         indFragMM <- fragMM[frag_order][i]
+#         ## get corresponding Precursor MZ
+#         correspPrecMZ <- precmz[max(which(IndPrecMZ < indFragMM))]
+#         ## get corresponding rt
+#         correspPrecRT <- rt[max(which(IndPrecMZ < indFragMM))]
+#         ## get unique row identifier
+#         uniqueIden <- paste(correspPrecMZ, correspPrecRT, sep="/")
+#         rowInd <- which(uniqueIden == rownames(mm))
+#         ## get col index 
+#         colInd <- which(distAdapt[[i]][1] == colnames(mm))
+#         ## write 
+#         mm[rowInd,colInd] <- msp[indFragMM, 2]
+#     }
 
-    rNames <- rownames(mm)
-    rownames(mm) <- paste(group, rNames, sep="_")
+    rownames(mm) <- paste(group, rownames(mm), sep="_")
     
     class(mm) <- "numeric"
     
