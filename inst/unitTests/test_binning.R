@@ -1,28 +1,28 @@
 ## START unit test getPrecursorMZ
-finalMSPmsp <- MetabolomicTools::convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)@msp
+finalMSPmsp <- getMSP(convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2))
 
 test_getPrecursorMZ <- function() {
-    checkEquals(length(MetabolomicTools:::getPrecursorMZ(finalMSPmsp)), 360)
-    checkTrue(is.vector(MetabolomicTools:::getPrecursorMZ(finalMSPmsp)))
-    checkTrue(is.numeric(MetabolomicTools:::getPrecursorMZ(finalMSPmsp)))
-    checkEquals(MetabolomicTools:::getPrecursorMZ(sd02_deconvoluted), numeric())
+    checkEquals(length(getPrecursorMZ(finalMSPmsp)), 360)
+    checkTrue(is.vector(getPrecursorMZ(finalMSPmsp)))
+    checkTrue(is.numeric(getPrecursorMZ(finalMSPmsp)))
+    checkEquals(getPrecursorMZ(sd02_deconvoluted), numeric())
 }
 ## END unit test getPrecursorMZ
 
 ## START unit test getRT
 test_getRT <- function() {
-    checkEquals(length(MetabolomicTools:::getRT(finalMSPmsp)), 360)
-    checkTrue(is.vector(MetabolomicTools:::getRT(finalMSPmsp)))
-    checkTrue(is.numeric(MetabolomicTools:::getRT(finalMSPmsp)))
+    checkEquals(length(getRT(finalMSPmsp)), 360)
+    checkTrue(is.vector(getRT(finalMSPmsp)))
+    checkTrue(is.numeric(getRT(finalMSPmsp)))
     checkEquals(
-        MetabolomicTools:::getRT(sd02_deconvoluted), numeric())
+        getRT(sd02_deconvoluted), numeric())
 }
 ## END unit test getRT
 
 ## START unit test getBegEndIndMSP
-BegEndIndMSP <- MetabolomicTools:::getBegEndIndMSP(finalMSPmsp)
+BegEndIndMSP <- getBegEndIndMSP(finalMSPmsp)
 test_getBegEndIndMSP <- function() {
-    checkTrue(is.list(MetabolomicTools:::getBegEndIndMSP(finalMSPmsp)))
+    checkTrue(is.list(getBegEndIndMSP(finalMSPmsp)))
     checkTrue(length(BegEndIndMSP[[1]]) == length(BegEndIndMSP[[2]]))
     checkTrue(all(BegEndIndMSP[[1]] <=  BegEndIndMSP[[2]]))
     checkTrue(is.numeric(BegEndIndMSP[[1]]))
@@ -33,13 +33,12 @@ test_getBegEndIndMSP <- function() {
 ## END unit test getBegIndMSP
 
 ## START unit test binning
-finalMSP <- MetabolomicTools::convert2MSP(sd02_deconvoluted, 
-                                          split = " _ ", splitInd = 2)
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
 compartment <- c(rep("a", 90), rep("b", 90), rep("c", 90), rep("d", 90))
 ## create binnedMSPs
-binnedMSP001 <- MetabolomicTools::binning(finalMSP, 0.01, group = compartment)
-binnedMSP1 <- MetabolomicTools::binning(finalMSP, 1, group = compartment)
-binnedMSP100 <- MetabolomicTools::binning(finalMSP, 100, group = compartment)
+binnedMSP001 <- binning(finalMSP, 0.01, group = compartment)
+binnedMSP1 <- binning(finalMSP, 1, group = compartment)
+binnedMSP100 <- binning(finalMSP, 100, group = compartment)
 
 test_binning <- function() {
     checkTrue(is.matrix(binnedMSP001))
@@ -47,6 +46,6 @@ test_binning <- function() {
     checkEquals(dim(binnedMSP001), c(360, 691)) 
     checkEquals(dim(binnedMSP1), c(360,351)) 
     checkEquals(dim(binnedMSP100), c(360,8))
-    checkException(MetabolomicTools::binning(finalMSP, 1, compartment[1:7]))
+    checkException(binning(finalMSP, 1, compartment[1:7]))
 }
 ## END unit test binning

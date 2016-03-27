@@ -14,6 +14,7 @@
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples \dontrun{cutUniquePreMZ(precursor, splitPattern = splitPattern, 
 #'      splitInd = splitInd, returnCharacter = TRUE)}
+#' @export
 cutUniquePreMZ <- function(precursor, splitPattern = splitPattern, 
                             splitInd = splitInd, returnCharacter = TRUE) {
     ## split precursors according to split pattern
@@ -126,7 +127,7 @@ msp2FunctionalLossesMSP <- function(msp) {
     
     if (!is(msp) == "MSP") stop("msp is not of class MSP")
     
-    msp <- msp@msp
+    msp <- getMSP(msp)
     
     precmz <- getPrecursorMZ(msp)
     rt <- getRT(msp)
@@ -193,7 +194,6 @@ setMethod("length", signature = "MSP",
               length(getPrecursorMZ(x@msp))
 })
 
-
 #' @name show
 #' @rdname show-method
 #' @aliases show,MSP-method
@@ -208,21 +208,35 @@ setMethod("show", signature = "MSP",
               cat("An object of class", class(object), "with", 
                   length(getPrecursorMZ(object@msp)), "entries.", sep = " ")
 })
+#' @import methods
+NULL
 
+#' @export
+setGeneric("getMSP", function(object) standardGeneric("getMSP"))
 
+#' @name getMSP
+#' @rdname getMSP-method
+#' @aliases getMSP,MSP-method
+#' @title getMSP method for MSP class
+#' @return data.frame
+#' @description Returns the data.frame entry of an MSP object.
+#' @param object object of class MSP
+#' @docType methods
+#' @export
+setMethod("getMSP", signature = "MSP", definition = function(object) {object@msp})
 
-##setGeneric("as.data.frame", function(x, ...) standardGeneric("as.data.frame"))
-### name as.data.frame-methods
-### rdname as.data.frame-methods
-### aliases as.data.frame.MSP,data.frame,MSP-method,ANY-method
-### usage as.data.frame(x)
-### title  method for MSP class
-### description Accessor for the msp data.frame of an object of class MSP.
-### param x object of class MSP
-### examples
-### data("sd02_deconvoluted", package = "MetabolomicTools")
-### finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-### as.data.frame(finalMSP)
-### docType methods
-### export
-##setMethod("as.data.frame", signature = "MSP", definition = function(x, row.names = NULL) x@msp)
+#' @export
+setGeneric("combine", function(object1, object2) standardGeneric("combine"))
+
+#' @name combine
+#' @rdname combine-method
+#' @aliases combine,MSP-method
+#' @title combine method for MSP class
+#' @return MSP object
+#' @description Combines two objects of class MSP.
+#' @param object1 object of class MSP
+#' @param object2 object of class MSP
+#' @docType methods
+#' @export
+setMethod("combine", signature = c("MSP", "MSP"), definition = function(object1, object2) {
+    MSP(msp = rbind(object1@msp, object2@msp))})

@@ -24,9 +24,9 @@
 #'  features of a circlize plot. 
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#'  #'  ## load binnedMSP
-#'  load(system.file("data/binnedMSP.RData", package = "MetabolomicTools"))
-#'  load(system.file("data/similarityMat.RData", package = "MetabolomicTools"))
+#'  ## load binnedMSP
+#'  data("binnedMSP", package = "MetabolomicTools")
+#'  data("similarityMat", package = "MetabolomicTools")
 #'  namesPrec <- rownames(binnedMSP)
 #' 
 #'  dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
@@ -184,8 +184,8 @@ plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE),
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
 #'  ## load binnedMSP
-#'  load(system.file("data/binnedMSP.RData", package = "MetabolomicTools"))
-#'  load(system.file("data/similarityMat.RData", package = "MetabolomicTools"))
+#'  data("binnedMSP", package = "MetabolomicTools")
+#'  data("similarityMat", package = "MetabolomicTools")
 #'  namesPrec <- rownames(binnedMSP)
 #' 
 #'  dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
@@ -198,7 +198,6 @@ plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE),
 #'      
 #'  ## create a new similarity matrix with updated rownames
 #'  simM <- createOrderedSimMat(dfNameGroupRT, similarityMat)
-#'  ## create link matrix
 #'  ## create link matrix
 #'  linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.95,
 #'      dfNameGroup = dfNameGroupRT)
@@ -269,6 +268,7 @@ highlight <- function(dfNameGroup, ind, LinkMatrix) {
 #'      which dfInd connects
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples \dontrun{getLinkMatrixIndices(dfInd, linkMatrix)}
+#' @export
 getLinkMatrixIndices <- function(dfInd, linkMatrix) {
     
     linkMatrixInd <- lapply(as.character(dfInd[, "name"]), 
@@ -299,6 +299,7 @@ getLinkMatrixIndices <- function(dfInd, linkMatrix) {
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
 #'      \dontrun{truncateName(dfNameGroup, roundDigits = 2, nameGroup = FALSE)}
+#' @export
 truncateName <- function (dfNameGroup, roundDigits = 2, nameGroup = FALSE) {
     names <- as.character(dfNameGroup$name)
     
@@ -347,15 +348,16 @@ truncateName <- function (dfNameGroup, roundDigits = 2, nameGroup = FALSE) {
 #'     group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
 #' ## order according to compartment
 #' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
-#' MetabolomicTools::plotCircos(dfNameGroup, NULL, initialize = TRUE,
-#'  featureNames = FALSE, groupName = FALSE, links = FALSE, highlight = FALSE)
+#' plotCircos(dfNameGroup, NULL, initialize = TRUE, featureNames = FALSE, 
+#'          groupName = FALSE, links = FALSE, highlight = FALSE)
 #' x <- 1
 #' y <- 0
 #' degreeFeatures <- lapply(dfNameGroup$name, 
 #'  function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
-#' MetabolomicTools:::minFragCart2Polar(x, y, degreeOfFeatures = degreeFeatures)
+#' minFragCart2Polar(x, y, degreeOfFeatures = degreeFeatures)
+#' @export
 minFragCart2Polar <- function(x, y, degreeOfFeatures) {
-    polar <- MetabolomicTools:::cart2Polar(x, y)
+    polar <- cart2Polar(x, y)
     minInd <- NA
     if (polar$r <= 1 & polar$r >= 0.8) 
         minInd <- which.min(abs(polar$theta - unlist(degreeOfFeatures)))
@@ -376,6 +378,7 @@ minFragCart2Polar <- function(x, y, degreeOfFeatures) {
 #' @examples 
 #' x <- 1; y <- 1
 #' MetabolomicTools:::cart2Polar(x, y)
+#' @export
 cart2Polar <- function(x, y) {
     r <- sqrt( x ^ 2 + y ^ 2)
     thetaP <- atan( y/x ) * 180 / pi

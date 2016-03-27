@@ -28,8 +28,8 @@ Internal use for shiny app.
 }
 \examples{
  ## load binnedMSP
- load(system.file("data/binnedMSP.RData", package = "MetabolomicTools"))
- load(system.file("data/similarityMat.RData", package = "MetabolomicTools"))
+ data("binnedMSP", package = "MetabolomicTools")
+ data("similarityMat", package = "MetabolomicTools")
  namesPrec <- rownames(binnedMSP)
 
  dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
@@ -42,7 +42,6 @@ Internal use for shiny app.
      
  ## create a new similarity matrix with updated rownames
  simM <- createOrderedSimMat(dfNameGroupRT, similarityMat)
- ## create link matrix
  ## create link matrix
  linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.95,
      dfNameGroup = dfNameGroupRT)

@@ -26,18 +26,18 @@ test_createLink0Matrix <- function() {
 
 ## START unit test thresholdLinkMatrix
 test_thresholdLinkMatrix <- function() {
-    checkEquals(dim(MetabolomicTools::thresholdLinkMatrix(link0Matrix, 0)), dim(link0Matrix))
-    checkException(MetabolomicTools::thresholdLinkMatrix(similarityMat, 0))
-    checkException(MetabolomicTools::thresholdLinkMatrix(link0Matrix, 1.1))
+    checkEquals(dim(thresholdLinkMatrix(link0Matrix, 0)), dim(link0Matrix))
+    checkException(thresholdLinkMatrix(similarityMat, 0))
+    checkException(thresholdLinkMatrix(link0Matrix, 1.1))
     checkTrue(
-        dim(MetabolomicTools::thresholdLinkMatrix(link0Matrix, 0.2))[1] >= 
-            dim(MetabolomicTools::thresholdLinkMatrix(link0Matrix, 0.3))[1])
+        dim(thresholdLinkMatrix(link0Matrix, 0.2))[1] >= 
+            dim(thresholdLinkMatrix(link0Matrix, 0.3))[1])
 }
 ## END unit test thresholdLinkMatrix
 
 ## START unit test createLinkMatrix
-tLinkMatrix1 <- MetabolomicTools::thresholdLinkMatrix(link0Matrix, 0.3)
-tLinkMatrix2 <- MetabolomicTools::createLinkMatrix(similarityMat, dfNameGroup, 0.3)
+tLinkMatrix1 <- thresholdLinkMatrix(link0Matrix, 0.3)
+tLinkMatrix2 <- createLinkMatrix(similarityMat, dfNameGroup, 0.3)
 
 test_createLinkMatrix <- function() {
     checkTrue(identical(tLinkMatrix1, tLinkMatrix2))
@@ -45,14 +45,14 @@ test_createLinkMatrix <- function() {
 ## END unit test createLinkMatrix
 
 ## START unit test cutLinkMatrix
-cutLMInter <- MetabolomicTools::cutLinkMatrix(tLinkMatrix1, type = "inter")
-cutLMIntra <- MetabolomicTools::cutLinkMatrix(tLinkMatrix1, type = "intra")
+cutLMInter <- cutLinkMatrix(tLinkMatrix1, type = "inter")
+cutLMIntra <- cutLinkMatrix(tLinkMatrix1, type = "intra")
 
 test_cutLinkMatrix <- function() {
     checkTrue(
-        all(dim(MetabolomicTools::cutLinkMatrix(tLinkMatrix1, type = "all")) == dim(tLinkMatrix2))
+        all(dim(cutLinkMatrix(tLinkMatrix1, type = "all")) == dim(tLinkMatrix2))
     )
-    checkException(MetabolomicTools::cutLinkMatrix(tLinkMatrix1, type = "foo"))
+    checkException(cutLinkMatrix(tLinkMatrix1, type = "foo"))
     checkTrue(
         all(unlist(lapply(1:dim(cutLMInter)[1], 
                           function(x) cutLMInter[x,1] != cutLMInter[x,3])))

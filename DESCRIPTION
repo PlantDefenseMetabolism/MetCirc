@@ -19,10 +19,10 @@ Depends:
     graphics (>= 3.2),
     amap (>= 0.8),
     scales (>= 0.3.0),
+    methods (>= 3.2),
     shiny (>= 0.13.0)
 Suggests:
-    knitr (>= 1.11),
-    methods (>= 3.2)
+    knitr (>= 1.11)    
 biocViews: Metabolomics, MassSpectrometry, Visualization
 Description: A workflow to analyse metabolomics data: create MSP, binning,
     visualise.
