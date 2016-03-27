@@ -135,6 +135,7 @@ precursor ion.
 data("sd01_outputXCMS", package = "MetabolomicTools")
 data("sd02_deconvoluted", package = "MetabolomicTools")
 
+## optional:
 ## load binnedMSP
 data("binnedMSP", package = "MetabolomicTools")
 ## load similarityMat
@@ -142,7 +143,7 @@ data("similarityMat", package = "MetabolomicTools")
 @
 
 
-\section{Write into .msp file format}
+\section{Write sd02\_deconvoluted into .msp file format}
 Here, we convert \Robject{sd02\_deconvoluted} into a file in .msp format. The 
 function \Rfunction{convert2MSP} creates an entry for each precursor and 
 identifies the m/z and retention time of fragment ions. Each entry of 
@@ -152,7 +153,7 @@ identifies the m/z and retention time of fragment ions. Each entry of
 relative intensity in \%. The retention time calcuated by 
 \Rfunction{finalMSP} is the average value of the retention time values 
 of all fragment ions belonging to the specific precursor. The actual \code{msp}
-\Robject{data.frame} can be accessed by \Robject{msp(finalMSP)}.
+\Robject{data.frame} can be accessed by \Robject{getMSP(finalMSP)}.
 <<eval=c(1:2)>>=
 ## identify precursor mz
 finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
@@ -163,7 +164,7 @@ save(finalMSP, file = "idMSMStoMSP.RData")
 @
 
 \subsection{Tissue}
-\paragraph{Convert \Robject{idMSMStissueproject.csv} into .msp file format.} 
+\paragraph{Convert \Robject{idMSMStissueproject} into .msp file format.} 
 Here, we would like to analyse data from multiple plant tissues. The data are 
 stored in \Robject{idMSMStissueproject.Rdata} as \Robject{tissue}. \newline 
 
@@ -189,8 +190,33 @@ newtissue <- newtissue[,1:4]
 tissue <- newtissue
 
 finalMSPTissue <- convert2MSP(tissue, split = "_", splitInd=1)
-@
+compartmentTissue <- read.table("/home/thomas/Documents/University/Master/HiWi/floral dtg.txt", header=TRUE)
 
+tissueSPL <- compartmentTissue[compartmentTissue[,"SPL"] == TRUE, 1]
+tissueLIM <- compartmentTissue[compartmentTissue[,"LIM"] == TRUE, 1]
+tissueANT <- compartmentTissue[compartmentTissue[,"ANT"] == TRUE, 1]
+tissueSTY <- compartmentTissue[compartmentTissue[,"STY"] == TRUE, 1]
+
+## truncate tissue
+tissueSPL <- tissue[tissue[,4] %in% tissueSPL,] 
+tissueLIM <- tissue[tissue[,4] %in% tissueLIM,]
+tissueANT <- tissue[tissue[,4] %in% tissueANT,]
+tissueSTY <- tissue[tissue[,4] %in% tissueSTY,]
+
+
+finalMSP <- convert2MSP(tissueSPL)
+finalMSP <- combine(finalMSP, convert2MSP(tissueLIM))
+finalMSP <- combine(finalMSP, convert2MSP(tissueANT))
+finalMSP <- combine(finalMSP, convert2MSP(tissueSTY))
+
+## create vector with compartments
+compSPL <- rep("SPL", length(convert2MSP(tissueSPL)))
+compLIM <- rep("LIM", length(convert2MSP(tissueLIM)))
+compANT <- rep("ANT", length(convert2MSP(tissueANT)))
+compSTY <- rep("STY", length(convert2MSP(tissueSTY)))
+
+compartment <- c(compSPL, compLIM, compANT, compSTY)
+@
 
 \section{Convert \Robject{sd02\_deconvoluted} precursor ions and 
 \Robject{sd01\_outputXCMS} into a format as in \Robject{convertExampleDF}}
@@ -206,8 +232,8 @@ average m/z, the name of the metabolite, the adduct ion name, the spectrum
 reference file name and TRIO/LVS???. \Rfunction{allocatePrecursor2mz} uses 
 \Robject{data.frame}s of the kind of \Robject{sd01\_outputXCMS} and 
 \Robject{sd02\_deconvoluted} to create a \Robject{data.frame} of the kind of 
-\Robject{convertExampleDF} by allocating precursor ions to candidate
-m/z values based on minimal distance of m/z and deviance of retention time 
+\Robject{convertExampleDF}. Allocation of precursor ions to candidate
+m/z values is based on minimal distance of m/z and deviance of retention time 
 based on an objective function. We can specify threshold values for m/z and
 retention time to be used in \Rfunction{allocatePrecursor2mz}, as well as 
 the number of neighbours based on deviation from m/z values. Also, we can 
@@ -245,7 +271,7 @@ between m/z values. \Rfunction{binning} applies the following algorithm:
     \item calculate the new distance to neighbour fragments.
     \item \Rfunction{binning} will then cluster together the next-distant 
         pair of fragment ions (starting from step 1) until 
-    \item the distance will be greater than the tolerande value \code{tol},
+    \item the distance will be greater than the tolerance value \code{tol},
         where \Rfunction{binning} will return a matrix with binned m/z
         fragment ion values together with their intensity for all 
         precursor ions
@@ -255,11 +281,11 @@ between m/z values. \Rfunction{binning} applies the following algorithm:
 membership of the entries in the \Robject{msp} object, to a compartment, 
 species, individual, etc. If \Robject{group} is not specified 
 \Rfunction{binning} will create an internal dummy variable group ("a" with 
-the length of entries in \Robject{msp}).
+the length of \Robject{msp}).
 
 <<eval=FALSE>>=
-compartment <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), 
-    replace=TRUE) 
+##compartment <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), 
+##    replace=TRUE) 
 ## create data.frame with binned fragments
 binnedMSP <- binning(msp = finalMSP, tol = 0.01, group = compartment)
 @
@@ -268,7 +294,7 @@ binnedMSP <- binning(msp = finalMSP, tol = 0.01, group = compartment)
 The normalised dot product (NDP) is the similarity coefficient to calculate 
 the similarity between two precursor ions and their fragments, respectively. 
 The NDP uses the m/z value of fragment/precursor ions and their 
-peak intensity, respectively, of two metabolites. The NDP is calculated 
+peak intensityof two metabolites, respectively. The NDP is calculated 
 according to:
 \begin{equation}
     NDP = \frac{\sum(W_{S1, i} \cdot W_{S2, i}) ^ 2}{ \sum(W_{S1, i} ^ 2) * \sum(W_{S2, i} ^ 2) },
@@ -305,7 +331,7 @@ we enter:
 ## load package amap
 hClustMSP <- hcluster(similarityMat, method = "spearman")
 ## visualise clusters
-plot(hClustMSP, labels = FALSE,xlab="",sub="")
+plot(hClustMSP, labels = FALSE, xlab="", sub="")
 @
 
 \begin{figure}
@@ -452,7 +478,7 @@ plot(nlHClustMSP, labels = FALSE)
 \Rpackage{MetabolomicTools} comprises functionality to visualise metabolomics
 data and exploring it interactively. To do this, we first need to create 
 a \Robject{data.frame} - \Robject{dfNameGroup} -  which contains all precursor 
-ions together with their respective group. A group can be almost everything and
+ions together with their respective group. A group 
 specifies the origin of the sample: e.g. it can be a specific tissue, different
 times, different species, etc. The visualisation tools implemented in 
 \Rpackage{MetabolomicTools} allow then to display similarity between 
@@ -460,7 +486,8 @@ precursor ions between and/or inside of groups.
 
 <<eval=TRUE>>=
 namesPrec <- rownames(binnedMSP)
-## namesPrec <- rownames(binnedMSPNL) ## for neutral losses
+## for neutral losses
+## namesPrec <- rownames(binnedMSPNL) 
 
 dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
                                                 "[[", 1)), name = namesPrec) 
@@ -471,7 +498,7 @@ dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),]
 \Rfunction{shinyCircos} uses the function \Rfunction{createLinkMatrix} which 
 comprises per row these precursor ions which are linked by a normalised dot 
 product $\geq$ \Robject{threshold} to the precursor ion in the same row. 
-Internally, in \Rfunction{shinyCircos} \Rfunction{createLinkMatrix} will be 
+Internally, in \Rfunction{shinyCircos}, \Rfunction{createLinkMatrix} will be 
 called to produce link matrices based on the given threshold. 
 <<eval=TRUE>>=
 linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold=0.5,
@@ -493,7 +520,7 @@ can be changed by selecting the respective option in the sidebar panel.
 Momentarily, there are options to reorder features based on clustering, 
 the m/z or the retention time of the precursor ion.
 On exiting the shiny application
-via the the exit button in the sidebar panel, selected precursors will
+via the exit button in the sidebar panel, selected precursors will
 be returned which are allocated here to \Robject{selectedFeatures}. 
 \Robject{selectedFeatures} is a vector of the precursor names.
 
@@ -506,7 +533,8 @@ selectedFeatures <- shinyCircos(dfNameGroup, similarityMat)
 interactive context, which might be helpful to create figures and export them 
 e.g. in .pdf or .jpeg format. \Rfunction{shinyCircos} does currently not 
 support to export figures as they can be easily rebuilt outside of 
-\Rfunction{shinyCircos}; this also promotes reproducibility of such figures.
+\Rfunction{shinyCircos}; building figures outside of the interactive context
+also promotes reproducibility of such figures.
 To rebuild the figure in a non-interactive environment, run 
 <<circos,eval=TRUE,results='hide',message=FALSE,fig.show='hide'>>=
 ## order according to retention time and create object dfNameGroupRT

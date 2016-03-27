@@ -40,9 +40,9 @@ Circular plot to visualise similarity
 Internal use for shiny app
 }
 \examples{
- #'  ## load binnedMSP
- load(system.file("data/binnedMSP.RData", package = "MetabolomicTools"))
- load(system.file("data/similarityMat.RData", package = "MetabolomicTools"))
+ ## load binnedMSP
+ data("binnedMSP", package = "MetabolomicTools")
+ data("similarityMat", package = "MetabolomicTools")
  namesPrec <- rownames(binnedMSP)
 
  dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
