@@ -98,8 +98,9 @@ improve the analysis of metabolomics data when comparing similarity between
 metabolites. Therefore \Rpackage{MetabolomicTools} includes functions 
 to calculate the similarity between features based on the normalised dot product
 (NDP, see \citet{Li2015} for further details). This vignette will 
-use examplary data from \citet{Li2015} to navigate through the 
-analysis pipeline. This will include creation of an \code{.msp} object, 
+use examplary data from \citet{Li2015} and MS/MS data from different
+tissues of the flower to navigate through the 
+analysis pipeline. The pipeline will include creation of an \code{.msp} object, 
 binning of fragment ions, calculation of a similarity measure (NDP), 
 assignment to a similarity matrix and visualisation of similarity based 
 on interactive and non-interactive graphical tools using the 
@@ -156,17 +157,29 @@ of all fragment ions belonging to the specific precursor. The actual \code{msp}
 \Robject{data.frame} can be accessed by \Robject{getMSP(finalMSP)}.
 <<eval=c(1:2)>>=
 ## identify precursor mz
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+finalMSPLi2015 <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
 
 ## optional:
 ## write finalMSP to idMSMStoMSP.RData
-save(finalMSP, file = "idMSMStoMSP.RData")
+save(finalMSPLi2015, file = "idMSMStoMSP.RData")
+@
+
+For the \Rfunction{binning} function used later, we need to pass a vector
+containing the groups (compartments, times, species, etc.) of the metabolites.
+Here, we will create a vector, \Robject{compartment}, with randomised 
+assignment of compartments to show functionality. This can be replaced with 
+a vector comprising actual compartments or with dummy variables. 
+<<eval=TRUE>>=
+compartment <- sample(c("yl", "ol", "s","r"), size = length(finalMSPLi2015), 
+    replace=TRUE) 
 @
 
 \subsection{Tissue}
 \paragraph{Convert \Robject{idMSMStissueproject} into .msp file format.} 
 Here, we would like to analyse data from multiple plant tissues. The data are 
-stored in \Robject{idMSMStissueproject.Rdata} as \Robject{tissue}. \newline 
+stored in \Robject{idMSMStissueproject.Rdata} as \Robject{tissue}. In addition,
+spatial information of metabolites is stored in 
+\Robject{compartmentTissue}. \newline 
 
 Often, the data is not in the right format to analyse it - so it is here - 
 thus we need to bring 
@@ -189,9 +202,15 @@ newtissue[,4] <- tissue[,7]; colnames(newtissue)[4] <- colnames(tissue)[7]
 newtissue <- newtissue[,1:4]
 tissue <- newtissue
 
-finalMSPTissue <- convert2MSP(tissue, split = "_", splitInd=1)
-compartmentTissue <- read.table("/home/thomas/Documents/University/Master/HiWi/floral dtg.txt", header=TRUE)
+@
 
+We would like to focus our analysis on four tissues (sepal, SPL; LIM; anther, ANT; 
+style, STY). We will truncate \Robject{tissue} that it contains only these 
+instances to belonging to these types of tissue. In a next step, we will 
+create a msp object, \Robject{finalMSP}, comprising the features found 
+in the tissues SPL, LIM, ANT and STY. 
+<<eval=TRUE>>=
+## create vectors with precursor names present in tissue
 tissueSPL <- compartmentTissue[compartmentTissue[,"SPL"] == TRUE, 1]
 tissueLIM <- compartmentTissue[compartmentTissue[,"LIM"] == TRUE, 1]
 tissueANT <- compartmentTissue[compartmentTissue[,"ANT"] == TRUE, 1]
@@ -203,12 +222,17 @@ tissueLIM <- tissue[tissue[,4] %in% tissueLIM,]
 tissueANT <- tissue[tissue[,4] %in% tissueANT,]
 tissueSTY <- tissue[tissue[,4] %in% tissueSTY,]
 
-
+## create msp and combine msp objects of different tissues
 finalMSP <- convert2MSP(tissueSPL)
 finalMSP <- combine(finalMSP, convert2MSP(tissueLIM))
 finalMSP <- combine(finalMSP, convert2MSP(tissueANT))
 finalMSP <- combine(finalMSP, convert2MSP(tissueSTY))
+@
 
+For the \Rfunction{binning} function, we will derive a vector, 
+\Robject{compartment}, which gives the compartment for each entry of 
+\Robject{finalMSP}.
+<<eval=TRUE>>=
 ## create vector with compartments
 compSPL <- rep("SPL", length(convert2MSP(tissueSPL)))
 compLIM <- rep("LIM", length(convert2MSP(tissueLIM)))
@@ -219,7 +243,8 @@ compartment <- c(compSPL, compLIM, compANT, compSTY)
 @
 
 \section{Convert \Robject{sd02\_deconvoluted} precursor ions and 
-\Robject{sd01\_outputXCMS} into a format as in \Robject{convertExampleDF}}
+\Robject{sd01\_outputXCMS} into a format as in \Robject{convertExampleDF} 
+(not part of the workflow)}
 
 First, we would like to have a look on the format of \Robject{convertExampleDF}:
 <<eval=TRUE>>=
@@ -256,7 +281,6 @@ write.table(finalCluster, file = "finalCluster.csv", sep=";", dec=".",
 @
 
 \section{Binning}
-
 \subsection{Binning for files in .msp format with fragment ions}
 Due to inaccuracies fragments might have m/z values which differ from other 
 fragments even though they are in theory identical. \Rfunction{binning} 
@@ -284,8 +308,6 @@ species, individual, etc. If \Robject{group} is not specified
 the length of \Robject{msp}).
 
 <<eval=FALSE>>=
-##compartment <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), 
-##    replace=TRUE) 
 ## create data.frame with binned fragments
 binnedMSP <- binning(msp = finalMSP, tol = 0.01, group = compartment)
 @
