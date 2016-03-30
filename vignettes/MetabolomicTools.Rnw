@@ -522,7 +522,7 @@ comprises per row these precursor ions which are linked by a normalised dot
 product $\geq$ \Robject{threshold} to the precursor ion in the same row. 
 Internally, in \Rfunction{shinyCircos}, \Rfunction{createLinkMatrix} will be 
 called to produce link matrices based on the given threshold. 
-<<eval=TRUE>>=
+<<eval=FALSE>>=
 linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold=0.5,
                             dfNameGroup = dfNameGroup)
 @
