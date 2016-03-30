@@ -81,7 +81,7 @@
 
 \affil{
     Plant Defense Metabolism \\
-    Centre for Organismel Studies
+    Centre for Organismal Studies
 }
 
 \title{MetabolomicTools: A workflow for metabolomics data in \R}
