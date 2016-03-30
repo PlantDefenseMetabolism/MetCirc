@@ -3,9 +3,9 @@ mass <- colnames(binnedMSP)
 
 test_NDP <- function() {
     checkEquals(NDP(binnedMSP[1,], binnedMSP[1,], mass = mass), 1)
-    checkEquals(NDP(binnedMSP[1,], binnedMSP[2,], mass = mass), 0.01356902, 
+    checkEquals(NDP(binnedMSP[1,], binnedMSP[2,], mass = mass), 0.7980518, 
                 tolerance = 0.000001)
-    checkEquals(NDP(binnedMSP[2,], binnedMSP[1,], mass = mass), 0.01356902, 
+    checkEquals(NDP(binnedMSP[2,], binnedMSP[1,], mass = mass), 0.7980518, 
                 tolerance = 0.000001)    
     checkEquals(NDP(binnedMSP[1,], binnedMSP[2,], mass = mass), 
                 NDP(binnedMSP[2,], binnedMSP[1,], mass = mass))
