@@ -110,7 +110,7 @@ on interactive and non-interactive graphical tools using the
 discover any bugs, typos or develop ideas of improving 
 \Rpackage{MetabolomicsTools} feel free to raise an issue via 
 \href{https://github.com/PlantDefenseMetabolism/MetabolomicTools}{GitHub} or 
-send a mail to the developer. 
+send a mail to the developers. 
 
 <<knitr, include=FALSE, cache=FALSE>>=
 library("knitr")
