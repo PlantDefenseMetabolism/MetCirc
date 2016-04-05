@@ -41,13 +41,31 @@ Allocates precursor ions to candidate m / z values based on
 minimal distance of m / z and deviance of rt based on an objective function
 }
 \details{
-This condition combines different data sources. However, this may 
-not be recommended in most cases, when files were acquired under different 
-conditions. 1 - 183 is currently predefined.
+This function combines different data sources. 
+\code{convertExampleDF} is a \code{data.frame} which comprises information 
+on a specific metabolite per 
+row stating the average retention time, average m/z, the name of the 
+metabolite, the adduct ion name, the spectrum 
+reference file name and additional information (TRIO/LVS). 
+\code{allocatePrecursor2mz} uses \code{data.frame}s of the kind of 
+\code{sd01\_outputXCMS} and \code{sd02\_deconvoluted} to create a 
+\code{data.frame} of the kind of \code{convertExampleDF}. Allocation of 
+precursor ions to candidate m/z values is based on minimal distance of m/z 
+and deviance of retention time based on an objective function. We can specify 
+threshold values for m/z and retention time to be used in 
+\code{allocatePrecursor2mz}, as well as the number of neighbours based on 
+deviation from m/z values. Also, we can specify the weight to base the 
+selection on the m/z compared to the retention time (\code{mzVsRTbalance}). 
+This might be useful because m/z values might differ less than the retention 
+time in \code{sd01\_outputXCMS} and \code{sd02\_deconvoluted}. Please note, 
+that it might be problematic to compare \code{sd01\_outputXCMS} and 
+\code{sd02\_deconvoluted} and allocate precursor ions therefrom, 
+especially when data were acquired under different conditions.
 }
 \examples{
 data("sd01_outputXCMS", package = "MetCirc")
 data("sd02_deconvoluted", package = "MetCirc") 
+data("convertExampleDF", package = "MetCirc")
 allocatePrecursor2mz(sd01 = sd01_outputXCMS, sd02 = sd02_deconvoluted, 
      kNN = 10, mzCheck = 1, rtCheck = 30, mzVsRTbalance = 10000)
 }
