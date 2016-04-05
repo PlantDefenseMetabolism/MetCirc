@@ -25,8 +25,8 @@
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
 #'  ## load binnedMSP
-#'  data("binnedMSP", package = "MetabolomicTools")
-#'  data("similarityMat", package = "MetabolomicTools")
+#'  data("binnedMSP", package = "MetCirc")
+#'  data("similarityMat", package = "MetCirc")
 #'  namesPrec <- rownames(binnedMSP)
 #' 
 #'  dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
@@ -184,8 +184,8 @@ plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE),
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
 #'  ## load binnedMSP
-#'  data("binnedMSP", package = "MetabolomicTools")
-#'  data("similarityMat", package = "MetabolomicTools")
+#'  data("binnedMSP", package = "MetCirc")
+#'  data("similarityMat", package = "MetCirc")
 #'  namesPrec <- rownames(binnedMSP)
 #' 
 #'  dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
@@ -342,7 +342,7 @@ truncateName <- function (dfNameGroup, roundDigits = 2, nameGroup = FALSE) {
 #'  0.8 and 1 will be used to find the feature with smallest distance.
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#' data("binnedMSP", package = "MetabolomicTools")
+#' data("binnedMSP", package = "MetCirc")
 #' namesPrec <- rownames(binnedMSP)
 #' dfNameGroup <- data.frame(
 #'     group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
@@ -377,7 +377,7 @@ minFragCart2Polar <- function(x, y, degreeOfFeatures) {
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
 #' x <- 1; y <- 1
-#' MetabolomicTools:::cart2Polar(x, y)
+#' cart2Polar(x, y)
 #' @export
 cart2Polar <- function(x, y) {
     r <- sqrt( x ^ 2 + y ^ 2)
@@ -423,8 +423,8 @@ cart2Polar <- function(x, y) {
 #' name
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#' data("binnedMSP", package = "MetabolomicTools")
-#' data("similarityMat", package = "MetabolomicTools")
+#' data("binnedMSP", package = "MetCirc")
+#' data("similarityMat", package = "MetCirc")
 #' namesPrec <- rownames(binnedMSP)
 #' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
 #'      name = namesPrec) 

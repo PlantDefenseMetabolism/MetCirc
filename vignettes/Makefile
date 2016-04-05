@@ -14,18 +14,18 @@ LATEXFILES = *.aux\
 	*.dep\
 	*.dpth\
 	*.makefile\
-	MetabolomicTools.tex\
+	MetCirc.tex\
 
 	
 all: 
 	make vignette
 
 	
-vignette: MetabolomicTools.Rnw
-	pdflatex MetabolomicTools.tex
-	bibtex MetabolomicTools
-	pdflatex MetabolomicTools.tex
-	pdflatex MetabolomicTools.tex
+vignette: MetCirc.Rnw
+	pdflatex MetCirc.tex
+	bibtex MetCirc
+	pdflatex MetCirc.tex
+	pdflatex MetCirc.tex
 
 	
 clean:	

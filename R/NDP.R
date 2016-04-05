@@ -23,11 +23,7 @@
 #' @return NDP returns a numeric similarity coefficient between 0 and 1
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#' data("sd02_deconvoluted", package = "MetabolomicTools") 
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-#' compartment <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), 
-#'      replace=TRUE) 
-#' binnedMSP <- binning(msp = finalMSP, tol = 0.01, group = compartment)
+#' data("binnedMSP", package = "MetCirc")
 #' NDP(matrow1 = binnedMSP[1,], matrow2 = binnedMSP[2,], m = 0.5, n = 2,
 #'  mass = colnames(binnedMSP))
 #' @export
@@ -68,11 +64,7 @@ NDP <- function(matrow1, matrow2, m = 0.5, n = 2, mass) {
 #' NDP similarity measure between all precursors in the data set
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#' data("sd02_deconvoluted", package = "MetabolomicTools")
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-#' compartment <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), 
-#'      replace=TRUE) 
-#' binnedMSP <- binning(msp = finalMSP, tol = 0.01, group = compartment)
+#' data("binnedMSP", package = "MetCirc")
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
 #' @export
 createSimilarityMatrix <- function(mm) {

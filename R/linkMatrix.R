@@ -14,7 +14,7 @@
 #' information on linked features
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#' data("binnedMSP", package = "MetabolomicTools")
+#' data("binnedMSP", package = "MetCirc")
 #' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
 #' namesPrec <- rownames(binnedMSP)
@@ -89,7 +89,7 @@ createLink0Matrix <- function(similarityMatrix, dfNameGroup) {
 #' information on linked features which are linked above a certain threshold
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#' data("binnedMSP", package = "MetabolomicTools")
+#' data("binnedMSP", package = "MetCirc")
 #' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
 #' namesPrec <- rownames(binnedMSP)
@@ -143,7 +143,7 @@ thresholdLinkMatrix <- function(linkMatrix, threshold) {
 #' information on linked features
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#' data("binnedMSP", package = "MetabolomicTools")
+#' data("binnedMSP", package = "MetCirc")
 #' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
 #' namesPrec <- rownames(binnedMSP)
@@ -180,7 +180,7 @@ createLinkMatrix <- function(similarityMatrix, dfNameGroup, threshold) {
 #' information on linked features
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#' data("binnedMSP", package = "MetabolomicTools")
+#' data("binnedMSP", package = "MetCirc")
 #' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
 #' namesPrec <- rownames(binnedMSP)

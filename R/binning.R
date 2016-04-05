@@ -88,7 +88,7 @@ getBegEndIndMSP <- function(msp) {
 #' several fragment ions) and recalculates the new m / z by weighing for the 
 #' number of m / z fragments.
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples data("idMSMStoMSP", package = "MetabolomicTools")
+#' @examples data("idMSMStoMSP", package = "MetCirc")
 #' group <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), replace=TRUE) 
 #' binning(msp = finalMSP, tol = 0.01, group = group)
 #' @export

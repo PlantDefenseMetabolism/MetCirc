@@ -53,7 +53,7 @@ cutUniquePreMZ <- function(precursor, splitPattern = splitPattern,
 #' @return convert2MSP returns an object of class MSP
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#' data("sd02_deconvoluted", package = "MetabolomicTools")
+#' data("sd02_deconvoluted", package = "MetCirc")
 #' convert2MSP(mm = sd02_deconvoluted, splitPattern = "_", splitInd = 1)
 #' @export
 convert2MSP <- function (mm, splitPattern = "_", splitInd = 1) {
@@ -119,7 +119,7 @@ convert2MSP <- function (mm, splitPattern = "_", splitInd = 1) {
 #' (with neutral losses).
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples \dontrun{msp2FunctionalLossesMSP(msp)}
-#' data("sd02_deconvoluted", package = "MetabolomicTools")
+#' data("sd02_deconvoluted", package = "MetCirc")
 #' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
 #' finalMSPNL <- msp2FunctionalLossesMSP(msp = finalMSP)
 #' @export
