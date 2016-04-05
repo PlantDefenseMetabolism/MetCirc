@@ -5,13 +5,12 @@ dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"),
 ## order according to compartment
 dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
 
-link0Matrix <- MetabolomicTools::createLink0Matrix(
+link0Matrix <- createLink0Matrix(
     similarityMatrix = similarityMat, dfNameGroup = dfNameGroup)
 ndps <- as.numeric(link0Matrix[,"NDP"])
 
 test_createLink0Matrix <- function() {
-    checkException(
-        MetabolomicTools::createLink0Matrix(similarityMat, dfNameGroup[1:10,]))
+    checkException(createLink0Matrix(similarityMat, dfNameGroup[1:10,]))
     checkEquals(dim(link0Matrix)[2], 5)
     checkTrue(is.matrix(link0Matrix))
     checkTrue(all(

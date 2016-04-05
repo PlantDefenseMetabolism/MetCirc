@@ -40,7 +40,7 @@ circos.clear()
 ## set circlize paramters
 circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
            track.margin = c(0.0, 0))
-MetabolomicTools::plotCircos(dfNameGroup, NULL, initialize = TRUE, 
+plotCircos(dfNameGroup, NULL, initialize = TRUE, 
     featureNames = FALSE, groupName = FALSE, links = FALSE, highlight = FALSE)
 test_getLinkMatrixIndices <- function() {
     checkEquals(getLinkMatrixIndices(dfNameGroup[1,], linkMat), 172)
@@ -89,16 +89,15 @@ test_minFragCart2Polar <- function() {
 ## START unit test cart2Polar
 test_cart2Polar <- function() {
     checkEquals(cart2Polar(0, 0), list(r = 0, theta = 0))
-    checkEquals(
-        cart2Polar(1, 1), list(r = 1.414214, theta = 45), tolerance = 0.00001)
-    checkEquals(cart2Polar(0, 1), list(r = 1, theta = 90))
-    checkEquals(
-        MetabolomicTools:::cart2Polar(-1, 1), list(r = 1.414214, theta = 135),
+    checkEquals(cart2Polar(1, 1), list(r = 1.414214, theta = 45), 
         tolerance = 0.00001)
-    checkEquals(
-        cart2Polar(-1, -1), list(r = 1.414214, theta = 225),tolerance = 0.00001)
-    checkEquals(
-        cart2Polar(1, -1), list(r = 1.414214, theta = 315), tolerance = 0.00001)
+    checkEquals(cart2Polar(0, 1), list(r = 1, theta = 90))
+    checkEquals(cart2Polar(-1, 1), list(r = 1.414214, theta = 135),
+        tolerance = 0.00001)
+    checkEquals(cart2Polar(-1, -1), list(r = 1.414214, theta = 225), 
+        tolerance = 0.00001)
+    checkEquals(cart2Polar(1, -1), list(r = 1.414214, theta = 315), 
+        tolerance = 0.00001)
     checkException(cart2Polar(NA, NA))
     checkException(cart2Polar(1, NA))
     checkException(cart2Polar(NA, 1))

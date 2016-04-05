@@ -1,8 +1,11 @@
 library(amap)
 library(circlize)
-data("sd01_outputXCMS", package = "MetabolomicTools")
-data("sd02_deconvoluted", package = "MetabolomicTools")
-data("binnedMSP", package = "MetabolomicTools")
-data("similarityMat", package = "MetabolomicTools")
+library(scales)
+library(shiny)
 
-BiocGenerics:::testPackage("MetabolomicTools")
+data("sd01_outputXCMS", package = "MetCirc")
+data("sd02_deconvoluted", package = "MetCirc")
+data("binnedMSP", package = "MetCirc")
+data("similarityMat", package = "MetCirc")
+
+BiocGenerics:::testPackage("MetCirc")
