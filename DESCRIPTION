@@ -1,6 +1,6 @@
-Package: MetabolomicTools
+Package: MetCirc
 Type: Package
-Title: MetabolomicTools is a workflow to analyse metabolomics data
+Title: MetCirc - a workflow to analyse and visualise metabolomics data
 Version: 0.98.0
 Date: 2016-01-15
 Authors@R: c(person(given = "Thomas", family = "Naake",

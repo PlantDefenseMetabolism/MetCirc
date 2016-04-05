@@ -69,7 +69,7 @@
 \usepackage{color}
 
 \usepackage[backend=bibtex,natbib,style=authoryear,maxcitenames=2]{biblatex}
-\addbibresource{MetabolomicTools-citations}
+\addbibresource{MetCirc-citations}
 
 \usepackage{setspace}
 \onehalfspacing

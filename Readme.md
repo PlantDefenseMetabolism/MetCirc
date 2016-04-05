@@ -1,5 +1,5 @@
-To install `MetabolomicTools` enter:
+To install `MetCirc` enter:
 
 `library(devtools)` 
 
-`install_github(repo = "PlantDefenseMetabolism/MetabolomicTools")`
+`install_github(repo = "PlantDefenseMetabolism/MetCirc")`
