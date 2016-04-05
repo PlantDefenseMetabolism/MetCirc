@@ -211,11 +211,7 @@ setMethod("show", signature = "MSP",
 #' @import methods
 NULL
 
-#' @export
-setGeneric("getMSP", function(object) standardGeneric("getMSP"))
-
 #' @name getMSP
-#' @rdname getMSP-method
 #' @aliases getMSP,MSP-method
 #' @title getMSP method for MSP class
 #' @return data.frame
@@ -223,13 +219,14 @@ setGeneric("getMSP", function(object) standardGeneric("getMSP"))
 #' @param object object of class MSP
 #' @docType methods
 #' @export
-setMethod("getMSP", signature = "MSP", definition = function(object) {object@msp})
+setGeneric("getMSP", function(object) standardGeneric("getMSP"))
+
 
 #' @export
-setGeneric("combine", function(object1, object2) standardGeneric("combine"))
+#' @describeIn getMSP returns the data.frame of an MSP object
+setMethod("getMSP", signature = "MSP", definition = function(object) {object@msp})
 
 #' @name combine
-#' @rdname combine-method
 #' @aliases combine,MSP-method
 #' @title combine method for MSP class
 #' @return MSP object
@@ -238,5 +235,10 @@ setGeneric("combine", function(object1, object2) standardGeneric("combine"))
 #' @param object2 object of class MSP
 #' @docType methods
 #' @export
+setGeneric("combine", function(object1, object2) standardGeneric("combine"))
+
+
+#' @export
+#' @describeIn combine combines two MSP objects
 setMethod("combine", signature = c("MSP", "MSP"), definition = function(object1, object2) {
     MSP(msp = rbind(object1@msp, object2@msp))})
