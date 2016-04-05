@@ -3,7 +3,7 @@
 \docType{data}
 \name{sd01_outputXCMS}
 \alias{sd01_outputXCMS}
-\title{Example data for MetabolomicTools}
+\title{Example data for MetCirc}
 \format{data.frame}
 \source{
 internal
@@ -18,6 +18,6 @@ data.frame
 This data set contains the object \code{sd01_outputXCMS}.
 }
 \author{
-T. Naake
+T. Naake, \email{naake@stud.uni-heidelberg.de}
 }
 

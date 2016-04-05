@@ -28,7 +28,7 @@ will only contain entries of links which are inside groups and not between
 groups.
 }
 \examples{
-data("binnedMSP", package = "MetabolomicTools")
+data("binnedMSP", package = "MetCirc")
 namesPrec <- rownames(binnedMSP)
 similarityMat <- createSimilarityMatrix(binnedMSP)
 namesPrec <- rownames(binnedMSP)

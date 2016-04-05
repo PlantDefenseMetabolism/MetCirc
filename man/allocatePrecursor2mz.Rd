@@ -46,10 +46,8 @@ not be recommended in most cases, when files were acquired under different
 conditions. 1 - 183 is currently predefined.
 }
 \examples{
-load(system.file("data/sd01_outputXCMS.RData", 
-     package = "MetabolomicTools")) 
-load(system.file("data/sd02_deconvoluted.RData", 
-     package = "MetabolomicTools")) 
+data("sd01_outputXCMS", package = "MetCirc")
+data("sd02_deconvoluted", package = "MetCirc") 
 allocatePrecursor2mz(sd01 = sd01_outputXCMS, sd02 = sd02_deconvoluted, 
      kNN = 10, mzCheck = 1, rtCheck = 30, mzVsRTbalance = 10000)
 }

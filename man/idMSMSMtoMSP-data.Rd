@@ -4,7 +4,7 @@
 \name{idMSMSMtoMSP-data}
 \alias{finalMSP}
 \alias{idMSMSMtoMSP-data}
-\title{Example data for MetabolomicTools}
+\title{Example data for MetCirc}
 \format{object of class MSP}
 \source{
 internal
@@ -19,6 +19,6 @@ object of class MSP
 This data set contains the object \code{finalMSP}.
 }
 \author{
-T. Naake
+T. Naake, \email{naake@stud.uni-heidelberg.de}
 }
 

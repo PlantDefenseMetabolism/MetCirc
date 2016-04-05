@@ -28,11 +28,7 @@ coyote tobacco populations using MS/MS structural analysis. PNAS,
 E4147--E4155.
 }
 \examples{
-data("sd02_deconvoluted", package = "MetabolomicTools")
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-compartment <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), 
-     replace=TRUE) 
-binnedMSP <- binning(msp = finalMSP, tol = 0.01, group = compartment)
+data("binnedMSP", package = "MetCirc")
 similarityMat <- createSimilarityMatrix(binnedMSP)
 }
 \author{

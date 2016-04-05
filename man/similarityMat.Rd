@@ -3,7 +3,7 @@
 \docType{data}
 \name{similarityMat}
 \alias{similarityMat}
-\title{Example data for MetabolomicTools}
+\title{Example data for MetCirc}
 \format{matrix}
 \source{
 internal
@@ -18,6 +18,6 @@ matrix
 This data set contains the object \code{similarityMat}.
 }
 \author{
-T. Naake
+T. Naake, \email{naake@stud.uni-heidelberg.de}
 }
 

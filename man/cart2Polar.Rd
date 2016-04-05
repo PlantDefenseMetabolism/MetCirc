@@ -24,7 +24,7 @@ cart2Polar calculates polar coordinates from cartesian coordinates
 }
 \examples{
 x <- 1; y <- 1
-MetabolomicTools:::cart2Polar(x, y)
+cart2Polar(x, y)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

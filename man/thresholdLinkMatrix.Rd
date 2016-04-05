@@ -25,7 +25,7 @@ threshold is a numerical value and filters linked precursor ions;
 filtering is currently based on the normalised dot product.
 }
 \examples{
-data("binnedMSP", package = "MetabolomicTools")
+data("binnedMSP", package = "MetCirc")
 namesPrec <- rownames(binnedMSP)
 similarityMat <- createSimilarityMatrix(binnedMSP)
 namesPrec <- rownames(binnedMSP)

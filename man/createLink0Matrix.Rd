@@ -26,7 +26,7 @@ includes all connections between features in the similarityMatrix, but
 exclude links which have a similarity of exactly 0.
 }
 \examples{
-data("binnedMSP", package = "MetabolomicTools")
+data("binnedMSP", package = "MetCirc")
 namesPrec <- rownames(binnedMSP)
 similarityMat <- createSimilarityMatrix(binnedMSP)
 namesPrec <- rownames(binnedMSP)

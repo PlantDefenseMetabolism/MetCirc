@@ -30,7 +30,7 @@ return object has the following information: NAME, RETENTIONTIME,
      fragments together with their intensities.
 }
 \examples{
-data("sd02_deconvoluted", package = "MetabolomicTools")
+data("sd02_deconvoluted", package = "MetCirc")
 convert2MSP(mm = sd02_deconvoluted, splitPattern = "_", splitInd = 1)
 }
 \author{

@@ -29,7 +29,7 @@ Bin m/z values
 The functions bins fragments together by calculating
 }
 \examples{
-data("idMSMStoMSP", package = "MetabolomicTools")
+data("idMSMStoMSP", package = "MetCirc")
 group <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), replace=TRUE) 
 binning(msp = finalMSP, tol = 0.01, group = group)
 }

@@ -33,8 +33,8 @@ circos plot. It may be used as well externally, to reproduce plots outside
 of the reactive environment (see vignette for a workflow).
 }
 \examples{
-load(system.file("data/binnedMSP.RData", package = "MetabolomicTools"))
-load(system.file("data/similarityMat.RData", package = "MetabolomicTools"))
+data("binnedMSP", package = "MetCirc")
+data("similarityMat", package = "MetCirc")
 namesPrec <- rownames(binnedMSP)
 dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
  name = namesPrec) 

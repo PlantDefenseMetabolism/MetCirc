@@ -29,7 +29,7 @@ Calculates the nearest feature in polar coordinates given
  the smallest distance from given cartesian coordinates.
 }
 \examples{
-data("binnedMSP", package = "MetabolomicTools")
+data("binnedMSP", package = "MetCirc")
 namesPrec <- rownames(binnedMSP)
 dfNameGroup <- data.frame(
     group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
