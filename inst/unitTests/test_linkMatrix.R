@@ -35,8 +35,8 @@ test_thresholdLinkMatrix <- function() {
 ## END unit test thresholdLinkMatrix
 
 ## START unit test createLinkMatrix
-tLinkMatrix1 <- thresholdLinkMatrix(link0Matrix, 0.3)
-tLinkMatrix2 <- createLinkMatrix(similarityMat, dfNameGroup, 0.3)
+tLinkMatrix1 <- thresholdLinkMatrix(link0Matrix, 0.9)
+tLinkMatrix2 <- createLinkMatrix(similarityMat, dfNameGroup, 0.9)
 
 test_createLinkMatrix <- function() {
     checkTrue(identical(tLinkMatrix1, tLinkMatrix2))

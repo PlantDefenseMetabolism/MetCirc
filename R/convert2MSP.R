@@ -103,8 +103,8 @@ convert2MSP <- function (mm, splitPattern = "_", splitInd = 1) {
         newend <- newstart + dim(entry)[1] - 1
         finalMSP[newstart:newend,] <- entry
     }
-    
-    return(MSP(msp = finalMSP))
+
+    return(new("MSP", msp = finalMSP))
 }
 
 #' @name msp2FunctionalLossesMSP
@@ -258,7 +258,7 @@ setGeneric("combine", function(object1, object2) standardGeneric("combine"))
 #' @export
 #' @describeIn combine combines two MSP objects
 setMethod("combine", signature = c("MSP", "MSP"), definition = function(object1, object2) {
-    MSP(msp = rbind(object1@msp, object2@msp))})
+    new("MSP", msp = rbind(object1@msp, object2@msp))})
 
 #' @name [
 #' @aliases [,MSP,numeric,missing,missing-method
@@ -286,6 +286,7 @@ setMethod("[",
         end <- end[i]
         inds <- lapply(1:length(start), function(j) start[j]:end[j])
         inds <- unlist(inds)
-        return(MSP(msp = x@msp[inds, ]))
+        
+        return(new("MSP", msp = x@msp[inds, ]))
     }
 )
