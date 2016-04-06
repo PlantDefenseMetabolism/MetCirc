@@ -38,14 +38,12 @@ compartment <- c(rep("a", 90), rep("b", 90), rep("c", 90), rep("d", 90))
 ## create binnedMSPs
 binnedMSP001 <- binning(finalMSP, 0.01, group = compartment)
 binnedMSP1 <- binning(finalMSP, 1, group = compartment)
-binnedMSP100 <- binning(finalMSP, 100, group = compartment)
 
 test_binning <- function() {
     checkTrue(is.matrix(binnedMSP001))
     checkTrue(is.numeric(binnedMSP001))
     checkEquals(dim(binnedMSP001), c(360, 691)) 
-    checkEquals(dim(binnedMSP1), c(360,351)) 
-    checkEquals(dim(binnedMSP100), c(360,8))
+    checkEquals(dim(binnedMSP1), c(360,351))
     checkException(binning(finalMSP, 1, compartment[1:7]))
 }
 ## END unit test binning
