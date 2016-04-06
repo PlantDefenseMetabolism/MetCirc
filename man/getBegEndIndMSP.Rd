@@ -22,7 +22,10 @@ msp format
 Internal use to retrieve indices when fragments start and end.
 }
 \examples{
-\dontrun{getBegEndIndMSP(msp)}
+data("sd02_deconvoluted", package = "MetCirc")
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+finalMSPdf <- getMSP(finalMSP)
+getBegEndIndMSP(finalMSPdf)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

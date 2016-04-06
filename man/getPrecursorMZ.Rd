@@ -20,7 +20,10 @@ Get precursor m/z values of a data.frame in msp format
 Internal use to retrieve precursor m/z values.
 }
 \examples{
-\dontrun{getPrecursorMZ(msp)}
+data("sd02_deconvoluted", package = "MetCirc")
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+finalMSPdf <- getMSP(finalMSP)
+getPrecursorMZ(finalMSPdf)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

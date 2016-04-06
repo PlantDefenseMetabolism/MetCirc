@@ -7,7 +7,11 @@
 #' @return getPrecursorMZ returns a character vector with all precursor 
 #' values
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples \dontrun{getPrecursorMZ(msp)}
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc")
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' finalMSPdf <- getMSP(finalMSP)
+#' getPrecursorMZ(finalMSPdf)
 #' @export
 getPrecursorMZ <- function (msp) {
     ## get indices with precursor mz
@@ -28,7 +32,11 @@ getPrecursorMZ <- function (msp) {
 #' @details Internal use to retrieve retention time values.
 #' @return getRT returns a character vector with all retention time values
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples \dontrun{getRT(msp)}
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc")
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' finalMSPdf <- getMSP(finalMSP)
+#' getRT(finalMSPdf)
 #' @export
 getRT <- function (msp) {
     ## get indices with rt
@@ -53,7 +61,11 @@ getRT <- function (msp) {
 #' @return getBegEndIndMSP returns a list of length 2 where the first entry
 #' contains the start indices and the second the end indices
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples \dontrun{getBegEndIndMSP(msp)}
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc")
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' finalMSPdf <- getMSP(finalMSP)
+#' getBegEndIndMSP(finalMSPdf)
 #' @export
 getBegEndIndMSP <- function(msp) {
     

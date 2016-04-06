@@ -26,4 +26,10 @@ Combines two objects of class MSP.
 \itemize{
 \item \code{object1 = MSP,object2 = MSP}: combines two MSP objects
 }}
+\examples{
+data("sd02_deconvoluted", package = "MetCirc")
+finalMSP1 <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+finalMSP2 <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+combine(finalMSP1, finalMSP2)
+}
 

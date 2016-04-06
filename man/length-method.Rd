@@ -17,4 +17,9 @@ numerical
 \description{
 Gives the number of entries in the MSP object.
 }
+\examples{
+data("sd02_deconvoluted", package = "MetCirc")
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+length(finalMSP)
+}
 

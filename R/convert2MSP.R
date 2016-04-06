@@ -188,6 +188,10 @@ MSP <- setClass("MSP", slots = c(msp = "data.frame"))
 #' @description Gives the number of entries in the MSP object.
 #' @param x object of class MSP
 #' @docType methods
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc")
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' length(finalMSP)
 #' @export
 setMethod("length", signature = "MSP", 
           definition = function(x) {
@@ -202,6 +206,10 @@ setMethod("length", signature = "MSP",
 #' @description Prints information on the MSP class (number of entries).
 #' @param object object of class MSP
 #' @docType methods
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc")
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' show(finalMSP)
 #' @export
 setMethod("show", signature = "MSP", 
           definition = function(object) {
@@ -218,6 +226,10 @@ NULL
 #' @description Returns the data.frame entry of an MSP object.
 #' @param object object of class MSP
 #' @docType methods
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc")
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' getMSP(finalMSP)
 #' @export
 setGeneric("getMSP", function(object) standardGeneric("getMSP"))
 
@@ -234,6 +246,11 @@ setMethod("getMSP", signature = "MSP", definition = function(object) {object@msp
 #' @param object1 object of class MSP
 #' @param object2 object of class MSP
 #' @docType methods
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc")
+#' finalMSP1 <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' finalMSP2 <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' combine(finalMSP1, finalMSP2)
 #' @export
 setGeneric("combine", function(object1, object2) standardGeneric("combine"))
 
