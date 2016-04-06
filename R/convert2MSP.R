@@ -259,3 +259,33 @@ setGeneric("combine", function(object1, object2) standardGeneric("combine"))
 #' @describeIn combine combines two MSP objects
 setMethod("combine", signature = c("MSP", "MSP"), definition = function(object1, object2) {
     MSP(msp = rbind(object1@msp, object2@msp))})
+
+#' @name [
+#' @aliases [,MSP,numeric,missing,missing-method
+#' @title Extract parts of a MSP object
+#' @return MSP object
+#' @description [ operator acting on an MSP object to extract parts. 
+#' @param x object of class MSP
+#' @param i numeric
+#' @param j missing
+#' @param drop missing
+#' @docType methods
+#' @rdname extract-methods
+#' @examples
+#' data("sd02_deconvoluted", package = "MetCirc")
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' finalMSP[1]
+#' @export
+setMethod("[", 
+    signature(x = "MSP", i = "numeric", j = "missing", drop = "missing"), 
+    definition = function(x, i, j = "missing", drop = "missing") {
+        if (max(i) > length(x)) stop("max(i) greater than length(x)")
+        start <- getBegEndIndMSP(x@msp)[[1]] - 6
+        end <- getBegEndIndMSP(x@msp)[[2]] + 1
+        start <- start[i]
+        end <- end[i]
+        inds <- lapply(1:length(start), function(j) start[j]:end[j])
+        inds <- unlist(inds)
+        return(MSP(msp = x@msp[inds, ]))
+    }
+)
