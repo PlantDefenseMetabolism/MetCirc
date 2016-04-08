@@ -19,6 +19,7 @@ cutUniquePreMZ <- function(precursor, splitPattern = splitPattern,
                             splitInd = splitInd, returnCharacter = TRUE) {
     ## split precursors according to split pattern
     precursor <- as.character(precursor)
+    precursor <- unique(precursor)
     splitPrecursor <- strsplit(precursor, split = splitPattern)
     ## extract precursor mz at position splitInd
     splitPrecursor <- lapply(splitPrecursor,"[", splitInd)
@@ -28,11 +29,12 @@ cutUniquePreMZ <- function(precursor, splitPattern = splitPattern,
     ## change character to numeric
     if (!returnCharacter)
         PrecursorMZ <- as.numeric(PrecursorMZ)
-    #uniquePreMZ <- unique(precursor)
-    #lenUniquePreMZ <- length(uniquePreMZ)
-    uniquePreMZ_cut <- unique(PrecursorMZ)
+    ##uniquePreMZ <- unique(precursor)
+    ##lenUniquePreMZ <- length(uniquePreMZ)
+    ##uniquePreMZ_cut <- unique(PrecursorMZ)
     
-    return(uniquePreMZ_cut)
+    
+    return(PrecursorMZ) ## return(uniquePreMZ_cut)
 }
 
 #' @name convert2MSP
@@ -79,7 +81,7 @@ convert2MSP <- function (mm, splitPattern = "_", splitInd = 1) {
     ## mm <- cbind(mm, PrecursorMZ)
     
     ## create data frame for MSP file
-    finalMSP <- matrix(data = NA, nrow = 7 * lenUniquePreMZ + dim(mm)[1], 
+    finalMSP <- matrix(data = NA, nrow = 8 * lenUniquePreMZ + dim(mm)[1], 
             ncol = 2) ## 7 new entries + all fragment ion entries
     finalMSP <- as.data.frame(finalMSP)
     
@@ -91,6 +93,7 @@ convert2MSP <- function (mm, splitPattern = "_", splitInd = 1) {
             c("RETENTIONTIME: ", mean(mm[ind,"rt"])),
             c("PRECURSORMZ: ", uniquePreMZ_cut[i]),
             c("METABOLITENAME: ", "Unknown"),
+            c("METABOLITECLASS: ", "Unknown"),
             c("ADDUCTIONNAME: ", "Unknown"),
             c("Num Peaks: ", length(ind)),
             mm[ind,c(1,3)],
@@ -152,6 +155,7 @@ msp2FunctionalLossesMSP <- function(msp) {
             c("RETENTIONTIME: ", rt[i]),
             c("PRECURSORMZ: ", precmz[i]),
             c("METABOLITENAME: ", "Unknown"),
+            c("METABOLITECLASS: ", "Unknown"),
             c("ADDUCTIONNAME: ", "Unknown"),
             c("Num Losses: ", length(indBeg:indEnd)),
             matrix(c(neutralL, msp[indBeg:indEnd,2]), ncol = 2),
@@ -168,6 +172,9 @@ msp2FunctionalLossesMSP <- function(msp) {
     
     return(MSP(msp = finalMSP))
 }
+
+#' @import methods
+NULL
 
 #' @name MSP
 #' @title MSP-class
@@ -216,8 +223,6 @@ setMethod("show", signature = "MSP",
               cat("An object of class", class(object), "with", 
                   length(getPrecursorMZ(object@msp)), "entries.", sep = " ")
 })
-#' @import methods
-NULL
 
 #' @name getMSP
 #' @aliases getMSP,MSP-method
@@ -260,6 +265,55 @@ setGeneric("combine", function(object1, object2) standardGeneric("combine"))
 setMethod("combine", signature = c("MSP", "MSP"), definition = function(object1, object2) {
     new("MSP", msp = rbind(object1@msp, object2@msp))})
 
+#' @name getNames
+#' @aliases getNames,MSP-method
+#' @title getNames returns names of compounds in MSP object
+#' @return character
+#' @description getNames returns names of compounds in MSP object.
+#' @param object object of class MSP
+#' @docType methods
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc")
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' getNames(finalMSP)
+#' @export
+setGeneric("getNames", function(object) standardGeneric("getNames"))
+
+
+#' @describeIn getNames returns names of compounds in MSP objects
+#' @export
+getNames <- function(object) {
+    ## get classes of compounds in an msp object
+    df <- object@msp
+    ind <- which(df[,1] == "METABOLITENAME: ")
+    return(df[ind,2])
+}
+
+#' @name getMetaboliteClass
+#' @aliases getMetaboliteClass,MSP-method
+#' @title getMetaboliteClass returns names of compounds in MSP object
+#' @return character
+#' @description getMetaboliteClass returns names of compounds in MSP object.
+#' @param object object of class MSP
+#' @docType methods
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc")
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' getMetaboliteClass(finalMSP)
+#' @export
+setGeneric("getMetaboliteClass", 
+           function(object) standardGeneric("getMetaboliteClass"))
+
+#' @describeIn getMetaboliteClass returns class names of compounds in MSP 
+#' objects
+#' @export
+getMetaboliteClass <- function(object) {
+    ## get classes of compounds in an msp object
+    df <- object@msp
+    ind <- which(df[,1] == "METABOLITECLASS: ")
+    return(df[ind,2])
+}
+
 #' @name [
 #' @aliases [,MSP,numeric,missing,missing-method
 #' @title Extract parts of a MSP object
@@ -280,7 +334,7 @@ setMethod("[",
     signature(x = "MSP", i = "numeric", j = "missing", drop = "missing"), 
     definition = function(x, i, j = "missing", drop = "missing") {
         if (max(i) > length(x)) stop("max(i) greater than length(x)")
-        start <- getBegEndIndMSP(x@msp)[[1]] - 6
+        start <- getBegEndIndMSP(x@msp)[[1]] - 7 ## which(testMSP@msp[,1] == "NAME: "), indices of 'NAME: '
         end <- getBegEndIndMSP(x@msp)[[2]] + 1
         start <- start[i]
         end <- end[i]
