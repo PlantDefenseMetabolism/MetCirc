@@ -50,6 +50,7 @@ getRT <- function (msp) {
     return(rt)
 }
 
+
 #' @name getBegEndIndMSP
 #' @title Get beginning and end indices of each entry in a data.frame in 
 #' msp format

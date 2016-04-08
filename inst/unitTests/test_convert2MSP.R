@@ -22,7 +22,7 @@ test_convert2MSP <- function() {
     checkTrue(class(testMSP) == "MSP")
     checkEquals(length(testMSP), 360)
     checkTrue(is.data.frame(getMSP(testMSP)))
-    checkEquals(dim(getMSP(testMSP)), c(7263, 2))
+    checkEquals(dim(getMSP(testMSP)), c(7623, 2))
     checkEquals(as.numeric(
         table(getMSP(testMSP)[,1])["ADDUCTIONNAME: "]), 360)
     checkEquals(as.numeric(
@@ -44,7 +44,7 @@ test_msp2FunctionalLossesMSP <- function() {
     checkTrue(class(testMSPNL) == "MSP")
     checkEquals(length(testMSPNL), 360)
     checkTrue(is.data.frame(testMSPNL@msp))
-    checkEquals(dim(testMSPNL@msp), c(7263, 2))
+    checkEquals(dim(testMSPNL@msp), c(7623, 2))
     checkTrue(is.data.frame(testMSPNL@msp))
     checkEquals(as.numeric(
         table(getMSP(testMSPNL)[,1])["ADDUCTIONNAME: "]), 360)
@@ -85,7 +85,7 @@ test_show <- function() {
 ## START unit test getMSP-method
 test_getMSP <- function() {
     checkTrue(is.data.frame(getMSP(testMSP)))
-    checkEquals(dim(getMSP(testMSP)), c(7263, 2))
+    checkEquals(dim(getMSP(testMSP)), c(7623, 2))
     checkEquals(dim(getMSP(testMSP)), dim(getMSP(testMSPNL)))
 }
 ## END unit test getMSP-method
@@ -93,7 +93,7 @@ test_getMSP <- function() {
 ## START unit test combine-method
 test_combine <- function() {
     checkEquals(length(combine(testMSP, testMSP)), 720)
-    checkEquals(dim(getMSP(combine(testMSP, testMSP))), c(14526, 2))
+    checkEquals(dim(getMSP(combine(testMSP, testMSP))), c(15246, 2))
 }
 ## END unit test combine-method
 
@@ -101,7 +101,7 @@ test_combine <- function() {
 test_extract <- function() {
     checkEquals(length(testMSP[1]), 1)
     checkEquals(length(testMSP[1:10]), 10)
-    checkEquals(testMSP@msp[1:23,], getMSP(testMSP[1:2]))
+    checkEquals(testMSP@msp[1:25,], getMSP(testMSP[1:2]))
     checkTrue(is(testMSP[1:10]) == "MSP")
     checkException(testMSP[400])
 }
