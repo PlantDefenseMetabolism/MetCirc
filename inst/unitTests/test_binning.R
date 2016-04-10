@@ -5,7 +5,7 @@ testMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
 testMSPmsp <- getMSP(testMSP)
 BegEndIndMSP <- getBegEndIndMSP(testMSPmsp)
 test_getBegEndIndMSP <- function() {
-    checkTrue(is.list(getBegEndIndMSP(finalMSPmsp)))
+    checkTrue(is.list(getBegEndIndMSP(testMSPmsp)))
     checkTrue(length(BegEndIndMSP[[1]]) == length(BegEndIndMSP[[2]]))
     checkTrue(all(BegEndIndMSP[[1]] <=  BegEndIndMSP[[2]]))
     checkTrue(is.numeric(BegEndIndMSP[[1]]))
