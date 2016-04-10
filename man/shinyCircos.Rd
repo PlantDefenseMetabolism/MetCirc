@@ -13,7 +13,7 @@ shinyCircos(dfNameGroup, similarityMatrix, msp, size = 400)
 similarity coefficients which give information about the similarity between
 precursors}
 
-\item{msp}{data.frame, a data.frame in msp file format for information about 
+\item{msp}{MSP, an S4 object of class 'MSP' for information about 
 the hovered feature}
 
 \item{size}{numerical, image width/height in pixels}
