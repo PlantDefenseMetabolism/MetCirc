@@ -82,6 +82,24 @@ test_show <- function() {
 }
 ## END unit test show-method
 
+## START unit test getPrecursorMZ
+test_getPrecursorMZ <- function() {
+    checkEquals(length(getPrecursorMZ(testMSP)), 360)
+    checkTrue(is.vector(getPrecursorMZ(testMSP)))
+    checkTrue(is.numeric(getPrecursorMZ(testMSP)))
+    checkException(getPrecursorMZ(sd02_deconvoluted))
+}
+## END unit test getPrecursorMZ
+
+## START unit test getRT
+test_getRT <- function() {
+    checkEquals(length(getRT(testMSP)), 360)
+    checkTrue(is.vector(getRT(testMSP)))
+    checkTrue(is.numeric(getRT(testMSP)))
+    checkException(getRT(sd02_deconvoluted))
+}
+## END unit test getRT
+
 ## START unit test getMSP-method
 test_getMSP <- function() {
     checkTrue(is.data.frame(getMSP(testMSP)))
