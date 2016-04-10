@@ -1,56 +1,3 @@
-#' @name getPrecursorMZ
-#' @title Get precursor m/z values
-#' @description Get precursor m/z values of a data.frame in msp format
-#' @usage getPrecursorMZ(msp)
-#' @param msp data.frame in msp format, see ?convert2MSP for further information
-#' @details Internal use to retrieve precursor m/z values.
-#' @return getPrecursorMZ returns a character vector with all precursor 
-#' values
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples 
-#' data("sd02_deconvoluted", package = "MetCirc")
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-#' finalMSPdf <- getMSP(finalMSP)
-#' getPrecursorMZ(finalMSPdf)
-#' @export
-getPrecursorMZ <- function (msp) {
-    ## get indices with precursor mz
-    IndPrecMZ <- which(msp[,1] == "PRECURSORMZ: ")
-    ## get precursor mz
-    precmz <- msp[IndPrecMZ,2]
-    
-    ## change to numeric
-    precmz <- as.numeric(precmz)
-    
-    return(precmz)
-}
-#' @name getRT
-#' @title Get precursor RT values
-#' @description Get precursor RT values of a data.frame in msp format
-#' @usage getRT(msp)
-#' @param msp data.frame in msp format, see ?convert2MSP for further information
-#' @details Internal use to retrieve retention time values.
-#' @return getRT returns a character vector with all retention time values
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples 
-#' data("sd02_deconvoluted", package = "MetCirc")
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-#' finalMSPdf <- getMSP(finalMSP)
-#' getRT(finalMSPdf)
-#' @export
-getRT <- function (msp) {
-    ## get indices with rt
-    IndRT <- which(msp[,1] == "RETENTIONTIME: ")
-    ## get rt 
-    rt <- msp[IndRT,2]
-    
-    ## change to numeric
-    rt <- as.numeric(rt)
-    
-    return(rt)
-}
-
-
 #' @name getBegEndIndMSP
 #' @title Get beginning and end indices of each entry in a data.frame in 
 #' msp format
@@ -106,8 +53,12 @@ getBegEndIndMSP <- function(msp) {
 #' binning(msp = finalMSP, tol = 0.01, group = group)
 #' @export
 binning <- function(msp, tol = 0.01, group = NULL) { 
-    
+    ## msp is .msp file
+    ## tol is tolerance value for binning
     if (!is(msp) == "MSP") stop("msp is not of class MSP.")
+    
+    precmz <- getPrecursorMZ(msp)
+    rt <- getRT(msp)
     
     msp <- getMSP(msp)
     
@@ -115,11 +66,7 @@ binning <- function(msp, tol = 0.01, group = NULL) {
         print("argument group is not specified, will create dummy group")
         group <- rep("a", length(getPrecursorMZ(msp)))
     }
-    ## msp is .msp file
-    ## tol is tolerance value for binning
-    precmz <- getPrecursorMZ(msp)
-    rt <- getRT(msp)
-    
+
     if (length(precmz) != length(group)) 
         stop("length of precursor ions != length(group)")
     

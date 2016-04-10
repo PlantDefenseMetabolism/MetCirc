@@ -40,32 +40,55 @@ cutUniquePreMZ <- function(precursor, splitPattern = splitPattern,
 #' @name convert2MSP
 #' @title Convert deconvoluted matrix into MSP format
 #' @description Convert deconvoluted matrix into MSP format
-#' @usage convert2MSP(mm, splitPattern = "_", splitInd = 1)
-#' @param mm matrix, mm has four columns, the first column contains the m/z 
-#'  value, the second column the rt, the third column the intensity, the fourth
-#'  column the pcgroup_precursorMZ
+#' @usage convert2MSP(mm, splitPattern = "_", splitInd = 1, names = FALSE, 
+#'  metNames = FALSE, class = FALSE)
+#' @param mm matrix, mm has to have four columns with colnames 
+#'  mz, rt, intensity (order is not important). In the fourth column there has 
+#'  to information about the precursor ion which will be assessed by 
+#'  splitPattern and splitInd. Optionally, mm can have colnames names, 
+#'  metNames, class. 
 #' @param splitPattern character, splitPattern is the pattern which separates 
 #'      elements and precursor m/z
 #' @param splitInd numeric, the position of the precursor m/z concerning 
 #'      separation by splitPattern
+#' @param names logical, should names be retrieved? If set to TRUE, convert2MSP
+#'      will access the column "names" in mm which contains the names of the 
+#'      metabolites
+#' @param metNames logical, should names of metabolites be retrieved? 
+#'      If set to TRUE, convert2MSP will access the column "metNames" in mm 
+#'      which contains the names of the metabolites
+#' @param class logical, should classes of metabolites be retrieved? If set to 
+#'      TRUE, convert2MSP will access the column "class" in mm which contains
+#'      the names of the metabolites
 #' @details Creates a data entry for each precursor ion. Each entry in the 
 #' return object has the following information: NAME, RETENTIONTIME, 
 #'      PRECURSORMZ, METABOLITENAME, ADDUCTIONNAME, Num Peaks and a list of 
-#'      fragments together with their intensities.
+#'      fragments together with their intensities. convert2MSP will access
+#'      the column name 'name', 'metNames' and 'class', respectively, 
+#'      if arguments are set to TRUE. In the fourth column there has 
+#'      to information about the precursor ion which will be assessed by 
+#'      splitPattern and splitInd. E.g. items in the fourth column can be in 
+#'      the form of '1_163.23', which has to be accessed by setting 
+#'      \code{splitPattern = "_"} and \code{splitInd = 2} to access the m/z 
+#'      value of the precursor ion (here: 162.23). 
 #' @return convert2MSP returns an object of class MSP
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
-#' convert2MSP(mm = sd02_deconvoluted, splitPattern = "_", splitInd = 1)
+#' convert2MSP(mm = sd02_deconvoluted, splitPattern = "_", splitInd = 1, 
+#'  names = FALSE, metNames = FALSE, class = FALSE)
 #' @export
-convert2MSP <- function (mm, splitPattern = "_", splitInd = 1) {
+convert2MSP <- function (mm, splitPattern = "_", splitInd = 1, names = FALSE, 
+                    metNames = FALSE, class = FALSE) {
     
     colNames <- colnames(mm)
-    if (colNames[1] != "mz") stop("name of first colomn is not mz")
-    if (colNames[2] != "rt") stop("name of second column is not rt")
-    if (colNames[3] != "intensity") 
-                            stop("name of third column is not intensity")
-    
+    if (!("mz" %in% colNames)) stop("no column 'mz' found")
+    if (!("rt" %in% colNames)) stop("no column 'rt' found")
+    if (!("intensity" %in% colNames)) stop("no column 'intensity' found")
+    if (names & !("names" %in% colNames)) stop("no column 'names' found")
+    if (metNames & !("metNames" %in% colNames)) 
+                                        stop("no column 'metNames' found")
+    if (class & !("class" %in% colNames)) stop ("no column 'class' found")
     
     ## if (colNames[4] != "pcgroup_precursorMZ") break
      
@@ -75,11 +98,21 @@ convert2MSP <- function (mm, splitPattern = "_", splitInd = 1) {
     uniquePreMZ <- unique(precursor)
     uniquePreMZ_cut <- cutUniquePreMZ(precursor = precursor, 
             splitPattern = splitPattern, splitInd = splitInd)
+    
+    ## check if pcgroup_grecursorMZ is in fourth column and unique precursor
+    ## mz were assessed correctly
+    if (any(is.na(as.numeric(uniquePreMZ_cut))))
+            stop("unique precursors are not in the fourth column or 
+                splitPattern/splitInd was chosen incorrectly")
+    
     lenUniquePreMZ <- length(uniquePreMZ_cut)
     
-    ## add PrecursorMZ to deconvoluted idMSMS
-    ## mm <- cbind(mm, PrecursorMZ)
-    
+    ## access columns names, metNames, class to retrieve information about 
+    ## names, metabolite names or metabolite class
+    if (names) namesMM <- mm[, "names"]
+    if (metNames) metNamesMM <- mm[, "metNames"]
+    if (class) classesMM <- mm[, "classes"]
+
     ## create data frame for MSP file
     finalMSP <- matrix(data = NA, nrow = 8 * lenUniquePreMZ + dim(mm)[1], 
             ncol = 2) ## 7 new entries + all fragment ion entries
@@ -89,14 +122,17 @@ convert2MSP <- function (mm, splitPattern = "_", splitInd = 1) {
     for (i in 1:lenUniquePreMZ) {
         ind <- which(uniquePreMZ[i] == precursor)    
         entry <- rbind(
-            c("NAME: ", "Unknown"),
+            c("NAME: ", if (names) {
+                unique(as.character(namesMM[ind])[1])} else "Unknown"),
             c("RETENTIONTIME: ", mean(mm[ind,"rt"])),
             c("PRECURSORMZ: ", uniquePreMZ_cut[i]),
-            c("METABOLITENAME: ", "Unknown"),
-            c("METABOLITECLASS: ", "Unknown"),
+            c("METABOLITENAME: ", if (metNames) {
+                unique(as.character(metNamesMM[ind])[1])} else "Unknown"),
+            c("METABOLITECLASS: ", if (class) {
+                unique(as.character(classesMM[ind])[1])} else "Unknown"),
             c("ADDUCTIONNAME: ", "Unknown"),
             c("Num Peaks: ", length(ind)),
-            mm[ind,c(1,3)],
+            mm[ind, c("mz", "intensity")],
             c(" ", " ")
         )
         entry <- as.matrix(entry)
@@ -130,10 +166,16 @@ msp2FunctionalLossesMSP <- function(msp) {
     
     if (!is(msp) == "MSP") stop("msp is not of class MSP")
     
-    msp <- getMSP(msp)
-    
+    ## do the following before getMSP
+    nameMet <- getMetaboliteName(msp)
+    name <- getName(msp)
+    classes <- getMetaboliteClass(msp)
     precmz <- getPrecursorMZ(msp)
     rt <- getRT(msp)
+    ## 
+    
+    msp <- getMSP(msp)
+    
     indices <- getBegEndIndMSP(msp)
     indBegL <- indices[[1]]
     indEndL <- indices[[2]]
@@ -151,11 +193,11 @@ msp2FunctionalLossesMSP <- function(msp) {
         neutralL <- -1 * neutralL
         
         entry <- rbind(
-            c("NAME: ", "Unknown"),
+            c("NAME: ", name[i]),
             c("RETENTIONTIME: ", rt[i]),
             c("PRECURSORMZ: ", precmz[i]),
-            c("METABOLITENAME: ", "Unknown"),
-            c("METABOLITECLASS: ", "Unknown"),
+            c("METABOLITENAME: ", nameMet[i]),
+            c("METABOLITECLASS: ", classes[i]),
             c("ADDUCTIONNAME: ", "Unknown"),
             c("Num Losses: ", length(indBeg:indEnd)),
             matrix(c(neutralL, msp[indBeg:indEnd,2]), ncol = 2),
@@ -201,8 +243,7 @@ MSP <- setClass("MSP", slots = c(msp = "data.frame"))
 #' length(finalMSP)
 #' @export
 setMethod("length", signature = "MSP", 
-          definition = function(x) {
-              length(getPrecursorMZ(x@msp))
+          definition = function(x) {length(getPrecursorMZ(x))
 })
 
 #' @name show
@@ -221,7 +262,7 @@ setMethod("length", signature = "MSP",
 setMethod("show", signature = "MSP", 
           definition = function(object) {
               cat("An object of class", class(object), "with", 
-                  length(getPrecursorMZ(object@msp)), "entries.", sep = " ")
+                  length(getPrecursorMZ(object)), "entries.", sep = " ")
 })
 
 #' @name getMSP
@@ -265,29 +306,53 @@ setGeneric("combine", function(object1, object2) standardGeneric("combine"))
 setMethod("combine", signature = c("MSP", "MSP"), definition = function(object1, object2) {
     new("MSP", msp = rbind(object1@msp, object2@msp))})
 
-#' @name getNames
-#' @aliases getNames,MSP-method
-#' @title getNames returns names of compounds in MSP object
+#' @name getName
+#' @aliases getName,MSP-method
+#' @title getName returns names in MSP object
 #' @return character
-#' @description getNames returns names of compounds in MSP object.
-#' @param object object of class MSP
+#' @description getName returns names in MSP object.
+#' @param object object of class MSP, see ?convert2MSP for further information
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
 #' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-#' getNames(finalMSP)
+#' getName(finalMSP)
 #' @export
-setGeneric("getNames", function(object) standardGeneric("getNames"))
+setGeneric("getName", function(object) standardGeneric("getName"))
 
-
-#' @describeIn getNames returns names of compounds in MSP objects
+#' @describeIn getName returns names in MSP objects
 #' @export
-getNames <- function(object) {
-    ## get classes of compounds in an msp object
+getName <- function(object) {
+    ## get names in an msp object
+    df <- object@msp
+    ind <- which(df[,1] == "NAME: ")
+    return(df[ind,2])
+}
+
+#' @name getMetaboliteName
+#' @aliases getMetaboliteName,MSP-method
+#' @title getMetaboliteName returns names of metabolites in MSP object
+#' @return character
+#' @description getMetaboliteName returns names in MSP object.
+#' @param object object of class MSP, see ?convert2MSP for further information
+#' @docType methods
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc")
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' getMetaboliteName(finalMSP)
+#' @export
+setGeneric("getMetaboliteName", 
+           function(object) standardGeneric("getMetaboliteName"))
+
+#' @describeIn getMetaboliteName returns names of metabolites in MSP objects
+#' @export
+getMetaboliteName <- function(object) {
+    ## get names of metabolites in an msp object
     df <- object@msp
     ind <- which(df[,1] == "METABOLITENAME: ")
     return(df[ind,2])
 }
+
 
 #' @name getMetaboliteClass
 #' @aliases getMetaboliteClass,MSP-method
@@ -312,6 +377,62 @@ getMetaboliteClass <- function(object) {
     df <- object@msp
     ind <- which(df[,1] == "METABOLITECLASS: ")
     return(df[ind,2])
+}
+
+
+#' @name getRT
+#' @aliases getRT,MSP-method
+#' @title getRT returns precursor RT values of an MSP object
+#' @return numeric
+#' @description getRT returns a numeric vector with all retention time values
+#' @param object object of class MSP
+#' @docType methods
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc")
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' getRT(finalMSP)
+#' @export
+setGeneric("getRT", function(object) standardGeneric("getRT"))
+
+#' @describeIn getRT returns precursor RT values of an MSP object
+#' @export
+getRT <- function(object) {
+    ## get classes of compounds in an msp object
+    df <- object@msp
+    ind <- which(df[,1] == "RETENTIONTIME: ")
+    ## get rt 
+    rt <- df[ind,2]
+    ## change to numeric
+    rt <- as.numeric(rt)
+    return(rt)
+}
+
+#' @name getPrecursorMZ
+#' @aliases getPrecursorMZ,MSP-method
+#' @title getPrecursorMZ returns precursor m/z values of an MSP object
+#' @return numeric
+#' @description getPrecursorMZ returns a numeric vector with 
+#'  precursor m/z values
+#' @param object object of class MSP
+#' @docType methods
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc")
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' getPrecursorMZ(finalMSP)
+#' @export
+setGeneric("getPrecursorMZ", function(object) standardGeneric("getPrecursorMZ"))
+
+#' @describeIn getPrecursorMZ returns precursor m/z values of an MSP object
+#' @export
+getPrecursorMZ <- function(object) {
+    ## get classes of compounds in an msp object
+    df <- object@msp
+    ind <- which(df[,1] == "PRECURSORMZ: ")
+    ## get m/z
+    mz <- df[ind,2]
+    ## change to numeric
+    mz <- as.numeric(mz)
+    return(mz)
 }
 
 #' @name [
