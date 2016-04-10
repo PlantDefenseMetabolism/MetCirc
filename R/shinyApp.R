@@ -8,7 +8,7 @@
 #' @param similarityMatrix matrix, similarityMatrix contains pair-wise 
 #' similarity coefficients which give information about the similarity between
 #' precursors
-#' @param msp data.frame, a data.frame in msp file format for information about 
+#' @param msp MSP, an S4 object of class 'MSP' for information about 
 #' the hovered feature
 #' @param size numerical, image width/height in pixels
 #' @details The function is based on the shiny and circlize package. Choose
