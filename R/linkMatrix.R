@@ -15,9 +15,10 @@
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
 #' data("binnedMSP", package = "MetCirc")
+#' ## use only a selection 
+#' binnedMSP <- binnedMSP[c(c(1:20, 29:48, 113:132, 240:259)),]
 #' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
-#' namesPrec <- rownames(binnedMSP)
 #' dfNameGroup <- data.frame(group = unlist(
 #'  lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
 #' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
@@ -69,7 +70,13 @@ createLink0Matrix <- function(similarityMatrix, dfNameGroup) {
             }
         }
     }
-    lastIndex <- min(which(is.na(mat[,1]))) - 1
+    
+    lastIndex <- which(is.na(mat[,1]))
+    if (length(lastIndex) == 0) {
+        lastIndex <- dim(mat)[1] } else {
+            lastIndex <- min(lastIndex) - 1
+    }
+
     mat <- mat[1:lastIndex, ]
     
     return(mat)
@@ -90,9 +97,10 @@ createLink0Matrix <- function(similarityMatrix, dfNameGroup) {
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
 #' data("binnedMSP", package = "MetCirc")
+#' ## use only a selection 
+#' binnedMSP <- binnedMSP[c(c(1:20, 29:48, 113:132, 240:259)),]
 #' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
-#' namesPrec <- rownames(binnedMSP)
 #' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
 #'                              "[[", 1)), name = namesPrec)
 #' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
@@ -142,6 +150,8 @@ thresholdLinkMatrix <- function(linkMatrix, threshold) {
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
 #' data("binnedMSP", package = "MetCirc")
+#' ## use only a selection 
+#' binnedMSP <- binnedMSP[c(c(1:20, 29:48, 113:132, 240:259)),]
 #' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
 #' namesPrec <- rownames(binnedMSP)
@@ -179,15 +189,13 @@ createLinkMatrix <- function(similarityMatrix, dfNameGroup, threshold) {
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
 #' data("binnedMSP", package = "MetCirc")
+#' ## use only a selection 
+#' binnedMSP <- binnedMSP[c(c(1:20, 29:48, 113:132, 240:259)),]
 #' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
-#' namesPrec <- rownames(binnedMSP)
 #' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
 #'                              "[[", 1)), name = namesPrec)
 #' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
-#' linkMatrix <- createLink0Matrix(similarityMatrix = similarityMat,  
-#'      dfNameGroup = dfNameGroup)
-#' thresholdLinkMatrix(linkMatrix = linkMatrix, threshold = 0.5)
 #' linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold = 0.5, 
 #'      dfNameGroup = dfNameGroup)
 #' cutLinkMatrix(LinkMatrix = linkMat, type = "all")

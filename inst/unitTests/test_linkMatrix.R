@@ -1,12 +1,14 @@
 ## START unit test createLink0Matrix
-namesPrec <- rownames(binnedMSP)
+## use only the first 100 to speed up computation
+namesPrec <- rownames(binnedMSP)[1:100]
 dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
                                                 "[[", 1)), name = namesPrec)
 ## order according to compartment
 dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
 
+similarityMat <- createSimilarityMatrix(binnedMSP[1:100,])
 link0Matrix <- createLink0Matrix(
-    similarityMatrix = similarityMat, dfNameGroup = dfNameGroup)
+    similarityMatrix = similarityMat[1:100, 1:100], dfNameGroup = dfNameGroup)
 ndps <- as.numeric(link0Matrix[,"NDP"])
 
 test_createLink0Matrix <- function() {
@@ -27,7 +29,7 @@ test_createLink0Matrix <- function() {
 test_thresholdLinkMatrix <- function() {
     checkEquals(dim(thresholdLinkMatrix(link0Matrix, 0)), dim(link0Matrix))
     checkException(thresholdLinkMatrix(similarityMat, 0))
-    checkException(thresholdLinkMatrix(link0Matrix, 1.1))
+    checkEquals(dim(thresholdLinkMatrix(link0Matrix, 1.1)), c(0, 5))
     checkTrue(
         dim(thresholdLinkMatrix(link0Matrix, 0.2))[1] >= 
             dim(thresholdLinkMatrix(link0Matrix, 0.3))[1])
