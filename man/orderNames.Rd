@@ -41,8 +41,11 @@ be used externally to reconstruct circos plots outside the reactive
 environment (see vignette for further details).
 }
 \examples{
+## load binnedMSP
 data("binnedMSP", package = "MetCirc")
-data("similarityMat", package = "MetCirc")
+## use only a selection 
+binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
+similarityMat <- createSimilarityMatrix(binnedMSP)
 namesPrec <- rownames(binnedMSP)
 dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
      name = namesPrec) 

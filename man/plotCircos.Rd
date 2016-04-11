@@ -6,8 +6,8 @@
 \usage{
 plotCircos(dfNameGroup, linkMat, initialize = c(TRUE, FALSE), 
      featureNames = c(TRUE, FALSE), cexFeatureNames = 0.2, 
-     groupName = c(TRUE, FALSE), links = c(TRUE, FALSE), 
-     highlight = c(TRUE, FALSE))
+     groupSector = c(TRUE, FALSE), groupName = c(TRUE, FALSE), 
+     links = c(TRUE, FALSE), highlight = c(TRUE, FALSE))
 }
 \arguments{
 \item{dfNameGroup}{data.frame containing column "group" and "name", which is 
@@ -21,6 +21,9 @@ five columns (group1, name1, group2, name2, NDP)}
 \item{featureNames}{logical, should feature names be displayed?}
 
 \item{cexFeatureNames}{numerical, size of feature names}
+
+\item{groupSector}{logical, should groups be displayed with background 
+colours?}
 
 \item{groupName}{logical, should group names (e.g. compartment names or 
 individual names) be displayed?}
@@ -42,9 +45,10 @@ Internal use for shiny app
 \examples{
  ## load binnedMSP
  data("binnedMSP", package = "MetCirc")
- data("similarityMat", package = "MetCirc")
+ ## use only a selection 
+ binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
+ similarityMat <- createSimilarityMatrix(binnedMSP)#'  
  namesPrec <- rownames(binnedMSP)
-
  dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
      name = namesPrec) 
  
@@ -56,8 +60,7 @@ Internal use for shiny app
  ## create a new similarity matrix with updated rownames
  simM <- createOrderedSimMat(dfNameGroupRT, similarityMat)
  ## create link matrix
- ## create link matrix
- linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.95,
+ linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.8,
      dfNameGroup = dfNameGroupRT)
  ## cut link matrix (here: only display links between groups)
  linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
@@ -69,8 +72,8 @@ Internal use for shiny app
  
  ## actual plotting
  plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, 
-     featureNames = TRUE, cexFeatureNames = 0.2, groupName = TRUE, 
-     links = FALSE, highlight = FALSE)
+     featureNames = TRUE, cexFeatureNames = 0.2, groupSector = TRUE, 
+     groupName = FALSE, links = FALSE, highlight = FALSE)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

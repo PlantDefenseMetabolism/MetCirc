@@ -29,14 +29,17 @@ Calculates the nearest feature in polar coordinates given
  the smallest distance from given cartesian coordinates.
 }
 \examples{
+## load binnedMSP
 data("binnedMSP", package = "MetCirc")
+## use only a selection 
+binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
 namesPrec <- rownames(binnedMSP)
-dfNameGroup <- data.frame(
-    group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
+dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
+     "[[", 1)), name = namesPrec)
 ## order according to compartment
 dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
 plotCircos(dfNameGroup, NULL, initialize = TRUE, featureNames = FALSE, 
-         groupName = FALSE, links = FALSE, highlight = FALSE)
+     groupName = FALSE, groupSector = TRUE, links = FALSE, highlight = FALSE)
 x <- 1
 y <- 0
 degreeFeatures <- lapply(dfNameGroup$name, 

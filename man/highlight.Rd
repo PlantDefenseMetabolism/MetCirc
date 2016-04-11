@@ -29,9 +29,10 @@ Internal use for shiny app.
 \examples{
  ## load binnedMSP
  data("binnedMSP", package = "MetCirc")
- data("similarityMat", package = "MetCirc")
+ ## use only a selection 
+ binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
+ similarityMat <- createSimilarityMatrix(binnedMSP)#'  
  namesPrec <- rownames(binnedMSP)
-
  dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
      name = namesPrec) 
  
@@ -51,12 +52,12 @@ Internal use for shiny app.
  circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
          track.margin = c(0.0, 0))
  ## here set selectedFeatures arbitrarily
- selectedFeatures <- as.character(dfNameGroupRT[c(1,101,201,301),2])
+ selectedFeatures <- as.character(dfNameGroupRT[c(1,21,41,61),2])
  
  ## actual plotting
  plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, 
-     featureNames = TRUE, cexFeatureNames = 0.2, groupName = TRUE, 
-     links = FALSE, highlight = TRUE)
+     featureNames = TRUE, cexFeatureNames = 0.2, groupSector = FALSE, 
+     groupName = TRUE, links = FALSE, highlight = TRUE)
  indSelected <- mapply(function(x) which(x == dfNameGroupRT$name), 
          selectedFeatures)
  ## highlight

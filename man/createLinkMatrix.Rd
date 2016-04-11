@@ -28,6 +28,8 @@ filtering is currently based on the normalised dot product.
 }
 \examples{
 data("binnedMSP", package = "MetCirc")
+## use only a selection 
+binnedMSP <- binnedMSP[c(c(1:20, 29:48, 113:132, 240:259)),]
 namesPrec <- rownames(binnedMSP)
 similarityMat <- createSimilarityMatrix(binnedMSP)
 namesPrec <- rownames(binnedMSP)

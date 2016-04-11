@@ -27,9 +27,10 @@ exclude links which have a similarity of exactly 0.
 }
 \examples{
 data("binnedMSP", package = "MetCirc")
+## use only a selection 
+binnedMSP <- binnedMSP[c(c(1:20, 29:48, 113:132, 240:259)),]
 namesPrec <- rownames(binnedMSP)
 similarityMat <- createSimilarityMatrix(binnedMSP)
-namesPrec <- rownames(binnedMSP)
 dfNameGroup <- data.frame(group = unlist(
  lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
 dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
