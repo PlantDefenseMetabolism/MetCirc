@@ -35,7 +35,6 @@ Internal use for shiny app or outside of shiny to reproduce
      name = namesPrec) 
  ## plot legend
  circosLegend(dfNameGroup, highlight = TRUE)
- @export
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}
