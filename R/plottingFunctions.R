@@ -6,8 +6,8 @@
 #' @description Circular plot to visualise similarity
 #' @usage plotCircos(dfNameGroup, linkMat, initialize = c(TRUE, FALSE), 
 #'      featureNames = c(TRUE, FALSE), cexFeatureNames = 0.2, 
-#'      groupName = c(TRUE, FALSE), links = c(TRUE, FALSE), 
-#'      highlight = c(TRUE, FALSE))
+#'      groupSector = c(TRUE, FALSE), groupName = c(TRUE, FALSE), 
+#'      links = c(TRUE, FALSE), highlight = c(TRUE, FALSE))
 #' @param dfNameGroup data.frame containing column "group" and "name", which is 
 #' a unique identifier of the feature
 #' @param linkMat data.frame containing linked features in each row, has 
@@ -15,6 +15,8 @@
 #' @param initialize logical, should plot be initialized?
 #' @param featureNames logical, should feature names be displayed?
 #' @param cexFeatureNames numerical, size of feature names
+#' @param groupSector logical, should groups be displayed with background 
+#'      colours?
 #' @param groupName logical, should group names (e.g. compartment names or 
 #'      individual names) be displayed?
 #' @param links logical, should links be plotted?
@@ -40,7 +42,6 @@
 #'  ## create a new similarity matrix with updated rownames
 #'  simM <- createOrderedSimMat(dfNameGroupRT, similarityMat)
 #'  ## create link matrix
-#'  ## create link matrix
 #'  linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.95,
 #'      dfNameGroup = dfNameGroupRT)
 #'  ## cut link matrix (here: only display links between groups)
@@ -53,19 +54,20 @@
 #'  
 #'  ## actual plotting
 #'  plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, 
-#'      featureNames = TRUE, cexFeatureNames = 0.2, groupName = TRUE, 
-#'      links = FALSE, highlight = FALSE)
+#'      featureNames = TRUE, cexFeatureNames = 0.2, groupSector = TRUE, 
+#'      groupName = FALSE, links = FALSE, highlight = FALSE)
 #' @export
 plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE), 
         featureNames = c(TRUE, FALSE), cexFeatureNames = 0.2, 
-        groupName = c(TRUE, FALSE), links = c(TRUE, FALSE), 
-        highlight = c(TRUE, FALSE)) {
+        groupSector = c(TRUE, FALSE), groupName = c(TRUE, FALSE), 
+        links = c(TRUE, FALSE), highlight = c(TRUE, FALSE)) {
     
     dfNameGroup <- dfNameGroup[order(dfNameGroup[, "name"]), ]
 
     if (!is.numeric(cexFeatureNames)) stop("cexFeatureNames is not numeric")
     if (!is.logical(initialize)) stop("initialize is not logical")
     if (!is.logical(featureNames)) stop("featureNames is not logical")
+    if (!is.logical(groupSector)) stop("groupSector is not logical")
     if (!is.logical(groupName)) stop("groupName is not logical")
     if (!is.logical(links)) stop("links is not logical")
     if (!is.logical(highlight)) stop("highlight is not logical")
@@ -93,19 +95,30 @@ plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE),
         }
     }
     
-    ## group name
-    if (groupName) {
+    ## group sector
+    if (groupSector) {
         uniqueGroup <- unique(dfGroup)
-        transparency <- if (highlight) 0.05 else 0.2
+        transparency <- if (highlight) 0.1 else 0.2
         for( i in 1:length(uniqueGroup)) {
             ind <- which(uniqueGroup[i] == dfGroup)
             minInd <- min(ind)
             maxInd <- max(ind)
             circlize::highlight.sector(dfName[minInd:maxInd], 
-                             col = alpha(i + 1, transparency))
+                                       col = alpha(i + 1, transparency))
+        }
+    }
+    
+    
+    ## group name
+    if (groupName) {
+        uniqueGroup <- unique(dfGroup)
+        for( i in 1:length(uniqueGroup)) {
+            ind <- which(uniqueGroup[i] == dfGroup)
+            minInd <- min(ind)
+            maxInd <- max(ind)
             circlize::circos.text(x = 0.5, y = 1.5, labels = uniqueGroup[i], 
-                    sector.index = dfName[c(minInd:maxInd)[floor(length(minInd:maxInd) / 2)]],
-                    facing = "downward")    
+                     sector.index = dfName[c(minInd:maxInd)[floor(length(minInd:maxInd) / 2)]],
+                     facing = "downward")    
         }
     }
     
