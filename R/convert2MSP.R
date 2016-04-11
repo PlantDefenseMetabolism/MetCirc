@@ -353,6 +353,33 @@ getMetaboliteName <- function(object) {
     return(df[ind,2])
 }
 
+#' @name setMetaboliteName
+#' @aliases setMetaboliteName,character,MSP-method
+#' @title setMetaboliteName sets metabolite names in MSP objects
+#' @return MSP
+#' @description setMetaboliteName sets metabolite names in MSP objects. To set 
+#' metabolite names pass a vector with names to the argument \code{class}.
+#' @param object object of class MSP
+#' @param metName character, a vector with new metabolite names
+#' @docType methods
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc") 
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = "_ ", splitInd = 2)
+#' setMetaboliteName(finalMSP, c(rep("unknown", 358), "met1", "met2")
+#' @export
+setGeneric("setMetaboliteName", 
+           function(object) standardGeneric("setMetaboliteName"))
+
+#' @describeIn setMetaboliteName sets metabolite names in MSP objects
+#' @export
+setMetaboliteName <- function(object, metName) {
+    df <- object@msp
+    ind <- which(df[,1] == "METABOLITENAME: ") 
+    if (length(metName) != length(ind)) stop("number of items to replace does not 
+                                           match with replacement length")
+    df[ind, 2] <- metName
+    return(new("MSP", msp = df))
+}
 
 #' @name getMetaboliteClass
 #' @aliases getMetaboliteClass,MSP-method
@@ -379,6 +406,34 @@ getMetaboliteClass <- function(object) {
     return(df[ind,2])
 }
 
+#' @name setMetaboliteClass
+#' @aliases setMetaboliteClass,character,MSP-method
+#' @title setMetaboliteClass sets class names of compounds in MSP objects
+#' @return MSP
+#' @description setMetaboliteClass sets names of class names of compounds in 
+#' MSP objects. To set names pass a vector with class names to the argument 
+#' \code{class}.
+#' @param object object of class MSP
+#' @param class character, a vector with new class names
+#' @docType methods
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc") 
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = "_ ", splitInd = 2)
+#' setMetaboliteClass(finalMSP, c(rep("unknown", 359), "class1")
+#' @export
+setGeneric("setMetaboliteClass", 
+           function(object) standardGeneric("setMetaboliteClass"))
+
+#' @describeIn setMetaboliteClass sets class names of compounds in MSP objects
+#' @export
+setMetaboliteClass <- function(object, class) {
+    df <- object@msp
+    ind <- which(df[,1] == "METABOLITECLASS: ") 
+    if (length(class) != length(ind)) stop("number of items to replace does not 
+                                           match with replacement length")
+    df[ind, 2] <- class
+    return(new("MSP", msp = df))
+}
 
 #' @name getRT
 #' @aliases getRT,MSP-method
