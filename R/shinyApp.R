@@ -75,33 +75,52 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
     
     
     ui <- fluidPage(
-        sidebarPanel(
-            radioButtons("choiceLinks", "choose type of links", 
-                choices = c("all" = "all", "inter-class links" = "inter", 
+       ## fluidRow(3, 
+        fluidRow( ## was: sidebarPanel(
+            column(4, 
+                wellPanel(
+                    radioButtons("choiceLinks", "choose type of links", 
+                        choices = c("all" = "all", "inter-class links" = "inter", 
                             "intra-class links" = "intra"),
-                selected = "all"),
-            sliderInput("threshold", "Threshold for similarity to display",
-                min = 0, max = 1, value = 0.75),
-            radioButtons("order", "order within groups",
+                        selected = "all"),
+                    sliderInput("threshold", "Threshold for similarity to display",
+                        min = 0, max = 1, value = 0.75),
+                    radioButtons("order", "order within groups",
                         choices = c("retention time" = "retentionTime",
-                        "m/z" = "mz", "clustering" = "clustering")),
-            actionButton("resetClickIndices", "Reset features"),
-            actionButton("stop", "Stop and export \n selected features")
-        ),
-        mainPanel(
-            plotOutput("circos",
-                click = "circosClick",
-                #dblclick = "circosDblClick",
-                hover = hoverOpts(id = "circosHover", delay = 150, clip = TRUE,
-                        nullOutside = FALSE),
-                width = size, height = size),
-                #brush = brushOpts(id = "circosBrush",
-                #                  resetOnNew = TRUE)),
-            plotOutput("circosLegend", width = size / 3, height = size / 3),
-            textOutput("hoverConnectedFeature"),
-            ##textOutput("test"),
-            verbatimTextOutput("clickFeature"))
+                            "m/z" = "mz", "clustering" = "clustering")),
+                    actionButton("resetClickIndices", "Reset features"),
+                    actionButton("stop", "Stop and export \n selected features")
+                )
+            ),
+            column(8, 
+        ##fluidRow(9, 
+        #mainPanel(
+                fluidRow(    
+                    column(8,
+                        plotOutput("circos",
+                            click = "circosClick",
+                            #dblclick = "circosDblClick",
+                            hover = hoverOpts(id = "circosHover", delay = 150, 
+                                clip = TRUE, nullOutside = FALSE),
+                            width = size, height = size)
+                            ##brush = brushOpts(id = "circosBrush",
+                            ##                  resetOnNew = TRUE)),
+                    ),
+                    column(4,  
+                        plotOutput("circosLegend"))
+                ), 
+                #fluidRow(
+                #    column(12,
+                        textOutput("hoverConnectedFeature"),
+                        verbatimTextOutput("clickFeature")
+            )
+                #    )
+                #)
+        )
     )
+
+            
+        
     
     server <- function(input, output, session) {
         
@@ -122,9 +141,6 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
             dfNG
         })
 
-        ##output$test <- renderText(c("df", dfNG()[1:10,2]))
-
-        
         ## get degree of features
         features <- reactive(as.character( dfNG()[,"name"] ))
         degreeFeatures <- reactive(lapply(features(), 
@@ -222,8 +238,8 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
 
         ## plotting
         initializePlot <- reactive(plotCircos(dfNG(), NULL, initialize = TRUE, 
-                                featureNames = FALSE, groupName = FALSE,
-                                links = FALSE, highlight = FALSE))
+                featureNames = FALSE, groupName = FALSE, groupSector = FALSE,
+                links = FALSE, highlight = FALSE))
         output$circos <- renderPlot({
             initializePlot()
             ##if (!is.null(PlotFilled2)) {
@@ -266,25 +282,27 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
                     ##PlotFilled2()
                     if (input$order == "mz") {
                         replayPlot(PlotFilledMZ)
-                        plotCircos(dfNameGroupMZ, LinkMatrix_threshold(), initialize=FALSE, 
-                                   featureNames = FALSE, groupName = FALSE, 
-                                   links = TRUE, highlight = FALSE)
+                        plotCircos(dfNameGroupMZ, LinkMatrix_threshold(), 
+                            initialize=FALSE, featureNames = FALSE, 
+                            groupSector = FALSE, groupName = FALSE, 
+                            links = TRUE, highlight = FALSE)
                     }
                         
                         
                     if (input$order == "retentionTime") {
                         replayPlot(PlotFilledRT)
-                        plotCircos(dfNameGroupRT, LinkMatrix_threshold(), initialize=FALSE, 
-                                   featureNames = FALSE, groupName = FALSE, 
-                                   links = TRUE, highlight = FALSE)
+                        plotCircos(dfNameGroupRT, LinkMatrix_threshold(), 
+                            initialize=FALSE, featureNames = FALSE, 
+                            groupSector = FALSE, groupName = FALSE, 
+                            links = TRUE, highlight = FALSE)
                     }
                     
                     if (input$order == "clustering") {
                         replayPlot(PlotFilledCluster)
                         plotCircos(dfNameGroupCluster, LinkMatrix_threshold(), 
-                                   initialize = FALSE, featureNames = FALSE,
-                                   groupName = FALSE, links = TRUE, 
-                                   highlight = FALSE)
+                            initialize = FALSE, featureNames = FALSE,
+                            groupSector = FALSE, groupName = FALSE, 
+                            links = TRUE, highlight = FALSE)
                     }
                 }
             }
@@ -295,7 +313,9 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
        output$circosLegend <- renderPlot({
             groupDF <- dfNameGroup[,"group"]
             uniqNumGroupDF <- unique(as.numeric(groupDF))
-            plot(x=c(0,1), y=c(0,1), type="n", 
+            
+            circosLegend <- function()
+            plot(x=c(0,1), y=c(0,1), type="n", xlab = "", ylab = "",
                  axes = FALSE, frame.plot = FALSE)
             if(onCircle$is) {
                 legend(x = c(0,1), y = c(1,0), legend = levels(groupDF), bty = "n",
