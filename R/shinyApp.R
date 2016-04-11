@@ -31,12 +31,12 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
     dfNameGroupRT <- orderNames(dfNameGroup, order = "retentionTime")
     simMatRT <- createOrderedSimMat(dfNameGroupRT, similarityMatrix)
     plotCircos(dfNameGroupRT, NULL, initialize=TRUE, featureNames = TRUE, 
-            groupName = TRUE, links = FALSE, highlight = FALSE)
+            groupName = FALSE, links = FALSE, highlight = FALSE)
     PlotFilledRT <- recordPlot()
     plot.new()
      
     plotCircos(dfNameGroupRT, NULL, initialize=TRUE, featureNames = TRUE, 
-            groupName = TRUE, links = FALSE, highlight = TRUE)
+            groupName = FALSE, links = FALSE, highlight = TRUE)
     PlotHighlightRT <- recordPlot()
     plot.new()
     
@@ -44,12 +44,12 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
     dfNameGroupMZ <- orderNames(dfNameGroup, order = "mz")
     simMatMZ <- createOrderedSimMat(dfNameGroupMZ, similarityMatrix)
     plotCircos(dfNameGroupMZ, NULL, initialize=TRUE, featureNames = TRUE, 
-               groupName = TRUE, links = FALSE, highlight = FALSE)
+               groupName = FALSE, links = FALSE, highlight = FALSE)
     PlotFilledMZ <- recordPlot()
     plot.new()
     
     plotCircos(dfNameGroupMZ, NULL, initialize=TRUE, featureNames = TRUE, 
-               groupName = TRUE, links = FALSE, highlight = TRUE)
+               groupName = FALSE, links = FALSE, highlight = TRUE)
     PlotHighlightMZ <- recordPlot()
     plot.new()
     
@@ -58,12 +58,12 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
         similarityMatrix = similarityMatrix, order = "clustering")
     simMatClustering <- createOrderedSimMat(dfNameGroupCluster, similarityMatrix)
     plotCircos(dfNameGroupCluster, NULL, initialize=TRUE, featureNames = TRUE, 
-               groupName = TRUE, links = FALSE, highlight = FALSE)
+               groupName = FALSE, links = FALSE, highlight = FALSE)
     PlotFilledCluster <- recordPlot()
     plot.new()
     
     plotCircos(dfNameGroupCluster, NULL, initialize=TRUE, featureNames = TRUE, 
-               groupName = TRUE, links = FALSE, highlight = TRUE)
+               groupName = FALSE, links = FALSE, highlight = TRUE)
     PlotHighlightCluster <- recordPlot()
     plot.new()
     
@@ -86,11 +86,12 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
             plotOutput("circos",
                 click = "circosClick",
                 #dblclick = "circosDblClick",
-                hover = hoverOpts(id = "circosHover", delay = 250, clip = TRUE,
+                hover = hoverOpts(id = "circosHover", delay = 150, clip = TRUE,
                         nullOutside = FALSE),
                 width = size, height = size),
                 #brush = brushOpts(id = "circosBrush",
                 #                  resetOnNew = TRUE)),
+            plotOutput("circosLegend"),
             textOutput("hoverConnectedFeature"),
             ##textOutput("test"),
             verbatimTextOutput("clickFeature"))
@@ -284,6 +285,14 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
             ##}
             
         })
+        
+#        output$circosLegend <- renderPlot({
+#             if(onCircle$is) {
+#                 alpha(palette()[as.numeric(as.factor(dfNameGroup[,"group"])[ind])[h] + 1]
+#             } else { ## if not inCircle$is
+#                 
+#             }
+#         })
         
         ## show when hovering the feature which connects to it
         linkMatIndsHover <- reactive({
