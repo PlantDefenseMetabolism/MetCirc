@@ -108,7 +108,7 @@ thresholdLinkMatrix <- function(linkMatrix, threshold) {
     ndp <- as.numeric(linkMatrix[, "NDP"])
     
     if (threshold > max(ndp)) 
-        stop("threshold greater than max NDP value in linkMatrix")
+        warning("threshold greater than max NDP value in linkMatrix")
     
     ## which rows have a coefficient >= threshold?
     indThreshold <- which(ndp >= threshold)
@@ -117,15 +117,13 @@ thresholdLinkMatrix <- function(linkMatrix, threshold) {
     if (length(indThreshold) <= 1) {
         thresholdLinkMatrix <- matrix(NA, ncol = ncol(linkMatrix), nrow = length(indThreshold))
         thresholdLinkMatrix[1:nrow(thresholdLinkMatrix),1:ncol(thresholdLinkMatrix)] <- linkMatrix[indThreshold,]
-        colnames(thresholdLinkMatrix) <- colnames(linkMatrix)    
     } else {
         thresholdLinkMatrix <- linkMatrix[indThreshold,]
-        colnames(thresholdLinkMatrix) <- colnames(linkMatrix) 
     }
     
+    colnames(thresholdLinkMatrix) <- colnames(linkMatrix)  
     
     return(thresholdLinkMatrix)
-    
 }
 
 #' @name createLinkMatrix

@@ -115,6 +115,58 @@ test_combine <- function() {
 }
 ## END unit test combine-method
 
+## START unit test getName-method
+test_getName <- function() {
+    checkTrue(all(is.character(getName(testMSP))))
+    checkTrue(length(getName(testMSP)) == length(testMSP))
+    checkException(getName("x"))
+}
+## END unit test getName-method
+
+## START unit test setName-method
+test_setName <- function() {
+    checkException(setName(testMSP, "a"))
+    checkTrue(all(
+        getName(setName(testMSP, rep("a", length(testMSP)))) == rep("a", 360)))
+}
+## END unit test setName-method
+
+## START unit test getMetaboliteName-method
+test_getMetaboliteName <- function() {
+    checkTrue(all(is.character(getMetaboliteName(testMSP))))
+    checkTrue(length(getMetaboliteName(testMSP)) == length(testMSP))
+    checkException(getMetaboliteName("x"))
+}
+## END unit test getMetaboliteName-method
+
+## START unit test setMetaboliteName-method
+test_setMetaboliteName <- function() {
+    checkException(setMetaboliteName(testMSP, "a"))
+    checkTrue(
+        all(getMetaboliteName(
+            setMetaboliteName(testMSP, rep("a", length(testMSP)))
+            ) == rep("a", 360)))
+}
+## END unit test setMetaboliteName-method
+
+## START unit test getMetaboliteClass-method
+test_getMetaboliteClass <- function() {
+    checkTrue(all(is.character(getMetaboliteClass(testMSP))))
+    checkTrue(length(getMetaboliteClass(testMSP)) == length(testMSP))
+    checkException(getMetaboliteClass("x"))
+}
+## END unit test getMetaboliteClass-method
+
+## START unit test setMetaboliteClass-method
+test_setMetaboliteClass <- function() {
+    checkException(setMetaboliteClass(testMSP, "a"))
+    checkTrue(
+        all(getMetaboliteClass(
+            setMetaboliteClass(testMSP, rep("a", length(testMSP)))
+            ) == rep("a", 360)))
+}
+## END unit test setMetaboliteClass-method
+
 ## START unit test [
 test_extract <- function() {
     checkEquals(length(testMSP[1]), 1)

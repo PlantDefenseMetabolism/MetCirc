@@ -212,7 +212,7 @@ msp2FunctionalLossesMSP <- function(msp) {
     }
 
     
-    return(MSP(msp = finalMSP))
+    return(new("MSP", msp = finalMSP))
 }
 
 #' @import methods
@@ -341,7 +341,7 @@ getName <- function(object) {
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc") 
 #' finalMSP <- convert2MSP(sd02_deconvoluted, split = "_ ", splitInd = 2)
-#' setMetaboliteName(finalMSP, c(rep("unknown", 358), "name1", "name2")
+#' setMetaboliteName(finalMSP, c(rep("unknown", 358), "name1", "name2"))
 #' @export
 setGeneric("setName", function(object) standardGeneric("setName"))
 
@@ -392,7 +392,7 @@ getMetaboliteName <- function(object) {
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc") 
 #' finalMSP <- convert2MSP(sd02_deconvoluted, split = "_ ", splitInd = 2)
-#' setMetaboliteName(finalMSP, c(rep("unknown", 358), "met1", "met2")
+#' setMetaboliteName(finalMSP, c(rep("unknown", 358), "met1", "met2"))
 #' @export
 setGeneric("setMetaboliteName", 
            function(object) standardGeneric("setMetaboliteName"))
@@ -402,8 +402,8 @@ setGeneric("setMetaboliteName",
 setMetaboliteName <- function(object, metName) {
     df <- object@msp
     ind <- which(df[,1] == "METABOLITENAME: ") 
-    if (length(metName) != length(ind)) stop("number of items to replace does not 
-                                           match with replacement length")
+    if (length(metName) != length(ind)) stop("number of items to replace does 
+                                    not match with replacement length")
     df[ind, 2] <- metName
     return(new("MSP", msp = df))
 }
@@ -446,7 +446,7 @@ getMetaboliteClass <- function(object) {
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc") 
 #' finalMSP <- convert2MSP(sd02_deconvoluted, split = "_ ", splitInd = 2)
-#' setMetaboliteClass(finalMSP, c(rep("unknown", 359), "class1")
+#' setMetaboliteClass(finalMSP, c(rep("unknown", 359), "class1"))
 #' @export
 setGeneric("setMetaboliteClass", 
            function(object) standardGeneric("setMetaboliteClass"))

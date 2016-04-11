@@ -157,12 +157,14 @@ plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE),
             } else {
                 alpha("black", alpha = (as.numeric(linkMat[,"NDP"]))^6)}
         
-        for (i in 1:dim(linkMat)[1]) {
-            circos.link(linkMat[i,][["name1"]], 0.5,
-                linkMat[i,][["name2"]], 0.5,
-                lwd = if (highlight) 0.5 else as.numeric(linkMat[i,][["NDP"]]),
-                ## transparency
-                col = colourLink[i])
+        if (dim(linkMat)[1] != 0) {
+            for (i in 1:dim(linkMat)[1]) {
+                circos.link(linkMat[i,][["name1"]], 0.5,
+                    linkMat[i,][["name2"]], 0.5,
+                    lwd = if (highlight) 0.5 else as.numeric(linkMat[i,][["NDP"]]),
+                    ## transparency
+                    col = colourLink[i])
+            }
         }
     }
 
@@ -237,22 +239,26 @@ highlight <- function(dfNameGroup, ind, LinkMatrix) {
 
     #######
     ## plot all links
-    for (i in 1:dim(LinkMatrix)[1]) {
-        circos.link(lMatName1[i], 0.5,
+    if (dim(LinkMatrix)[1] != 0) {
+        for (i in 1:dim(LinkMatrix)[1]) {
+            circos.link(lMatName1[i], 0.5,
                     lMatName2[i], 0.5,
                     lwd = 0.5,
                     ## transparency
                     col = alpha("black", 0.1))
+        }
     }
     #######
     
     ## plot highlighted links
-    for (j in LinkMatrixInd) {
-        circos.link(lMatName1[j], 0.5,
+    if (dim(LinkMatrixInd)[1] != 0) {
+        for (j in LinkMatrixInd) {
+            circos.link(lMatName1[j], 0.5,
                     lMatName2[j], 0.5,
                     lwd = 1,
                     ## transparency
                     col = "black")
+        }
     }
 }
 
