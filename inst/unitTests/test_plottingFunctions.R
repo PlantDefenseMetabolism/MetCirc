@@ -21,13 +21,13 @@ circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0),
            track.margin = c(0.0, 0))
 test_plotCircos <- function() {
     checkException(plotCircos(dfNameGroup, NULL, 
-        initialize = TRUE, featureNames = FALSE, groupName = FALSE, 
-        links = TRUE, highlight = FALSE))
+        initialize = TRUE, featureNames = FALSE, groupSector = FALSE, 
+        groupName = FALSE, links = TRUE, highlight = FALSE))
     checkException(plotCircos(dfNameGroupRT, NULL, 
-        initialize = FALSE, featureNames = TRUE, groupName = FALSE,
-                    links = FALSE, highlight = FALSE))
-    checkException(plotCircos(dfNameGroupRT, linkMat, 
-        initialize = TRUE, featureNames = FALSE, groupName = FALSE, 
+        initialize = FALSE, featureNames = TRUE, groupSector = FALSE, 
+        groupName = FALSE, links = FALSE, highlight = FALSE))
+    checkException(plotCircos(dfNameGroupRT, linkMat, initialize = TRUE, 
+        featureNames = FALSE, groupSector = FALSE, groupName = FALSE, 
         links = TRUE, highlight = FALSE)) ## names are different
 }
 ## END unit test for plotCircos
@@ -54,14 +54,14 @@ circos.clear()
 circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
            track.margin = c(0.0, 0))
 plotCircos(dfNameGroup, NULL, initialize = TRUE, 
-    featureNames = FALSE, groupName = FALSE, links = FALSE, highlight = FALSE)
+    featureNames = FALSE, groupSector = FALSE, groupName = FALSE, links = FALSE, highlight = FALSE)
 test_getLinkMatrixIndices <- function() {
-    checkEquals(getLinkMatrixIndices(dfNameGroup[1,], linkMat), 172)
+    checkEquals(getLinkMatrixIndices(dfNameGroup[1,], linkMat), 13)
     checkEquals(getLinkMatrixIndices(dfNameGroup[2,], linkMat), integer())
-    checkEquals(getLinkMatrixIndices(dfNameGroup[3,], linkMat), 173)
-    checkEquals(getLinkMatrixIndices(dfNameGroup[4,], linkMat), 174)
-    checkEquals(getLinkMatrixIndices(dfNameGroup[5,], linkMat), 175)
-    checkEquals(getLinkMatrixIndices(dfNameGroup[1:5,], linkMat), c(172:175))
+    checkEquals(getLinkMatrixIndices(dfNameGroup[3,], linkMat), 14)
+    checkEquals(getLinkMatrixIndices(dfNameGroup[4,], linkMat), 15)
+    checkEquals(getLinkMatrixIndices(dfNameGroup[5,], linkMat), 16)
+    checkEquals(getLinkMatrixIndices(dfNameGroup[1:5,], linkMat), c(13:16))
     checkException(getLinkMatrixIndices(dfNameGroup[1,], NULL))
 }
 ## END unit test for getLinkMatrixIndices
@@ -70,7 +70,7 @@ test_getLinkMatrixIndices <- function() {
 test_truncateName <- function() {
     checkEquals(
         as.character(truncateName(dfNameGroupRT[1,], 2, nameGroup=TRUE)[2]), 
-        "585.28/912.45")
+        "1398.71/1018.98")
     checkEquals(
         as.character(truncateName(dfNameGroup[1,], 2, nameGroup=FALSE)[2]), 
         "231.05/1020.69")
@@ -88,8 +88,8 @@ test_truncateName <- function() {
 degreeFeatures <- lapply(dfNameGroup$name, 
     function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
 test_minFragCart2Polar <- function() {
-    checkEquals(minFragCart2Polar(1,0,degreeFeatures), 335)
-    checkEquals(minFragCart2Polar(0.1,0.9,degreeFeatures), 287)
+    checkEquals(minFragCart2Polar(1,0,degreeFeatures), 74)
+    checkEquals(minFragCart2Polar(0.1,0.9,degreeFeatures), 77)
     checkEquals(minFragCart2Polar(1,1, degreeFeatures), NA)
     checkEquals(minFragCart2Polar(1, 0, NULL), integer())
     checkException(minFragCart2Polar(NA, NA, degreeFeatures))
