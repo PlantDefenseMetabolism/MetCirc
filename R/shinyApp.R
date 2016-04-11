@@ -308,22 +308,8 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
             
         })
         
-       output$circosLegend <- renderPlot({
-            groupDF <- dfNameGroup[,"group"]
-            uniqNumGroupDF <- unique(as.numeric(groupDF))
-            
-            circosLegend <- function()
-            plot(x=c(0,1), y=c(0,1), type="n", xlab = "", ylab = "",
-                 axes = FALSE, frame.plot = FALSE)
-            if(onCircle$is) {
-                legend(x = c(0,1), y = c(1,0), legend = levels(groupDF), bty = "n",
-                    fill =  alpha(palette()[uniqNumGroupDF + 1], 0.3),
-                    border = alpha(palette()[uniqNumGroupDF + 1]), 0.3)
-            } else { ## if not inCircle$is
-                legend(x = c(0,1), y = c(1,0), legend = levels(groupDF), bty = "n",
-                       fill =  palette()[uniqNumGroupDF + 1],
-                       border = palette()[uniqNumGroupDF + 1])
-            }
+        output$circosLegend <- renderPlot({
+            circosLegend(dfNameGroup, highlight = onCircle$is)
         })
         
         ## show when hovering the feature which connects to it

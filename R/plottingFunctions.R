@@ -278,6 +278,48 @@ highlight <- function(dfNameGroup, ind, LinkMatrix) {
     }
 }
 
+#' @name circosLegend
+#' @title Plot a legend for circos plot
+#' @description circosLegend plots a legend for circos plot using group names .
+#' @usage circosLegend(dfNameGroup, highlight)
+#' @param dfNameGroup data.frame , data.frame with group and unique idenfier 
+#'      (name)
+#' @param highlight logical, should colours be adjusted to highlight settings?
+#' @details Internal use for shiny app or outside of shiny to reproduce 
+#'      figures.
+#' @return The function will open a new plot and display colours together 
+#'      with labels. 
+#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @examples 
+#'  ## load binnedMSP
+#'  data("binnedMSP", package = "MetCirc")
+#'  ## use only a selection 
+#'  binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
+#'  similarityMat <- createSimilarityMatrix(binnedMSP)#'  
+#'  namesPrec <- rownames(binnedMSP)
+#'  dfNameGroup <- data.frame(
+#'      group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
+#'      name = namesPrec) 
+#'  ## plot legend
+#'  circosLegend(dfNameGroup, highlight = TRUE)
+#'  @export
+circosLegend <- function(dfNameGroup, highlight = c(TRUE, FALSE)) {
+    groupDF <- dfNameGroup[,"group"]
+    uniqNumGroupDF <- unique(as.numeric(groupDF))
+    plot(x=c(0,1), y=c(0,1), type="n", xlab = "", ylab = "",
+         axes = FALSE, frame.plot = FALSE)
+    if (highlight) {
+        legend(x = c(0,1), y = c(1,0), legend = levels(groupDF), 
+               bty = "n",
+               fill =  alpha(palette()[uniqNumGroupDF + 1], 0.3),
+               border = alpha(palette()[uniqNumGroupDF + 1]), 0.3)
+    } else { ## if not highlight
+        legend(x = c(0,1), y = c(1,0), legend = levels(groupDF), bty = "n",
+               fill =  palette()[uniqNumGroupDF + 1],
+               border = palette()[uniqNumGroupDF + 1])
+    }
+}
+
 #' @name getLinkMatrixIndices
 #' @title Get indices in LinkMatrix of feature 
 #' @description Gets indices in LinkMatrix of feature 
