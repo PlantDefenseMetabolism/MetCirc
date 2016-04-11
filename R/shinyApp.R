@@ -23,7 +23,7 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
     
     if (!is.numeric(size)) stop("size is not numerical")
     ## circlize parameters
-    circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
+    circos.par(gap.degree = 0, cell.padding = c(0, 0, 0, 0), 
             track.margin = c(0.0, 0))
     
     ## create plots and assign to objects by recordPlot
@@ -118,9 +118,7 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
                 #)
         )
     )
-
-            
-        
+ 
     
     server <- function(input, output, session) {
         
