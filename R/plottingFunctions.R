@@ -302,7 +302,7 @@ highlight <- function(dfNameGroup, ind, LinkMatrix) {
 #'      name = namesPrec) 
 #'  ## plot legend
 #'  circosLegend(dfNameGroup, highlight = TRUE)
-#'  @export
+#' @export
 circosLegend <- function(dfNameGroup, highlight = c(TRUE, FALSE)) {
     groupDF <- dfNameGroup[,"group"]
     uniqNumGroupDF <- unique(as.numeric(groupDF))
