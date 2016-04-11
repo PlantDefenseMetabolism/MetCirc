@@ -138,7 +138,7 @@ precursor ion.
 data("sd01_outputXCMS", package = "MetCirc")
 data("sd02_deconvoluted", package = "MetCirc")
 
-## optional:
+
 ## load binnedMSP
 data("binnedMSP", package = "MetCirc")
 ## load similarityMat
@@ -594,8 +594,8 @@ linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.95,
 linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
 
 ## set circlize paramters
-circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
-            track.margin = c(0.0, 0))
+circos.par(gap.degree = 0, cell.padding = c(0, 0, 0, 0), 
+            track.margin = c(0, 0))
 
 ## here set selectedFeatures arbitrarily
 selectedFeatures <- as.character(dfNameGroupRT[c(1,101,201,300),2])

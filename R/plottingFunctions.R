@@ -230,12 +230,13 @@ highlight <- function(dfNameGroup, ind, LinkMatrix) {
     lMatName2 <- LinkMatrix[,"name2"]
     
     for (h in 1:length(ind)) {
-        circlize::highlight.sector(sector.index = as.character(dfInd[h,"name"]), 
+        highlight.sector(sector.index = as.character(dfInd[h,"name"]), 
             col = alpha(palette()[as.numeric(as.factor(dfNameGroup[,"group"])[ind])[h] + 1], 0.4))
     }
     
     ## get indices in LinkMatrix of selected features 
-    LinkMatrixInd <- getLinkMatrixIndices(dfInd, LinkMatrix)
+    if (dim(LinkMatrix)[1] != 0) 
+        LinkMatrixInd <- getLinkMatrixIndices(dfInd, LinkMatrix)
 
     #######
     ## plot all links
@@ -251,7 +252,7 @@ highlight <- function(dfNameGroup, ind, LinkMatrix) {
     #######
     
     ## plot highlighted links
-    if (dim(LinkMatrixInd)[1] != 0) {
+    if (exists("LinkMatrixInd")) {
         for (j in LinkMatrixInd) {
             circos.link(lMatName1[j], 0.5,
                     lMatName2[j], 0.5,
