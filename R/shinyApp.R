@@ -97,7 +97,7 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
                 width = size, height = size),
                 #brush = brushOpts(id = "circosBrush",
                 #                  resetOnNew = TRUE)),
-            plotOutput("circosLegend"),
+            plotOutput("circosLegend", width = size / 3, height = size / 3),
             textOutput("hoverConnectedFeature"),
             ##textOutput("test"),
             verbatimTextOutput("clickFeature"))

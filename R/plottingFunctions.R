@@ -28,9 +28,10 @@
 #' @examples 
 #'  ## load binnedMSP
 #'  data("binnedMSP", package = "MetCirc")
-#'  data("similarityMat", package = "MetCirc")
+#'  ## use only a selection 
+#'  binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
+#'  similarityMat <- createSimilarityMatrix(binnedMSP)#'  
 #'  namesPrec <- rownames(binnedMSP)
-#' 
 #'  dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
 #'      name = namesPrec) 
 #'  
@@ -42,7 +43,7 @@
 #'  ## create a new similarity matrix with updated rownames
 #'  simM <- createOrderedSimMat(dfNameGroupRT, similarityMat)
 #'  ## create link matrix
-#'  linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.95,
+#'  linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.8,
 #'      dfNameGroup = dfNameGroupRT)
 #'  ## cut link matrix (here: only display links between groups)
 #'  linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
@@ -200,9 +201,10 @@ plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE),
 #' @examples 
 #'  ## load binnedMSP
 #'  data("binnedMSP", package = "MetCirc")
-#'  data("similarityMat", package = "MetCirc")
+#'  ## use only a selection 
+#'  binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
+#'  similarityMat <- createSimilarityMatrix(binnedMSP)#'  
 #'  namesPrec <- rownames(binnedMSP)
-#' 
 #'  dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
 #'      name = namesPrec) 
 #'  
@@ -222,12 +224,12 @@ plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE),
 #'  circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
 #'          track.margin = c(0.0, 0))
 #'  ## here set selectedFeatures arbitrarily
-#'  selectedFeatures <- as.character(dfNameGroupRT[c(1,101,201,301),2])
+#'  selectedFeatures <- as.character(dfNameGroupRT[c(1,21,41,61),2])
 #'  
 #'  ## actual plotting
 #'  plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, 
-#'      featureNames = TRUE, cexFeatureNames = 0.2, groupName = TRUE, 
-#'      links = FALSE, highlight = TRUE)
+#'      featureNames = TRUE, cexFeatureNames = 0.2, groupSector = FALSE, 
+#'      groupName = TRUE, links = FALSE, highlight = TRUE)
 #'  indSelected <- mapply(function(x) which(x == dfNameGroupRT$name), 
 #'          selectedFeatures)
 #'  ## highlight
@@ -362,14 +364,17 @@ truncateName <- function (dfNameGroup, roundDigits = 2, nameGroup = FALSE) {
 #'  0.8 and 1 will be used to find the feature with smallest distance.
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
+#' ## load binnedMSP
 #' data("binnedMSP", package = "MetCirc")
+#' ## use only a selection 
+#' binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
 #' namesPrec <- rownames(binnedMSP)
-#' dfNameGroup <- data.frame(
-#'     group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
+#' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
+#'      "[[", 1)), name = namesPrec)
 #' ## order according to compartment
 #' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
 #' plotCircos(dfNameGroup, NULL, initialize = TRUE, featureNames = FALSE, 
-#'          groupName = FALSE, links = FALSE, highlight = FALSE)
+#'      groupName = FALSE, groupSector = TRUE, links = FALSE, highlight = FALSE)
 #' x <- 1
 #' y <- 0
 #' degreeFeatures <- lapply(dfNameGroup$name, 
@@ -443,8 +448,11 @@ cart2Polar <- function(x, y) {
 #' name
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
+#' ## load binnedMSP
 #' data("binnedMSP", package = "MetCirc")
-#' data("similarityMat", package = "MetCirc")
+#' ## use only a selection 
+#' binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
+#' similarityMat <- createSimilarityMatrix(binnedMSP)
 #' namesPrec <- rownames(binnedMSP)
 #' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
 #'      name = namesPrec) 
