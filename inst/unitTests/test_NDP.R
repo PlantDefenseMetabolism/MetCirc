@@ -1,4 +1,10 @@
 ## START unit test NDP
+## create objects which will be used in unit tests
+data("binnedMSP", package = "MetCirc")
+## use only a selection 
+binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
+
+## get masses
 mass <- colnames(binnedMSP)
 
 test_NDP <- function() {

@@ -1,5 +1,11 @@
 ## create objects which will be used in unit tests
+data("binnedMSP", package = "MetCirc")
+## use only a selection 
+binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
+similarityMat <- createSimilarityMatrix(binnedMSP)  
 namesPrec <- rownames(binnedMSP)
+
+## create dfNameGroup
 dfNameGroup <- data.frame(
     group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
 ## order according to compartment
@@ -34,6 +40,13 @@ test_highlight <- function() {
     checkException(highlight(dfNameGroupRT, 1, linkMat))
 }
 ## END unit test for highlight
+
+## START unit test for circosLegend
+
+## END unit test for circosLegend
+test_circosLegend <- function() {
+    checkException(circosLegend(dfNameGroup[,1], TRUE))
+}
 
 ## START unit test for getLinkMatrixIndices
 circos.clear()

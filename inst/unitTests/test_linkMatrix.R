@@ -1,14 +1,20 @@
 ## START unit test createLink0Matrix
-## use only the first 100 to speed up computation
-namesPrec <- rownames(binnedMSP)[1:100]
+## create objects which will be used in unit tests
+data("binnedMSP", package = "MetCirc")
+## use only a selection 
+binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
+similarityMat <- createSimilarityMatrix(binnedMSP)  
+namesPrec <- rownames(binnedMSP)
+
+## create dfNameGroup
 dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
                                                 "[[", 1)), name = namesPrec)
 ## order according to compartment
 dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
 
-similarityMat <- createSimilarityMatrix(binnedMSP[1:100,])
+
 link0Matrix <- createLink0Matrix(
-    similarityMatrix = similarityMat[1:100, 1:100], dfNameGroup = dfNameGroup)
+    similarityMatrix = similarityMat, dfNameGroup = dfNameGroup)
 ndps <- as.numeric(link0Matrix[,"NDP"])
 
 test_createLink0Matrix <- function() {

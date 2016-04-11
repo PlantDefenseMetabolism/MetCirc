@@ -3,10 +3,18 @@
 ## 
 
 ## START unit test createOrderedSimMat
+## create objects which will be used in unit tests
+data("binnedMSP", package = "MetCirc")
+## use only a selection 
+binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
+similarityMat <- createSimilarityMatrix(binnedMSP)  
 namesPrec <- rownames(binnedMSP)
-dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
+
+## create dfNameGroup
+dfNameGroup <- data.frame(
+    group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
 dfNameGroupRT <- orderNames(dfNameGroup = dfNameGroup, 
-                            similarityMatrix = NULL, order = "retentionTime")
+    similarityMatrix = NULL, order = "retentionTime")
 dfNameGroupRTMock <- dfNameGroupRT
 colnames(dfNameGroupRTMock) <- c("group", "mockname")
 orderedSimMat <- createOrderedSimMat(dfNameGroupRT, similarityMat)
