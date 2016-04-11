@@ -329,6 +329,33 @@ getName <- function(object) {
     return(df[ind,2])
 }
 
+#' @name setName
+#' @aliases setName,character,MSP-method
+#' @title setName sets names in MSP objects
+#' @return MSP
+#' @description setName sets names in MSP objects. To set names pass a vector 
+#' with names to the argument \code{class}.
+#' @param object object of class MSP
+#' @param name character, a vector with new names
+#' @docType methods
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc") 
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = "_ ", splitInd = 2)
+#' setMetaboliteName(finalMSP, c(rep("unknown", 358), "name1", "name2")
+#' @export
+setGeneric("setName", function(object) standardGeneric("setName"))
+
+#' @describeIn setName sets names in MSP objects
+#' @export
+setName <- function(object, name) {
+    df <- object@msp
+    ind <- which(df[,1] == "NAME: ") 
+    if (length(name) != length(ind)) stop("number of items to replace does not 
+                                           match with replacement length")
+    df[ind, 2] <- name
+    return(new("MSP", msp = df))
+}
+
 #' @name getMetaboliteName
 #' @aliases getMetaboliteName,MSP-method
 #' @title getMetaboliteName returns names of metabolites in MSP object
