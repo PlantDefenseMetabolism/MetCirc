@@ -93,8 +93,6 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
                 )
             ),
             column(8, 
-        ##fluidRow(9, 
-        #mainPanel(
                 fluidRow(    
                     column(8,
                         plotOutput("circos",
@@ -109,13 +107,9 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
                     column(4,  
                         plotOutput("circosLegend"))
                 ), 
-                #fluidRow(
-                #    column(12,
                         textOutput("hoverConnectedFeature"),
                         verbatimTextOutput("clickFeature")
             )
-                #    )
-                #)
         )
     )
  
@@ -131,7 +125,7 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
         })
             
         
-        ## ordering of features, use specific predefined dfNameGroup object
+        ## ordering of features, use predefined dfNameGroup object
         dfNG <- reactive({
             if (input$order == "mz") dfNG <- dfNameGroupMZ
             if (input$order == "retentionTime") dfNG <- dfNameGroupRT
@@ -277,7 +271,6 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
                     }
                     
                 } else {
-                    ##PlotFilled2()
                     if (input$order == "mz") {
                         replayPlot(PlotFilledMZ)
                         plotCircos(dfNameGroupMZ, LinkMatrix_threshold(), 
@@ -304,8 +297,6 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
                     }
                 }
             }
-            ##}
-            
         })
         
         output$circosLegend <- renderPlot({
@@ -319,15 +310,15 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
         
         output$hoverConnectedFeature <- renderText({
             if (onCircle$is) {
+                ## hoveredFeat
+                hoveredFeat <- as.character(dfNG()[indHover$ind,"name"])
+                ## remove first column because it contains the precursor
+                ## connectedFeature:
+                connFeat <- unique(as.vector(LinkMatrix_threshold()[linkMatIndsHover(), c("name1", "name2")]))[-1]
                 if (length(linkMatIndsHover() > 0))
-                    c(as.character(dfNG()[indHover$ind,"name"]), 
-                        "connects to", 
-                        ## remove first column because it contains the precursor
-                        unique(as.vector(LinkMatrix_threshold()[linkMatIndsHover(), c("name1","name2")]))[-1]
-                      )
+                    c(hoveredFeat, "connects to", connFeat)
                 else 
-                    c(as.character(dfNG()[indHover$ind,"name"]), 
-                        "does not connect to any feature")
+                    c(hoveredFeat, "does not connect to any feature")
             }
         })
         
@@ -356,6 +347,97 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp, size = 400) {
 }
 ## to do
 ## second simmat for neutral losses
+
+##
+ind <- 10
+## put this to beginning of shiny app
+mzRTdf <- sapply(strsplit(as.character(dfNG[,"name"]), split="_"), function(x) x[2])
+mzRTMSP <- paste(getPrecursorMZ(msp), getRT(msp), sep="/")
+if(!all(mzRTdf == mzRTMSP)) stop("names not identical")
+## end
+
+## function print information about hovered features
+dfNameGroupOrder <- orderNames(dfNameGroup, order = "mz")
+printInfomationHover(dfNameGroup, dfNameGroupOrder, finalMSP, ind = 10, 
+                     linkMatIndsHover, 
+                      LinkMatrix_threshold, highlight = TRUE)
+printInformationHover <- function(dfNameGroup, dfNameGroupOrder, msp = NULL, 
+                            ind = indHover$ind, lMatIndHover = linkMatIndsHover,
+                            linkMatrixThreshold, highlight = c(TRUE, FALSE)) {
+    
+    dfNG <- dfNameGroup
+    dfNGo <- dfNameGroupOrder
+    lMatThr <- linkMatrixThreshold 
+    if (is.null(msp)) {
+        if (highlight) {
+            ## hoveredFeat
+            hoveredFeat <- as.character(dfNGo[ind,"name"])
+            ## remove first column because it contains the precursor
+            ## connectedFeature:
+            connFeat <- unique(as.vector(lMatThr[lMatIndHover, c("name1", "name2")]))[-1]
+            if (length(lMatIndHover > 0))
+                return(c(hoveredFeat, "connects to", connFeat))
+            else 
+                return(c(hoveredFeat, "does not connect to any feature"))
+        }
+        
+    } else {
+        if (highlight) {
+            ## find hovered feature
+            mzRTdfOrder <- sapply(strsplit(as.character(dfNGo[,"name"]), split="_"), function(x) x[3])
+            mzRTMSP <- paste(getPrecursorMZ(msp), getRT(msp), sep="/")
+            matchedHovMZRT <- match(mzRTdfOrder, mzRTMSP)
+            hoveredFeat <- msp[matchedHovMZRT[ind]]
+            hovFeat <- dfNGo[ind, "name"]
+            ## connected featuures
+            connect <- unique(as.vector(lMatThr[lMatIndHover, c("name1", "name2")]))[-1]
+            mzRTdfcon <- sapply(strsplit(connect, split="_"), function(x) x[3])
+            matchedConn <- match(mzRTdfcon, mzRTMSP)
+            connFeat <- finalMSP[matchedConn]
+            if (length(connFeat) == 0) {
+                return(paste0(hovFeat, " (", getName(hoveredFeat), ", ", 
+                    getMetaboliteName(hoveredFeat), ", ", 
+                    getMetaboliteClass(hoveredFeat), 
+                    "does not connect to anny feature"))
+            } else {
+                connChar <- character()
+                for (i in 1:length(connFeat)) {
+                    connFeatI <- connFeat[i]
+                    newFeat <- paste0(connect[i], " (", getName(connFeatI),
+                                      ", ", getMetaboliteName(connFeatI), ", ", 
+                                      getMetaboliteClass(connFeatI), ")", "\n")
+                    
+                    connChar <- c(connChar, newFeat)
+                }
+                return(paste0(hovFeat, " (", getName(hoveredFeat), ", ", 
+                              getMetaboliteName(hoveredFeat), ", ",
+                              getMetaboliteClass(hoveredFeat), ") connects to ", "\n", 
+                              connChar))
+            }
+        }
+ 
+    }
+}
+## test before starting application if features in dfNameGroup and msp are identical
+
+## find features
+
+
+## connectedFeat
+
+
+
+
+
+
+
+mzRTMSP[12]
+mzRTdfMZ[1]
+getMSP(finalMSP[1])
+getRT(finalMSP)[1] 
+
+rownames(binnedMSP)[1]
+## 
 
 #' @name createOrderedSimMat
 #' @title Update a similarity matrix according to order of name column in 
