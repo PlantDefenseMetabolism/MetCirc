@@ -192,27 +192,16 @@ MS/MS data are merged across floral organs in one unique data file
 organ-localisation of each MS/MS spectrum is stored in  
 \Robject{compartmentTissue}. \newline 
 
-Often, the data is not in the right format to initiate the analysis - so it is 
-here - thus we need to bring \Robject{tissue} into the right format to be used as 
-input by \Rfunction{convert2MSP}.
-\textit{Note bene}, \Rfunction{convert2MSP} expects right column names, too, 
-which will be checked internally.
-
+Often, the data is not in the right format to initiate the analysis - please
+make sure that the fourth column contains information about the precursor ion 
+and that the data contains the column names \code{mz}, \code{intensity} and
+\code{rt}. The order of these columns (except the fourth column) is not 
+important. \Rfunction{convert2MSP} will check internally if the data complies 
+these requirements.
 <<eval=TRUE>>=
-## load idMSMStissueproject
+## load idMSMStissueproject and display the first six rows
 data("idMSMStissueproject", package = "MetCirc")
-
-## change tissue to format that it is compatible with writeMSP 
-## sd02_deconvoluted
-## 1st column: mz, 2nd column: rt, 3rd column: intensity, 
-## 4th column: pcgroup_precursorMZ
-newtissue <- tissue
-newtissue[,2] <- tissue[,3]; colnames(newtissue)[2] <- colnames(tissue)[3]
-newtissue[,3] <- tissue[,2]; colnames(newtissue)[3] <- "intensity"
-newtissue[,4] <- tissue[,7]; colnames(newtissue)[4] <- colnames(tissue)[7]
-newtissue <- newtissue[,1:4]
-tissue <- newtissue
-
+head(tissue)
 @
 
 We would like to restrict the proof-of-funcction analysis to four tissues 
@@ -602,7 +591,8 @@ selectedFeatures <- as.character(dfNameGroupRT[c(1,101,201,300),2])
 
 ## actual plotting
 plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, featureNames = TRUE, 
-    cexFeatureNames = 0.2, groupName = TRUE, links = FALSE, highlight = TRUE)
+    cexFeatureNames = 0.2, groupSector = TRUE, groupName = FALSE, 
+    links = FALSE, highlight = TRUE)
 indSelected <- mapply(function(x) which(x == dfNameGroupRT$name), 
             selectedFeatures)
 highlight(dfNameGroup = dfNameGroupRT, ind = indSelected, LinkMatrix = 
@@ -610,7 +600,8 @@ highlight(dfNameGroup = dfNameGroupRT, ind = indSelected, LinkMatrix =
 
 ## plot without highlighting
 plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, featureNames = TRUE, 
-    cexFeatureNames = 0.2, groupName = TRUE, links = TRUE, highlight = FALSE)
+    cexFeatureNames = 0.2, groupSector = TRUE, groupName = FALSE, links = TRUE, 
+    highlight = FALSE)
 @
 
 \begin{figure}[h!]

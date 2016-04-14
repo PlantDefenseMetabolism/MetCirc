@@ -1,4 +1,4 @@
-#' @name idMSMSMtoMSP-data
+#' @name idMSMStoMSP-data
 #' @aliases finalMSP
 #' @title Example data for MetCirc
 #' @description This data set contains the object \code{finalMSP}.
