@@ -43,36 +43,36 @@ Circular plot to visualise similarity
 Internal use for shiny app
 }
 \examples{
- ## load binnedMSP
- data("binnedMSP", package = "MetCirc")
- ## use only a selection 
- binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
- similarityMat <- createSimilarityMatrix(binnedMSP)#'  
- namesPrec <- rownames(binnedMSP)
- dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
+## load binnedMSP
+data("binnedMSP", package = "MetCirc")
+## use only a selection 
+binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
+similarityMat <- createSimilarityMatrix(binnedMSP)#'  
+namesPrec <- rownames(binnedMSP)
+dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
      name = namesPrec) 
  
- ## order according to compartment
- dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
- dfNameGroupRT <- orderNames(dfNameGroup = dfNameGroup, 
+## order according to compartment
+dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
+dfNameGroupRT <- orderNames(dfNameGroup = dfNameGroup, 
      similarityMatrix = NULL, order = "retentionTime")
      
- ## create a new similarity matrix with updated rownames
- simM <- createOrderedSimMat(dfNameGroupRT, similarityMat)
- ## create link matrix
- linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.8,
+## create a new similarity matrix with updated rownames
+simM <- createOrderedSimMat(dfNameGroupRT, similarityMat)
+## create link matrix
+linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.8,
      dfNameGroup = dfNameGroupRT)
- ## cut link matrix (here: only display links between groups)
- linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
- ## set circlize paramters
- circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
+## cut link matrix (here: only display links between groups)
+linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
+## set circlize paramters
+circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
          track.margin = c(0.0, 0))
- ## here set selectedFeatures arbitrarily
- selectedFeatures <- as.character(dfNameGroupRT[c(1,101,201,301),2])
+## here set selectedFeatures arbitrarily
+selectedFeatures <- as.character(dfNameGroupRT[c(1,21,41,61),2])
  
- ## actual plotting
- plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, 
-     featureNames = TRUE, cexFeatureNames = 0.2, groupSector = TRUE, 
+## actual plotting
+plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, 
+    featureNames = TRUE, cexFeatureNames = 0.2, groupSector = TRUE, 
      groupName = FALSE, links = FALSE, highlight = FALSE)
 }
 \author{

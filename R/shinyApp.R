@@ -381,12 +381,34 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
 #' @param linkMatrixThreshold matrix that contains information of linked 
 #'  features of a threshold or greater
 #' @param highlight logical only return character when set to TRUE
+#' @param similarityMatrix matrix that is used to get information on the degree 
+#'  of similarity, similarityMat is an ordered version of a similarity matrix
 #' @details printInformationHover is for internal use. 
 #' @return character that is in HTML format
+#' @examples
+#' data("idMSMStoMSP", package = "MetCirc")
+#' data("binnedMSP", package = "MetCirc")
+#' binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
+#' similarityMat <- createSimilarityMatrix(binnedMSP)
+#' namesPrec <- rownames(binnedMSP)
+#' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"),
+#'                                                 "[[", 1)), name = namesPrec)
+#' ## order according to compartment
+#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),]
+#' dfNameGroupOrder <- orderNames(dfNameGroup, order = "mz")
+#' simMatO <- createOrderedSimMat(dfNameGroupOrder, similarityMat)
+#' linkMat_thr <- createLinkMatrix(simMatO, dfNameGroupOrder, 0.8) 
+#' ind <- 2
+#' linkMatIndsHover <- getLinkMatrixIndices(dfNameGroupOrder[ind,], linkMat_thr)
+#' printInformationHover(dfNameGroup = dfNameGroup, 
+#'  dfNameGroupOrder = dfNameGroupOrder, msp = NULL, ind = ind, 
+#'  lMatIndHover = linkMatIndsHover, linkMatrixThreshold = linkMat_thr, 
+#'  highlight = TRUE, similarityMatrix = simMatO)
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 printInformationHover <- function(dfNameGroup, dfNameGroupOrder, msp = NULL, 
                             ind, lMatIndHover = linkMatIndsHover,
-                            linkMatrixThreshold, highlight = c(TRUE, FALSE)) {
+                            linkMatrixThreshold, highlight = c(TRUE, FALSE),
+                            similarityMatrix) {
     
     if (!is.null(highlight)) {
         dfNG <- dfNameGroup
@@ -401,9 +423,13 @@ printInformationHover <- function(dfNameGroup, dfNameGroupOrder, msp = NULL,
                 connFeat <- unique(as.vector(lMatThr[lMatIndHover, c("name1", "name2")]))[-1]
                 if (length(lMatIndHover > 0)) {
                     connFeat <- paste(connFeat, collapse = " <br/>")
-                    return(c(hoveredFeat, "connects to", "<br/>", connFeat))
+                    return(
+                        paste(c(hoveredFeat, "connects to", "<br/>", connFeat), 
+                            collapse = " "))
                 } else 
-                    return(c(hoveredFeat, "does not connect to any feature"))
+                    return(
+                        paste(c(hoveredFeat, "does not connect to any feature"), 
+                        collapse = " "))
             }
         
         } else {
@@ -418,7 +444,7 @@ printInformationHover <- function(dfNameGroup, dfNameGroupOrder, msp = NULL,
                 connect <- unique(as.vector(lMatThr[lMatIndHover, c("name1", "name2")]))[-1]
                 mzRTdfcon <- sapply(strsplit(connect, split="_"), function(x) x[3])
                 
-            
+                
                 if (length(connect) == 0) {
                     return(paste0(hovFeat, " (", getName(hoveredFeat), ", ", 
                         getMetaboliteName(hoveredFeat), ", ", 
@@ -428,8 +454,10 @@ printInformationHover <- function(dfNameGroup, dfNameGroupOrder, msp = NULL,
                     matchedConn <- match(mzRTdfcon, mzRTMSP)
                     connFeat <- msp[matchedConn]
                     connChar <- character()
+                    print(degreeSimilarity <- similarityMatrix[hovFeat, ])
                     for (i in 1:length(connFeat)) {
                         connFeatI <- connFeat[i]
+                       ## degSimI <- degreeSimilarity[connFeatI]
                         newFeat <- paste0(connect[i], " (", getName(connFeatI),
                                       ", ", getMetaboliteName(connFeatI), ", ", 
                                       getMetaboliteClass(connFeatI), ")",  
