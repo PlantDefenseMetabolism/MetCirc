@@ -5,7 +5,8 @@
 \title{Display information on connected features of hovered features}
 \usage{
 printInformationHover(dfNameGroup, dfNameGroupOrder, msp = NULL, ind, 
- lMatIndHover = linkMatIndsHover, linkMatrixThreshold, highlight = TRUE)
+ lMatIndHover, linkMatrixThreshold, highlight = c(TRUE, FALSE), 
+ similarityMatrix)
 }
 \arguments{
 \item{dfNameGroup}{data.frame which contains columns "group" and "name"}
@@ -19,6 +20,8 @@ the hovered feature}
 
 \item{ind}{numeric}
 
+\item{lMatIndHover}{numeric indices of connected features}
+
 \item{linkMatrixThreshold}{matrix that contains information of linked 
 features of a threshold or greater}
 
@@ -26,8 +29,6 @@ features of a threshold or greater}
 
 \item{similarityMatrix}{matrix that is used to get information on the degree 
 of similarity, similarityMat is an ordered version of a similarity matrix}
-
-\item{lMatIndsHover}{numeric indices of connected features}
 }
 \value{
 character that is in HTML format
@@ -53,7 +54,7 @@ simMatO <- createOrderedSimMat(dfNameGroupOrder, similarityMat)
 linkMat_thr <- createLinkMatrix(simMatO, dfNameGroupOrder, 0.8) 
 ind <- 2
 linkMatIndsHover <- getLinkMatrixIndices(dfNameGroupOrder[ind,], linkMat_thr)
-printInformationHover(dfNameGroup = dfNameGroup, 
+MetCirc:::printInformationHover(dfNameGroup = dfNameGroup, 
  dfNameGroupOrder = dfNameGroupOrder, msp = NULL, ind = ind, 
  lMatIndHover = linkMatIndsHover, linkMatrixThreshold = linkMat_thr, 
  highlight = TRUE, similarityMatrix = simMatO)
