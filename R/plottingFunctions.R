@@ -19,46 +19,46 @@
 #'      colours?
 #' @param groupName logical, should group names (e.g. compartment names or 
 #'      individual names) be displayed?
-#' @param links logical, should links be plotted?
+#' @param links logical, should links be plotted? 
 #' @param highlight logical, are we in highlighting mode?
 #' @details Internal use for shiny app
 #' @return The function will initialize a circlize plot and/or will plot 
 #'  features of a circlize plot. 
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
-#'  ## load binnedMSP
-#'  data("binnedMSP", package = "MetCirc")
-#'  ## use only a selection 
-#'  binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
-#'  similarityMat <- createSimilarityMatrix(binnedMSP)#'  
-#'  namesPrec <- rownames(binnedMSP)
-#'  dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
+#' ## load binnedMSP
+#' data("binnedMSP", package = "MetCirc")
+#' ## use only a selection 
+#' binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
+#' similarityMat <- createSimilarityMatrix(binnedMSP)#'  
+#' namesPrec <- rownames(binnedMSP)
+#' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
 #'      name = namesPrec) 
 #'  
-#'  ## order according to compartment
-#'  dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
-#'  dfNameGroupRT <- orderNames(dfNameGroup = dfNameGroup, 
+#' ## order according to compartment
+#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
+#' dfNameGroupRT <- orderNames(dfNameGroup = dfNameGroup, 
 #'      similarityMatrix = NULL, order = "retentionTime")
 #'      
-#'  ## create a new similarity matrix with updated rownames
-#'  simM <- createOrderedSimMat(dfNameGroupRT, similarityMat)
-#'  ## create link matrix
-#'  linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.8,
+#' ## create a new similarity matrix with updated rownames
+#' simM <- createOrderedSimMat(dfNameGroupRT, similarityMat)
+#' ## create link matrix
+#' linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.8,
 #'      dfNameGroup = dfNameGroupRT)
-#'  ## cut link matrix (here: only display links between groups)
-#'  linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
-#'  ## set circlize paramters
-#'  circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
+#' ## cut link matrix (here: only display links between groups)
+#' linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
+#' ## set circlize paramters
+#' circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
 #'          track.margin = c(0.0, 0))
-#'  ## here set selectedFeatures arbitrarily
-#'  selectedFeatures <- as.character(dfNameGroupRT[c(1,101,201,301),2])
+#' ## here set selectedFeatures arbitrarily
+#' selectedFeatures <- as.character(dfNameGroupRT[c(1,21,41,61),2])
 #'  
-#'  ## actual plotting
-#'  plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, 
-#'      featureNames = TRUE, cexFeatureNames = 0.2, groupSector = TRUE, 
+#' ## actual plotting
+#' plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, 
+#'     featureNames = TRUE, cexFeatureNames = 0.2, groupSector = TRUE, 
 #'      groupName = FALSE, links = FALSE, highlight = FALSE)
 #' @export
-plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE), 
+plotCircos <- function(dfNameGroup, linkMat, initialize = c(TRUE, FALSE), 
         featureNames = c(TRUE, FALSE), cexFeatureNames = 0.2, 
         groupSector = c(TRUE, FALSE), groupName = c(TRUE, FALSE), 
         links = c(TRUE, FALSE), highlight = c(TRUE, FALSE)) {
@@ -73,7 +73,6 @@ plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE),
     if (!is.logical(links)) stop("links is not logical")
     if (!is.logical(highlight)) stop("highlight is not logical")
 
-    
     dfDim <- dim(dfNameGroup)
     dfName <- as.character(dfNameGroup$name)
     dfGroup <- as.character(dfNameGroup$group)
@@ -108,7 +107,6 @@ plotCircos <- function (dfNameGroup, linkMat, initialize = c(TRUE, FALSE),
                                        col = alpha(i + 1, transparency))
         }
     }
-    
     
     ## group name
     if (groupName) {
