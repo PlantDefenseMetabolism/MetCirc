@@ -26,8 +26,9 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
         if (class(msp) != "MSP") stop("msp is not of class MSP")
         ## test if mz/rt constructer of msp and names of dfNameGroup are 
         ## identical
+        dfNameGroupName <- as.character(dfNameGroup[, "name"])
         mzRTdf <- sapply(
-            strsplit(as.character(dfNameGroup[,"name"]), split="_"), 
+            strsplit(dfNameGroupName, split="_"), 
             function(x) x[2])
         mzRTMSP <- paste(getPrecursorMZ(msp), getRT(msp), sep="/")
         if(!all(mzRTdf == mzRTMSP)) 
@@ -45,6 +46,11 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
             groupSector = TRUE, groupName = FALSE, links = FALSE, 
             highlight = FALSE)
     PlotFilledRT <- recordPlot()
+    ## get degree of features
+    dfNameGroupRTName <- as.character(dfNameGroupRT[, "name"])
+    dfNameGroupRTGroup <- as.character(dfNameGroupRT[, "group"])
+    degreeFeaturesRT <- lapply(dfNameGroupRTName, 
+        function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
     plot.new()
      
     plotCircos(dfNameGroupRT, NULL, initialize=TRUE, featureNames = TRUE, 
@@ -60,6 +66,11 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
                groupSector = TRUE, groupName = FALSE, links = FALSE, 
                highlight = FALSE)
     PlotFilledMZ <- recordPlot()
+    ## get degree of features
+    dfNameGroupMZName <- as.character(dfNameGroupMZ[, "name"])
+    dfNameGroupMZGroup <- as.character(dfNameGroupMZ[, "group"])
+    degreeFeaturesMZ <- lapply(dfNameGroupMZName, 
+        function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
     plot.new()
     
     plotCircos(dfNameGroupMZ, NULL, initialize=TRUE, featureNames = TRUE, 
@@ -76,6 +87,11 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
                groupSector = TRUE, groupName = FALSE, links = FALSE, 
                highlight = FALSE)
     PlotFilledCluster <- recordPlot()
+    ## get degree of features
+    dfNameGroupClusterName <- as.character(dfNameGroupCluster[, "name"])
+    dfNameGroupClusterGroup <- as.character(dfNameGroupCluster[, "group"])
+    degreeFeaturesClust <- lapply(dfNameGroupClusterName,
+        function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
     plot.new()
     
     plotCircos(dfNameGroupCluster, NULL, initialize=TRUE, featureNames = TRUE, 
@@ -83,7 +99,7 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
                highlight = TRUE)
     PlotHighlightCluster <- recordPlot()
     plot.new()
-    
+
     
     ui <- fluidPage(
        ## fluidRow(3, 
@@ -109,7 +125,7 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
                         plotOutput("circos",
                             click = "circosClick",
                             #dblclick = "circosDblClick",
-                            hover = hoverOpts(id = "circosHover", delay = 150, 
+                            hover = hoverOpts(id = "circosHover", delay = 200, 
                                 clip = TRUE, nullOutside = FALSE),
                             width = size, height = size)
                             ##brush = brushOpts(id = "circosBrush",
@@ -145,11 +161,13 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
         })
 
         ## get degree of features
-        features <- reactive(as.character( dfNG()[,"name"] ))
-        degreeFeatures <- reactive(lapply(features(), 
-            function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")])))
+        degreeFeatures <- reactive({
+            if (input$order == "mz") degFeatures <- degreeFeaturesMZ
+            if (input$order == "retentionTime") degFeatures <- degreeFeaturesRT
+            if (input$order == "clustering") degFeatures <- degreeFeaturesClust
+            degFeatures
+        })
         
-        ########################
         ## calculateLink0Matrix
         link0Matrix <- reactive(createLink0Matrix(simMat(), dfNG()))
         
@@ -223,22 +241,73 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
         observe({
             if (!is.null(input$circosClick$x)) {
                 
-                indClick$new <- minFragCart2Polar(input$circosClick$x, 
+                minInd <- minFragCart2Polar(input$circosClick$x, 
                                             input$circosClick$y, 
                                             degreeFeatures()) 
-                if (isolate(indClick$new %in% indClick$ind))
-                    indClick$ind <- isolate(indClick$ind[-which(indClick$new == indClick$ind)])
-                else 
-                    indClick$ind <- isolate(c(indClick$ind, indClick$new))
+                dfNGselect <- dfNG()[minInd,]
+                newNG <- paste(dfNGselect[,"group"], 
+                    sapply(strsplit(dfNGselect[,"name"], split="_"), function(x) x[3]),
+                    sep = "_")
+                indClick$new <- newNG ## write truncated name to indClick$new
             } else indClick$new <- NULL
         })
         
         observe({
             input$resetClickIndices
-            isolate(indClick$ind <- NULL)
+            isolate(indClickMZ$ind <- NULL)
+            isolate(indClickRT$ind <- NULL)
+            isolate(indClickCluster$ind <- NULL)
             isolate(indClick$new <- NULL)
         })
+        
+        ## write clicked (truncated) names to indClickMZ, indClickRT, 
+        ## indClickCluster
+        indClickMZ <- reactiveValues(ind = NULL)
+        observe({
+            if (!is.null(input$circosClick$x)) {
 
+                newNGMZ <- paste(dfNameGroupMZGroup, 
+                    sapply(strsplit(dfNameGroupMZName, split="_"), function(x) x[3]),
+                    sep = "_")
+                newIndMZ <- match(indClick$new, newNGMZ)
+             
+                if (isolate(newIndMZ %in% indClickMZ$ind)) {
+                    indClickMZ$ind <- isolate(indClickMZ$ind[-which(newIndMZ == indClickMZ$ind)]) 
+                } else {indClickMZ$ind <- isolate(c(indClickMZ$ind, newIndMZ))}
+             }
+         })
+        
+        indClickRT <- reactiveValues(ind = NULL)
+        observe({
+            if (!is.null(input$circosClick$x)) {
+  
+                newNGRT <- paste(dfNameGroupRTGroup, 
+                    sapply(strsplit(dfNameGroupRTName, split="_"), function(x) x[3]),
+                    sep = "_")
+                newIndRT <- match(indClick$new, newNGRT)
+                
+                if (isolate(newIndRT %in% indClickRT$ind)) {
+                    indClickRT$ind <- isolate(indClickRT$ind[-which(newIndRT == indClickRT$ind)])
+                } else {indClickRT$ind <- isolate(c(indClickRT$ind, newIndRT))}
+                
+            }
+        })
+        
+        indClickCluster <- reactiveValues(ind = NULL)
+        observe({
+            if (!is.null(input$circosClick$x)) {
+                newNGCl <- paste(dfNameGroupClusterGroup, 
+                                 sapply(strsplit(dfNameGroupClusterName, split="_"), function(x) x[3]),
+                                 sep = "_")
+                newIndCl <- match(indClick$new, newNGCl)
+                
+                if (isolate(newIndCl %in% indClickCluster$ind)) {
+                    indClickCluster$ind <- isolate(indClickCluster$ind[-which(newIndCl == indClickCluster$ind)])
+                } else {indClickCluster$ind <- isolate(c(indClickCluster$ind, newIndCl))}
+                
+            }
+        })
+        
         ## plotting
         initializePlot <- reactive(plotCircos(dfNG(), NULL, initialize = TRUE, 
                 featureNames = FALSE, groupName = FALSE, groupSector = FALSE,
@@ -249,36 +318,36 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
             if (onCircle$is) {
                 if (input$order == "mz") {
                     replayPlot(PlotHighlightMZ)
-                    highlight(dfNameGroupMZ, c(indHover$ind, indClick$ind), 
+                    highlight(dfNameGroupMZ, c(indHover$ind, indClickMZ$ind), 
                               LinkMatrix_threshold())  
                 }
                         
                 if (input$order == "retentionTime") {
                     replayPlot(PlotHighlightRT)
-                    highlight(dfNameGroupRT, c(indHover$ind, indClick$ind), 
+                    highlight(dfNameGroupRT, c(indHover$ind, indClickRT$ind), 
                               LinkMatrix_threshold())    
                 }
                     
                 if (input$order == "clustering") {
                     replayPlot(PlotHighlightCluster)
-                    highlight(dfNameGroupCluster, c(indHover$ind, indClick$ind), 
+                    highlight(dfNameGroupCluster, c(indHover$ind, indClickCluster$ind), 
                               LinkMatrix_threshold())  
                 }
             } else { ## if not onCircle$is
-                if (length(indClick$ind) > 0) {
+                if (length(indClickMZ$ind) > 0) {
                     if (input$order == "mz") {
                         replayPlot(PlotHighlightMZ)
-                        highlight(dfNameGroupMZ, c(indClick$ind), LinkMatrix_threshold()) 
+                        highlight(dfNameGroupMZ, c(indClickMZ$ind), LinkMatrix_threshold()) 
                     }
                     
                     if (input$order == "retentionTime") {
                         replayPlot(PlotHighlightRT)
-                        highlight(dfNameGroupRT, c(indClick$ind), LinkMatrix_threshold()) 
+                        highlight(dfNameGroupRT, c(indClickRT$ind), LinkMatrix_threshold()) 
                     }
                     
                     if (input$order == "clustering") {
                         replayPlot(PlotHighlightCluster)
-                        highlight(dfNameGroupCluster, c(indClick$ind), LinkMatrix_threshold()) 
+                        highlight(dfNameGroupCluster, c(indClickCluster$ind), LinkMatrix_threshold())  
                     }
                     
                 } else {
@@ -311,7 +380,7 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
         })
         
         output$circosLegend <- renderPlot({
-            circosLegend(dfNameGroup, highlight = onCircle$is)
+            circosLegend(dfNameGroup, highlight = TRUE)
         })
         
         ## show when hovering the feature which connects to it
@@ -324,26 +393,16 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
                 HTML(printInformationHover(dfNameGroup, dfNG(), msp = msp, 
                         ind = indHover$ind, lMatIndHover = linkMatIndsHover(), 
                         linkMatrixThreshold = LinkMatrix_threshold(), 
-                        highlight = onCircle$is))  
+                        highlight = onCircle$is, similarityMatrix = simMat()))  
             }
-            
-#             if (onCircle$is) {
-#                 ## hoveredFeat
-#                 hoveredFeat <- as.character(dfNG()[indHover$ind,"name"])
-#                 ## remove first column because it contains the precursor
-#                 ## connectedFeature:
-#                 connFeat <- unique(as.vector(LinkMatrix_threshold()[linkMatIndsHover(), c("name1", "name2")]))[-1]
-#                 if (length(linkMatIndsHover() > 0))
-#                     c(hoveredFeat, "connects to", connFeat)
-#                 else 
-#                     c(hoveredFeat, "does not connect to any feature")
-#             }
         })
         
         output$clickFeature <- renderText({
-            if (length(indClick$ind) > 0)
+            if (length(indClickMZ$ind) > 0) 
                 c("selected features: ", 
-                    as.character(dfNG()[indClick$ind, "name"]))
+                    paste(dfNameGroupMZGroup[indClickMZ$ind], 
+                        sapply(strsplit(dfNameGroupMZName[indClickMZ$ind], split="_"), function(x) x[3]),
+                        sep="_"))
             else "no features selected"
         })
         
@@ -353,7 +412,10 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
                 return()
             else {
                 circos.clear()
-                stopApp(as.character(dfNG()[indClick$ind, "name"]))
+                stopApp(as.character(paste(
+                    dfNameGroupMZGroup[indClickMZ$ind], 
+                    sapply(strsplit(dfNameGroupMZName[indClickMZ$ind], split="_"), function(x) x[3]),
+                    sep="_")))
             }
         })
         
@@ -440,7 +502,7 @@ printInformationHover <- function(dfNameGroup, dfNameGroupOrder, msp = NULL,
                 matchedHovMZRT <- match(mzRTdfOrder, mzRTMSP)
                 hoveredFeat <- msp[matchedHovMZRT[ind]]
                 hovFeat <- dfNGo[ind, "name"]
-                ## connected featuures
+                ## connected features
                 connect <- unique(as.vector(lMatThr[lMatIndHover, c("name1", "name2")]))[-1]
                 mzRTdfcon <- sapply(strsplit(connect, split="_"), function(x) x[3])
                 
@@ -454,13 +516,17 @@ printInformationHover <- function(dfNameGroup, dfNameGroupOrder, msp = NULL,
                     matchedConn <- match(mzRTdfcon, mzRTMSP)
                     connFeat <- msp[matchedConn]
                     connChar <- character()
-                    print(degreeSimilarity <- similarityMatrix[hovFeat, ])
+                    degreeSimilarity <- similarityMatrix[hovFeat, ]
                     for (i in 1:length(connFeat)) {
                         connFeatI <- connFeat[i]
+                        connectI <- connect[i]
+                        degreeSimilarityI <- round(degreeSimilarity[connectI],3)
                        ## degSimI <- degreeSimilarity[connFeatI]
-                        newFeat <- paste0(connect[i], " (", getName(connFeatI),
-                                      ", ", getMetaboliteName(connFeatI), ", ", 
-                                      getMetaboliteClass(connFeatI), ")",  
+                        newFeat <- paste0(connectI, " (", 
+                                    degreeSimilarityI, ", ", 
+                                    getName(connFeatI),
+                                    ", ", getMetaboliteName(connFeatI), ", ", 
+                                    getMetaboliteClass(connFeatI), ")",  
                                       "<br/>")
                     
                         connChar <- c(connChar, newFeat)
@@ -517,10 +583,11 @@ createOrderedSimMat <- function(dfNameGroup, similarityMatrix) {
         stop("dfNameGroup does not have column 'name'")
     
     ## order according to group
-    dfNameGroup <- dfNameGroup[order(dfNameGroup[,"name"]),] 
-    
-    dfNameGroupName <- dfNameGroup[,"name"]
+    dfNameGroupName <- dfNameGroup[, "name"]
     dfNameGroupName <- as.character(dfNameGroupName)
+    dfNameGroup <- dfNameGroup[order(dfNameGroupName),] 
+    
+    
     ## crop name
     dfNameSplit <- strsplit(dfNameGroupName, "_") 
     dfNameSplit <- lapply(dfNameSplit, function(x) x[c(1, 3)])
