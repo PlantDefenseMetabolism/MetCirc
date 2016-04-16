@@ -1,0 +1,10 @@
+CHANGES IN VERSION 0.99.0
+-------------------------
+ o Version set to 0.99.0
+ 
+
+CHANGES IN VERSION 0.98.0
+-------------------------
+ o add information of hovered objects in shinyCircos [2016-04-16 Tue]
+ o allow for subsetting of MSP objects [2016-04-12 Tue]
+ o add unit tests for exported functions [2016-04-12 Tue]
