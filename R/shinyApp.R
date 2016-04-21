@@ -390,7 +390,7 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
         
         output$hoverConnectedFeature <- renderUI({
             if (!is.null(onCircle$is)) {
-                HTML(printInformationHover(dfNameGroup, dfNG(), msp = msp, 
+                HTML(printInformationHover(dfNG(), msp = msp, 
                         ind = indHover$ind, lMatIndHover = linkMatIndsHover(), 
                         linkMatrixThreshold = LinkMatrix_threshold(), 
                         highlight = onCircle$is, similarityMatrix = simMat()))  
@@ -430,10 +430,9 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
 #' @name printInformationHover
 #' @title Display information on connected features of hovered features
 #' @description Displays information on connected features of hovered features.
-#' @usage printInformationHover(dfNameGroup, dfNameGroupOrder, msp = NULL, ind, 
+#' @usage printInformationHover(dfNameGroupOrder, msp = NULL, ind, 
 #'  lMatIndHover, linkMatrixThreshold, highlight = c(TRUE, FALSE), 
 #'  similarityMatrix)
-#' @param dfNameGroup data.frame which contains columns "group" and "name"
 #' @param dfNameGroupOrder data.frame, an ordered data.frame derived from 
 #'  dfNameGroup which contains columns "group" and "name", the column "name" 
 #'  contains entries in the form of group_number_mz/rt
@@ -463,17 +462,16 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
 #' linkMat_thr <- createLinkMatrix(simMatO, dfNameGroupOrder, 0.8) 
 #' ind <- 2
 #' linkMatIndsHover <- getLinkMatrixIndices(dfNameGroupOrder[ind,], linkMat_thr)
-#' MetCirc:::printInformationHover(dfNameGroup = dfNameGroup, 
-#'  dfNameGroupOrder = dfNameGroupOrder, msp = NULL, ind = ind, 
-#'  lMatIndHover = linkMatIndsHover, linkMatrixThreshold = linkMat_thr, 
-#'  highlight = TRUE, similarityMatrix = simMatO)
+#' MetCirc:::printInformationHover(dfNameGroupOrder = dfNameGroupOrder, 
+#'  msp = NULL, ind = ind, lMatIndHover = linkMatIndsHover, 
+#'  linkMatrixThreshold = linkMat_thr, highlight = TRUE, 
+#'  similarityMatrix = simMatO)
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-printInformationHover <- function(dfNameGroup, dfNameGroupOrder, msp = NULL, 
+printInformationHover <- function(dfNameGroupOrder, msp = NULL, 
                             ind, lMatIndHover, linkMatrixThreshold, 
                             highlight = c(TRUE, FALSE), similarityMatrix) {
     
     if (!is.null(highlight)) {
-        dfNG <- dfNameGroup
         dfNGo <- dfNameGroupOrder
         lMatThr <- linkMatrixThreshold 
         if (is.null(msp)) {

@@ -2,7 +2,6 @@
 ## no unit test for shinyCircos since it is a shiny application
 ## 
 
-## START unit test createOrderedSimMat
 ## create objects which will be used in unit tests
 data("binnedMSP", package = "MetCirc")
 ## use only a selection 
@@ -18,7 +17,22 @@ dfNameGroupRT <- orderNames(dfNameGroup = dfNameGroup,
 dfNameGroupRTMock <- dfNameGroupRT
 colnames(dfNameGroupRTMock) <- c("group", "mockname")
 orderedSimMat <- createOrderedSimMat(dfNameGroupRT, similarityMat)
+linkMat_thr <- createLinkMatrix(orderedSimMat, dfNameGroupRT, 0.8) 
+ind <- 2
+linkMatIndsHover <- getLinkMatrixIndices(dfNameGroupRT[ind,], linkMat_thr)
 
+## START unit test printInformationHover 
+test_printInformationHover <- function() {
+    checkEquals(MetCirc:::printInformationHover( 
+                    dfNameGroupOrder = dfNameGroupRT, msp = NULL, ind = ind, 
+                    lMatIndHover = linkMatIndsHover, 
+                    linkMatrixThreshold = linkMat_thr, 
+                    highlight = TRUE, similarityMatrix = orderedSimMat),
+    "ANT_0002_1044.4755/1019.00998350877 connects to <br/> LIM_0002_1044.4755/1019.00998350877")
+}
+## END unit test printInformationHover
+
+## START unit test createOrderedSimMat
 test_createOrderedSimMat <- function() {
     checkException(createOrderedSimMat(dfNameGroupRTMock, similarityMat))
     checkException(createOrderedSimMat(dfNameGroupRT))
@@ -31,3 +45,5 @@ test_createOrderedSimMat <- function() {
     checkTrue(is.numeric(orderedSimMat))
 }
 ## END unit test createOrderedSimMat
+
+
