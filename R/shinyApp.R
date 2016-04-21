@@ -103,7 +103,7 @@ shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
     
     ui <- fluidPage(
        ## fluidRow(3, 
-        fluidRow( ## was: sidebarPanel(
+        fluidRow( 
             column(4, 
                 wellPanel(
                     radioButtons("choiceLinks", "choose type of links", 
@@ -590,7 +590,7 @@ createOrderedSimMat <- function(dfNameGroup, similarityMatrix) {
     
     ## crop name
     dfNameSplit <- strsplit(dfNameGroupName, "_") 
-    dfNameSplit <- lapply(dfNameSplit, function(x) x[c(1, 3)])
+    dfNameSplit <- lapply(dfNameSplit, function(x) x[c(1, 3)]) 
     dfName <- lapply(dfNameSplit, 
                      function(x) paste(x[1], x[2], sep="_"))
     dfName <- unlist(dfName)
