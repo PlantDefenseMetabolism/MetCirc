@@ -7,5 +7,5 @@
 #' @return object of class MSP
 #' @format object of class MSP
 #' @source internal 
-#' @author T. Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 NULL  

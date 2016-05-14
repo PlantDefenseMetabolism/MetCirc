@@ -6,5 +6,5 @@
 #' @return matrix
 #' @format matrix
 #' @source internal 
-#' @author T. Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 NULL  

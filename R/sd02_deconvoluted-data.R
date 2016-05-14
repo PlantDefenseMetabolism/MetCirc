@@ -6,5 +6,5 @@
 #' @return data.frame
 #' @format data.frame
 #' @source internal 
-#' @author T. Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 NULL 
