@@ -25,7 +25,7 @@ Suggests:
     knitr (>= 1.11)    
 biocViews: Metabolomics, MassSpectrometry, Visualization
 Description: MetCirc comprises a workflow to interactively explore 
-  metabolomics data: create MSP, binn m/z values, calculate similarity between
+  metabolomics data: create MSP, bin m/z values, calculate similarity between
   precursors and visualise similarities.
 License: GPL-2
 RoxygenNote: 5.0.1
