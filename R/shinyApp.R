@@ -17,7 +17,17 @@
 #' @return shinyCircos returns a character vector with the selected 
 #' precursors
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
-#' @examples \dontrun{shinyCircos(dfNameGroup, similarityMatrix, msp, size = 400)}
+#' @examples 
+#' data("idMSMStoMSP", package = "MetCirc")
+#' ## truncate files
+#' finalMSP <- finalMSP[c(1:20, 29:48, 113:132, 240:259)]
+#' data("binnedMSP", package = "MetCirc")
+#' binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
+#' similarityMat <- createSimilarityMatrix(binnedMSP)
+#' namesPrec <- rownames(binnedMSP)
+#' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"),
+#'                                                 "[[", 1)), name = namesPrec)
+#' \dontrun{shinyCircos(dfNameGroup, similarityMat, finalMSP, size = 400)}
 #' @export
 shinyCircos <- function(dfNameGroup, similarityMatrix, msp = NULL, size = 400) {
     
@@ -598,4 +608,3 @@ createOrderedSimMat <- function(dfNameGroup, similarityMatrix) {
     
     return(simM)
 }
-##b <- shinyCircos(dfNameGroup, similarityMat, msp = finalMSP)
