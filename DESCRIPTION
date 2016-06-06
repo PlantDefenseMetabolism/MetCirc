@@ -1,7 +1,7 @@
 Package: MetCirc
 Type: Package
 Title: MetCirc - a workflow to analyse and visualise metabolomics data
-Version: 0.99.0
+Version: 0.99.1
 Date: 2016-01-15
 Authors@R: c(person(given = "Thomas", family = "Naake",
     email = "naake@stud.uni-heidelberg.de",
@@ -22,7 +22,8 @@ Depends:
     methods (>= 3.3),
     shiny (>= 0.13.1)
 Suggests:
-    knitr (>= 1.11)    
+    knitr (>= 1.11),
+    BiocGenerics
 biocViews: Metabolomics, MassSpectrometry, Visualization
 Description: MetCirc comprises a workflow to interactively explore 
   metabolomics data: create MSP, bin m/z values, calculate similarity between
