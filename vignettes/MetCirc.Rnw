@@ -166,8 +166,8 @@ Here, we convert \Robject{sd02\_deconvoluted} into an object in .msp format.
 finalMSPLi2015 <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
 
 ## optional:
-## write finalMSP to idMSMStoMSP.RData
-save(finalMSPLi2015, file = "idMSMStoMSP.RData")
+## write finalMSPLi2015 to idMSMStoMSPLi2015.RData
+save(finalMSPLi2015, file = "idMSMStoMSPLi2015.RData")
 @
 
 For the \Rfunction{binning} function used later, we need to pass a vector
@@ -205,12 +205,12 @@ head(tissue)
 @
 
 We would like to restrict the proof-of-funcction analysis to four tissues 
-(sepal, SPL; LIM; anther, ANT; 
+(sepal, SPL; limb, LIM; anther, ANT; 
 style, STY). We will truncate \Robject{tissue} in order that it contains only these 
 instances belonging to these types of tissue. In a next step, we will 
 create a msp object, \Robject{finalMSP}, comprising the features found 
 in the tissues SPL, LIM, ANT and STY. 
-<<eval=TRUE>>=
+<<eval=c(1:18)>>=
 ## create vectors with precursor names present in tissue
 tissueSPL <- compartmentTissue[compartmentTissue[,"SPL"] == TRUE, 1]
 tissueLIM <- compartmentTissue[compartmentTissue[,"LIM"] == TRUE, 1]
@@ -228,6 +228,10 @@ finalMSP <- convert2MSP(tissueSPL)
 finalMSP <- combine(finalMSP, convert2MSP(tissueLIM))
 finalMSP <- combine(finalMSP, convert2MSP(tissueANT))
 finalMSP <- combine(finalMSP, convert2MSP(tissueSTY))
+
+## optional:
+## write finalMSP to idMSMStoMSP.RData
+save(finalMSP, file = "idMSMStoMSP.RData")
 @
 
 For the \Rfunction{binning} function, we will derive a vector, 
