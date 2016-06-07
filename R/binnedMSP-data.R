@@ -1,6 +1,10 @@
 #' @name binnedMSP
-#' @title Example data for MetCirc
-#' @description This data set contains the object \code{binnedMSP}.
+#' @title Example data for MetCirc: binnedMSP
+#' @description The object \code{binnedMSP} is a matrix, where rows are 
+#' metabolites detected in the tissues sepal (SPL), limb (LIM), anther (ANT) 
+#' and style (STY). The columns contain binned m/z values. Entries 
+#' contain the intensity (in percent) of a certain metabolite at a 
+#' certain m/z value. \code{binnedMSP} is derived from the object \code{tissue}.
 #' @docType data
 #' @usage binnedMSP
 #' @return matrix
