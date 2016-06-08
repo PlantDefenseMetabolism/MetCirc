@@ -1,6 +1,8 @@
 #' @name similarityMat
-#' @title Example data for MetCirc
-#' @description This data set contains the object \code{similarityMat}.
+#' @title Example data for \code{MetCirc}: \code{similarityMat}
+#' @description \code{similarityMat} is a matrix containing the pair-wise
+#' similarity scores derived from the \code{idMSMStissueproject} data set. 
+#' See the vignette for a workflow to reproduce the object \code{similarityMat}.
 #' @docType data
 #' @usage similarityMat
 #' @return matrix
