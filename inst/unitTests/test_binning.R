@@ -18,12 +18,11 @@ test_getBegEndIndMSP <- function() {
 ## START unit test binning
 compartment <- c(rep("a", 90), rep("b", 90), rep("c", 90), rep("d", 90))
 ## create binnedMSPs
-binnedMSP001 <- binning(testMSP, 0.01, group = compartment)
-
+binnedMSP001 <- binning(testMSP, 0.01, group = compartment, method = "mean")
 test_binning <- function() {
     checkTrue(is.matrix(binnedMSP001))
     checkTrue(is.numeric(binnedMSP001))
-    checkEquals(dim(binnedMSP001), c(360, 691)) 
+    checkEquals(dim(binnedMSP001), c(360, 764)) 
     checkException(binning(finalMSP, 1, compartment[1:7]))
 }
 ## END unit test binning

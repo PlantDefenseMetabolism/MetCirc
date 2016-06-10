@@ -65,6 +65,8 @@ NDP <- function(matrow1, matrow2, m = 0.5, n = 2, mass) {
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
 #' data("binnedMSP", package = "MetCirc")
+#' ## truncate binnedMSP 
+#' binnedMSP <- binnedMSP[1:28,]
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
 #' @export
 createSimilarityMatrix <- function(mm) {

@@ -35,24 +35,27 @@ getBegEndIndMSP <- function(msp) {
 #' @name binning
 #' @title Bin m/z values
 #' @description Bin m/z values
-#' @usage binning(msp, tol = 0.01, group)
+#' @usage binning(msp, tol = 0.01, group = NULL, method = c("median", "mean"))
 #' @param msp data.frame in msp format, see ?convert2MSP for further information
 #' @param tol numerical, boundary value until which neighboured peaks will be 
 #'      joined together
 #' @param group character vector, to which group does the entry belong to
-#' @details The functions bins fragments together by calculating 
+#' @param method character vector, method has to be "median" or "mean"
+#' @details The functions bins fragments together by obtaining bins via 
+#' calculating either mean or medians of fragments which were put in intervals 
+#' according to the \code{tol} parameter. 
 #' @return binning returns a matrix where rownames are precursor ions
 #' (m/z / retention time) and colnames are newly calculated m/z values which 
-#' were binned. The algorithm which is currently implemented joins the 
-#' two nearest m / z values (here the m / z values can also be joined by 
-#' several fragment ions) and recalculates the new m / z by weighing for the 
-#' number of m / z fragments.
+#' were binned. 
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples data("idMSMStoMSP", package = "MetCirc")
 #' group <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), replace=TRUE) 
-#' binning(msp = finalMSP, tol = 0.01, group = group)
+#' binning(msp = finalMSP, tol = 0.01, group = group, method = "median")
 #' @export
-binning <- function(msp, tol = 0.01, group = NULL) { 
+#' @importFrom stats median
+binning <- function(msp, tol = 0.01, group = NULL, method = c("median", "mean")) { 
+    
+    method <- match.arg(method)
     ## msp is .msp file
     ## tol is tolerance value for binning
     if (!is(msp) == "MSP") stop("msp is not of class MSP.")
@@ -64,9 +67,9 @@ binning <- function(msp, tol = 0.01, group = NULL) {
     
     if (is.null(group)) {
         print("argument group is not specified, will create dummy group")
-        group <- rep("a", length(getPrecursorMZ(msp)))
+        group <- rep("a", length(precmz))
     }
-
+    ## if group is not NULL then: 
     if (length(precmz) != length(group)) 
         stop("length of precursor ions != length(group)")
     
@@ -81,165 +84,49 @@ binning <- function(msp, tol = 0.01, group = NULL) {
     ## fragments 
     frag <- msp[IndFrag, 1] 
     frag <- as.numeric(frag)
+    frag <- unique(frag)
     ## sort frag and get order
     frag_s <- sort(frag)
-    frag_order <- order(frag)
+    ##frag_order <- order(frag)
     
-    
-    ## calculate distance to neighbours  
-    dist <- list(NA)
-    for (i in 1:length(frag_s)) {
-        if (i != length(frag_s)) {
-            dist[[i]] <- c(frag_s[i], frag_s[i+1] - frag_s[i])
-        } else dist[[i]] <- c(frag_s[i], Inf)
-    }
-    distAdapt <- dist
-    
-    ## get distance values
-    dist2Adapt <- dist2 <- lapply(dist, "[[", 2)
-    indConv <- which(unlist(dist2) == 0) ## get indices which have distance of 0
-    
-    mapping <- lapply(1:length(dist), function(x) x)
+    steps <- (max(frag_s) - min(frag_s)) / tol
 
-    ## map to the next element if it has same mz
-    for (i in 1:length(indConv)) mapping[[indConv[i]]] <- indConv[i] + 1
-    
-    ## conv is the vector which shows convoluted mz
-    conv <- numeric(length(mapping)) 
-    x <- 1
-    
-    ## for mz values which have distance of 0 create a identifier Mx, where x 
-    ## is an increasing number to be able to trace back same mz
-    for (i in 1:length(mapping)) {
-        if (mapping[i] != i & conv[i] == "0") {
-            conv[i] <- paste("M", x, sep="")
-            conv[i+1] <- paste("M", x, sep="")
-            j <- i
-            ## check when there is a sequence of mz which have distance 0 and 
-            ## allocate then the identical mx
-            while (unlist(mapping)[j+1] != (j +1) ) { 
-                conv[j + 1] <- paste("M", x, sep="")
-                conv[j + 2] <- paste("M", x, sep="")
-                j <- j +1 
-            }
-            i <- j
-            x <- x +1 
-        }
+    if (method == "median") {
+        bins <- tapply(frag_s, cut(frag_s, steps), median)
     }
     
-    ## actual binning script starts here 
-    indGreater0 <- which(unlist(dist2Adapt) > 0) ## get distances greater 0
-    ## find smallest distance which is greater than zero
-    minDist2AdaptGreater0 <- which.min(dist2Adapt[indGreater0])
-    indGreater0Min <- indGreater0[minDist2AdaptGreater0]
-    
-    while (distAdapt[indGreater0Min][[1]][2] < tol) {
-        ## write all which have Mx value to Mx+1
-        if (conv[indGreater0Min + 1 ] == 0) { ## then create new Mx
-            str <- unlist(strsplit(unique(conv),split="M"))
-            str <- str[which(str != "")]
-            if (0 %in% str) str <- str[which(str != "0")]
-            str <- max(as.numeric(str)) + 1
-            str <- paste("M", str, sep="")
-            if (conv[indGreater0Min] == 0) {
-                conv[indGreater0Min] <- str
-            } else {
-                conv[which(conv[indGreater0Min] == conv)] <- str
-            }
-            conv[indGreater0Min + 1] <- str   
-        } else { ## if conv[indGreater0min + 1] != 0, i.e. if it is Mx, 
-            ## then use "old" Mx
-            if (conv[indGreater0Min] == 0) {
-                conv[indGreater0Min] <- conv[indGreater0Min + 1 ]
-            } else {
-                conv[which(conv[indGreater0Min] == conv)] <- conv[indGreater0Min + 1 ]}
-        }
-        ## calculate new mean for all instances with Mx+1
-        indAdapt <- which(conv[indGreater0Min + 1 ] == conv)
-        newMean <- mean(unlist(lapply(distAdapt[indAdapt], "[", 1)))
-        ## write new mean to all instances with Mx+1
-        for (i in indAdapt) distAdapt[[i]][1] <- newMean
-        ## calculate new distances and write new distances
-        distAdaptOld <- distAdapt
-        for (i in 1:length(distAdapt)) { ## calculate for all elements in the 
-            ## list (this can be changed, so that we only calculate distance for 
-            ## elements before and after Mx+1)
-            if (i != length(distAdapt)) {
-                distAdapt[[i]] <- c(distAdaptOld[[i]][1], distAdaptOld[[i+1]][1] - distAdaptOld[[i]][1])
-            } else distAdapt[[i]] <- c(distAdaptOld[[i]][1], Inf)
-        }
-        dist2Adapt <- lapply(distAdapt, "[[", 2)
-        unlist(dist2Adapt)
-        
-        indGreater0 <- which(unlist(dist2Adapt) > 0) 
-        minDist2AdaptGreater0 <- which.min(dist2Adapt[indGreater0])
-        indGreater0Min <- indGreater0[minDist2AdaptGreater0]
+    if (method == "mean") {
+        bins <- tapply(frag_s, cut(frag_s, steps), mean)
     }
-    ## actual binning script ends here
+    bins <- bins[!is.na(bins)]
+    bins <- as.vector(bins)
+    ### new
     
-    ## write for every conv which has "0" a new Mx 
-    for (i in which(conv == "0")) {
-        str <- unlist(strsplit(unique(conv),split="M"))
-        str <- str[which(str != "")]
-        if (0 %in% str) str <- str[which(str != "0")] 
-        ## find highest x and create new one (+1)
-        str <- max(as.numeric(str)) + 1 
-        str <- paste("M", str, sep="")
-        conv[i] <- str ## allocate Mx+1 to conv[i]
-    }
-    
-    ## find all unique bins, these will be the colnames of mm
-    uniqueMZ <- unlist(lapply(distAdapt, "[", 1))
-    uniqueMZ <- unique(uniqueMZ)
-    
-    mm <- matrix(data = 0, nrow = length(precmz), ncol = length(uniqueMZ))
+    mm <- matrix(data = 0, nrow = length(precmz), ncol = length(bins))
     ## convoluted MZ is column names
-    colnames(mm) <- uniqueMZ
-    rownames(mm) <- paste(precmz, rt, sep="/")
+    colnames(mm) <- bins
+    rownamesMM <- paste(precmz, rt, sep="/")
+    rownames(mm) <- paste(group, rownamesMM, sep="_")
     
-    fragMM <- unlist(l)
-    ## write to mm 
-    
-    
-    ## new
+    ## write each entry of msp to mm
     for (i in 1:length(l)) {
-        entry <- l[[i]]    
-        for (j in 1:length(entry)) {
-            entryJ <- as.numeric(msp[entry[j],])
-            colIND <- which.min(abs(as.numeric(entryJ[1]) - uniqueMZ))
-            intensity <- entryJ[2]
-            mm[i, colIND] <- intensity
+        ## get ith entry of msp
+        mspI <- msp[l[[i]],]
+        mspI <- data.matrix(mspI)
+        ## inds hosts the column indices for the respective fragment
+        inds <- lapply(mspI[,1], FUN = function(x) which.min(abs(x - bins)))
+        inds <- as.numeric(unlist(inds))
+        ## assign to entry which is closest to the bin value
+        ## check if there are duplicated entries
+        if (any(duplicated(inds))) {
+            mm[i, inds[!duplicated(inds)]] <- mspI[!duplicated(inds),2]
+            mm[i, inds[which(duplicated(inds))]] <- mm[i, inds[which(duplicated(inds))]] + mspI[duplicated(inds),2]
+        } else {
+            mm[i, inds] <- mspI[,2]
         }
     }
-    
-    ## new ende
-    
-    ##IndPrecMZ <- match(precmz, msp[,2])
-    
-#     for (i in 1:length(fragMM)) {
-#         ## which frag is put first? second? ...
-#         indFragMM <- fragMM[frag_order][i]
-#         ## get corresponding Precursor MZ
-#         correspPrecMZ <- precmz[max(which(IndPrecMZ < indFragMM))]
-#         ## get corresponding rt
-#         correspPrecRT <- rt[max(which(IndPrecMZ < indFragMM))]
-#         ## get unique row identifier
-#         uniqueIden <- paste(correspPrecMZ, correspPrecRT, sep="/")
-#         rowInd <- which(uniqueIden == rownames(mm))
-#         ## get col index 
-#         colInd <- which(distAdapt[[i]][1] == colnames(mm))
-#         ## write 
-#         mm[rowInd,colInd] <- msp[indFragMM, 2]
-#     }
-
-    rownames(mm) <- paste(group, rownames(mm), sep="_")
     
     class(mm) <- "numeric"
-    
-    #rownames(mm) <- paste(group, rNames, sep="_")
-    ## convoluted MZ is column names
-    
-    ## was rownames(mm) <- paste(group, sprintf("%04d", 1:length(rNames)), rNames, sep="_")
     return(mm)
 }
 

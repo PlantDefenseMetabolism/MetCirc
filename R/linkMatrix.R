@@ -15,8 +15,8 @@
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
 #' data("binnedMSP", package = "MetCirc")
-#' ## use only a selection 
-#' binnedMSP <- binnedMSP[c(c(1:20, 29:48, 113:132, 240:259)),]
+#' ## truncate binnedMSP
+#' binnedMSP <- binnedMSP[1:28,]
 #' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
 #' dfNameGroup <- data.frame(group = unlist(
