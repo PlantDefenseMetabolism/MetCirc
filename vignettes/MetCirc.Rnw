@@ -204,7 +204,7 @@ data("idMSMStissueproject", package = "MetCirc")
 head(tissue)
 @
 
-We would like to restrict the proof-of-funcction analysis to four tissues 
+We would like to restrict the proof-of-function analysis to four tissues 
 (sepal, SPL; limb, LIM; anther, ANT; 
 style, STY). We will truncate \Robject{tissue} in order that it contains only these 
 instances belonging to these types of tissue. In a next step, we will 
@@ -296,20 +296,10 @@ fragments might have m/z values which differ from other
 fragments even though they are in theory identical. \Rfunction{binning} 
 will bin together fragment ions which are similar (set by the parameter
 \code{tol} for tolerance). In the following this will allow for comparison
-between m/z values. \Rfunction{binning} applies the following algorithm: 
-
-\begin{itemize}
-    \item it will first bin together the fragments which are closest together;       
-    \item from these newly binned together cluster it will calculate the 
-        new (average) m/z value and 
-    \item calculate the new distance to neighbour fragments.
-    \item \Rfunction{binning} will then cluster together the next-distant 
-        pair of fragment ions (starting from step 1) until 
-    \item the distance will be greater than the tolerance value \code{tol},
-        where \Rfunction{binning} will return a matrix with binned m/z
-        fragment ion values together with their intensity for all 
-        precursor ions
-\end{itemize}
+between m/z values. The functions \Rfunction{binning} bins fragments together 
+based on minimal distance to bins which were calculated either by the mean or 
+the median of fragments which were put in intervals according to the 
+\code{tol} parameter. \newline
 
 \Rfunction{binning} expects a vector (\Robject{group}) which comprises 
 membership of the entries in the \Robject{msp} object, to a compartment, 
@@ -320,7 +310,7 @@ set.
 
 <<eval=FALSE>>=
 ## create data.frame with binned fragments
-binnedMSP <- binning(msp = finalMSP, tol = 0.01, group = compartment)
+binnedMSP <- binning(msp = finalMSP, tol = 0.001, group = compartment, method = "median")
 @
 
 \paragraph{Calculation of the similarity matrix.} The normalised dot product 
@@ -477,7 +467,7 @@ similarity matrix:
 <<eval=FALSE>>=
 ## bin msp file with functional losses, create table with same fragments 
 ## (binning)
-mlBinnedMSP <- binning(nlMSP, tol = 0.01, group = compartment)
+mlBinnedMSP <- binning(nlMSP, tol = 0.001, group = compartment, method = "median")
 ## similarity Matrix
 nlSimilarityMat <- createSimilarityMatrix(nlBinnedMSP)
 @
@@ -526,10 +516,9 @@ namesPrec <- rownames(binnedMSP)
 ## for neutral losses
 ## namesPrec <- rownames(binnedMSPNL) 
 
-dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
-                                                "[[", 1)), name = namesPrec) 
-## order according to compartment
-dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
+## create data.frame dfNameGroup
+dfNameGroup <- data.frame(group = unlist(
+    lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec) 
 @
 
 \Rfunction{shinyCircos} uses the function \Rfunction{createLinkMatrix} which 
