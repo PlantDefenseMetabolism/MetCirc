@@ -14,16 +14,17 @@ Maintainer: Thomas Naake <naake@stud.uni-heidelberg.de>
 VignetteBuilder: knitr
 Depends:
     R (>= 3.3),
-    circlize (>= 0.3.5),
-    grDevices (>= 3.3),
-    graphics (>= 3.3),
     amap (>= 0.8),
-    scales (>= 0.3.0),
+    circlize (>= 0.3.5),
+    graphics (>= 3.3),
+    grDevices (>= 3.3),
     methods (>= 3.3),
-    shiny (>= 0.13.1)
+    scales (>= 0.3.0),
+    shiny (>= 0.13.1),
+    stats (>= 3.3)
 Suggests:
-    knitr (>= 1.11),
-    BiocGenerics
+    BiocGenerics,
+    knitr (>= 1.11)    
 biocViews: Metabolomics, MassSpectrometry, Visualization
 Description: MetCirc comprises a workflow to interactively explore 
   metabolomics data: create MSP, bin m/z values, calculate similarity between
