@@ -49,8 +49,8 @@ getBegEndIndMSP <- function(msp) {
 #' were binned. 
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples data("idMSMStoMSP", package = "MetCirc")
-#' group <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), replace=TRUE) 
-#' binning(msp = finalMSP, tol = 0.01, group = group, method = "median")
+#' ##group <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), replace=TRUE) 
+#' binning(msp = finalMSP, tol = 0.01, group = NULL, method = "median")
 #' @export
 #' @importFrom stats median
 binning <- function(msp, tol = 0.01, group = NULL, method = c("median", "mean")) { 
