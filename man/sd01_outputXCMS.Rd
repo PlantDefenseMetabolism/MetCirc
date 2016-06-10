@@ -3,10 +3,10 @@
 \docType{data}
 \name{sd01_outputXCMS}
 \alias{sd01_outputXCMS}
-\title{Example data for MetCirc}
+\title{Example data for \code{MetCirc}: \code{sd01_outputXCMS}}
 \format{data.frame}
 \source{
-internal
+Li et al. (2015)
 }
 \usage{
 sd01_outputXCMS
@@ -15,9 +15,11 @@ sd01_outputXCMS
 data.frame
 }
 \description{
-This data set contains the object \code{sd01_outputXCMS}.
+\code{sd01_outputXCMS} is the output file from the package
+\code{XCMS} using the data from Li et al. (2015). See Li et al. (2015) 
+for further details.
 }
 \author{
-T. Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{naake@stud.uni-heidelberg.de}
 }
 

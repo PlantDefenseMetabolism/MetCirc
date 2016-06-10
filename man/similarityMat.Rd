@@ -3,7 +3,7 @@
 \docType{data}
 \name{similarityMat}
 \alias{similarityMat}
-\title{Example data for MetCirc}
+\title{Example data for \code{MetCirc}: \code{similarityMat}}
 \format{matrix}
 \source{
 internal
@@ -15,9 +15,11 @@ similarityMat
 matrix
 }
 \description{
-This data set contains the object \code{similarityMat}.
+\code{similarityMat} is a matrix containing the pair-wise
+similarity scores derived from the \code{idMSMStissueproject} data set. 
+See the vignette for a workflow to reproduce the object \code{similarityMat}.
 }
 \author{
-T. Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{naake@stud.uni-heidelberg.de}
 }
 

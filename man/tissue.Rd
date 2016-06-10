@@ -3,7 +3,7 @@
 \docType{data}
 \name{tissue}
 \alias{tissue}
-\title{Example data for tissue subsection}
+\title{Example data for \code{MetCirc}: \code{tissue}}
 \format{data.frame}
 \source{
 internal
@@ -15,7 +15,10 @@ tissue
 data.frame
 }
 \description{
-This data set contains the object \code{tissue}.
+The data.frame \code{tissue} is used in the subsection
+'Preparing the tissue data set for analysis' in the vignette of 
+\code{MetCirc}. MS/MS data are merged across floral organs 
+in this data.frame.
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

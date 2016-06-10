@@ -3,10 +3,10 @@
 \docType{data}
 \name{sd02_deconvoluted}
 \alias{sd02_deconvoluted}
-\title{Example data for MetCirc}
+\title{Example data for \code{MetCirc}: sd02_deconvoluted}
 \format{data.frame}
 \source{
-internal
+Li et al. (2015)
 }
 \usage{
 sd02_deconvoluted
@@ -15,9 +15,12 @@ sd02_deconvoluted
 data.frame
 }
 \description{
-This data set contains the object \code{convertExampleDF}.
+sd02_deconvoluted contains MS/MS data from Li et al. (2015). It
+is a data.frame which hosts m/z values, retention time, intensity and the
+respective precursor m/z values. sd02_deconvoluted originates from 
+Li et al. (2015). See Li et al. (2015) for further information.
 }
 \author{
-T. Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{naake@stud.uni-heidelberg.de}
 }
 

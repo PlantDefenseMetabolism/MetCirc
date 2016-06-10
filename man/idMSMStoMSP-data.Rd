@@ -4,7 +4,7 @@
 \name{idMSMStoMSP-data}
 \alias{finalMSP}
 \alias{idMSMStoMSP-data}
-\title{Example data for MetCirc}
+\title{Example data for \code{MetCirc}: \code{finalMSP}}
 \format{object of class MSP}
 \source{
 internal
@@ -16,9 +16,11 @@ finalMSP
 object of class MSP
 }
 \description{
-This data set contains the object \code{finalMSP}.
+\code{finalMSP} is of instance 'MSP', a container for 
+MS/MS data. \code{finalMSP} is derived from the object \code{tissue} 
+and \code{compartmentTissue}.
 }
 \author{
-T. Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{naake@stud.uni-heidelberg.de}
 }
 

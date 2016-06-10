@@ -3,7 +3,7 @@
 \docType{data}
 \name{compartmentTissue}
 \alias{compartmentTissue}
-\title{Example data for tissue subsection}
+\title{Example data for \code{MetCirc}: \code{compartmentTissue}}
 \format{data.frame}
 \source{
 internal
@@ -15,7 +15,10 @@ tissue
 data.frame
 }
 \description{
-This data set contains the object \code{compartmentTissue}.
+The data.frame \code{compartmentTissue} is used in the 
+subsection 'Preparing the tissue data set for analysis' in the vignette 
+of \code{MetCirc}. In \code{compartmentTissue}, information on the 
+organ-localisation of each MS/MS spectrum is stored.
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}
