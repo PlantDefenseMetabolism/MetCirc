@@ -2,7 +2,7 @@
 #' @title Create a link matrix 
 #' @description Create a link matrix which links every feature in similarity
 #' matrix with another. 
-#' @usage createLink0Matrix(similarityMatrix, dfNameGroup)
+#' @usage createLink0Matrix(similarityMatrix)
 #' @param similarityMatrix matrix, a similarity matrix that contains the 
 #' NDP similarity measure between all precursors in the data set
 #' @details createLink0Matrix creates a matrix from a similarityMatrix which 
@@ -17,7 +17,7 @@
 #' binnedMSP <- binnedMSP[1:28,]
 #' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
-#' createLink0Matrix(similarityMatrix = similarityMat)
+#' link0Mat <- createLink0Matrix(similarityMatrix = similarityMat)
 #' @export
 createLink0Matrix <- function(similarityMatrix) { 
     
@@ -26,27 +26,15 @@ createLink0Matrix <- function(similarityMatrix) {
         stop("colnames(similarityMatrix) != rownames(similarityMatrix)")
     } 
     
-    ##if (!all(colnames(dfNameGroup) == c("group", "name"))) {
-    ##    stop("colnames of argument dfNameGroup are not group and name")
-    ##}
-    
-
-    ##dfName <- dfNameGroup[,2]
-    
-    ##if (!all(sort(colnames(similarityMatrix)) == sort(dfName))) {
-    ##    stop("colnames/rownames of similarityMatrix are not identical to names in dfNameGroup")
-    ##}
-    
     ## create vector with group names (e.g. compartments)
     group <- lapply(strsplit(groupname, split = "_"), "[", 1)
     group <- unlist(group)
     
     ## get matrix indices where similarity mat 
-    inds <- which(similarityMat > 0, arr.ind = TRUE)
+    inds <- which(similarityMatrix > 0, arr.ind = TRUE)
     indsrow <- as.vector(inds[,"row"])
     indscol <- as.vector(inds[,"col"])
 
-    ##name <- name[-pairwise]
     rowcol_s <- lapply(1:length(indsrow), function(x) sort(c(indsrow[x], indscol[x])))
     ##rowcol_s <- lapply(rowcol, sort)
     duplicatedRowCol <- duplicated(rowcol_s)

@@ -4,7 +4,7 @@
 #' @name plotCircos
 #' @title Circular plot to visualise similarity
 #' @description Circular plot to visualise similarity
-#' @usage plotCircos(dfNameGroup, linkMat, initialize = c(TRUE, FALSE), 
+#' @usage plotCircos(groupname, linkMat, initialize = c(TRUE, FALSE), 
 #'      featureNames = c(TRUE, FALSE), cexFeatureNames = 0.2, 
 #'      groupSector = c(TRUE, FALSE), groupName = c(TRUE, FALSE), 
 #'      links = c(TRUE, FALSE), highlight = c(TRUE, FALSE))
@@ -409,16 +409,13 @@ getLinkMatrixIndices <- function(groupnameselected, linkMatrix) {
 #' data("binnedMSP", package = "MetCirc")
 #' ## use only a selection 
 #' binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
-#' namesPrec <- rownames(binnedMSP)
-#' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
-#'      "[[", 1)), name = namesPrec)
-#' ## order according to compartment
-#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
-#' plotCircos(dfNameGroup, NULL, initialize = TRUE, featureNames = FALSE, 
+#' simM <- createSimilarityMatrix(binnedMSP)
+#' groupname <- rownames(simM)
+#' plotCircos(groupname, NULL, initialize = TRUE, featureNames = FALSE, 
 #'      groupName = FALSE, groupSector = TRUE, links = FALSE, highlight = FALSE)
 #' x <- 1
 #' y <- 0
-#' degreeFeatures <- lapply(dfNameGroup$name, 
+#' degreeFeatures <- lapply(groupname, 
 #'  function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
 #' minFragCart2Polar(x, y, degreeOfFeatures = degreeFeatures)
 #' @export

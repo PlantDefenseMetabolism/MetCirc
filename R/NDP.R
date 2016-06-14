@@ -94,16 +94,17 @@ createSimilarityMatrix <- function(mm) {
     
 }
 
+#' @import amap
 #' @name createOrderedSimMat
 #' @title Update colnames and rownames of a similarity matrix according to 
 #' order m/z, retention time and clustering
 #' @description Internal function for shiny application. May also be used 
 #' outside of shiny to reconstruct figures.
-#' @usage createOrderedSimMat(similarityMatrix, order = c("mz", "retentionTime", "clustering"))
+#' @usage createOrderedSimMat(similarityMatrix, order = c("retentionTime", "mz", "clustering"))
 #' @param similarityMatrix matrix, similarityMatrix contains pair-wise 
 #' similarity coefficients which give information about the similarity between
 #' precursors
-#' @param order character, one of "mz", "retentionTime" or "clustering"
+#' @param order character, one of "retentionTime", "mz" or "clustering"
 #' @details createOrderSimMat takes  a similarity matrix and a character vector
 #' as arguments. It will then reorder rows and columns of 
 #' the similarityMatrix object such, that it orders rows and columns of 

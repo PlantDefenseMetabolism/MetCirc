@@ -147,7 +147,6 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                         plotOutput("circosLegend"))
                 ), 
                         htmlOutput("hoverConnectedFeature"),
-                        textOutput("test"),
                         verbatimTextOutput("clickFeature")
             )
         )
@@ -266,8 +265,6 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                 indClick$new <- newNG ## write truncated name to indClick$new
             } else indClick$new <- NULL
         })
-        
-        output$test <- renderText({ c(indClickMZ$ind) })
         
         observe({
             input$resetClickIndices
@@ -516,7 +513,7 @@ printInformationHover <- function(groupname, msp = NULL,
         hovFeat <- groupname[ind] 
         ## connected features
         connect <- unique(as.vector(lMatThr[lMatIndHover, c("name1", "name2")]))
-        mzRTdfcon <- sapply(strsplit(connect, split="_"), function(x) x[3])
+        mzRTcon <- sapply(strsplit(connect, split="_"), function(x) x[3])
                 
         if (length(connect) == 0) {
             return(paste0(hovFeat, " (", getName(hoveredFeat), ", ", 
@@ -524,7 +521,7 @@ printInformationHover <- function(groupname, msp = NULL,
                 getMetaboliteClass(hoveredFeat), ") ",
                  "does not connect to any feature"))
         } else {
-            matchedConn <- match(mzRTdfcon, mzRTMSP)
+            matchedConn <- match(mzRTcon, mzRTMSP)
             connFeat <- msp[matchedConn]
             connChar <- character()
             degreeSimilarity <- similarityMatrix[hovFeat, ]
