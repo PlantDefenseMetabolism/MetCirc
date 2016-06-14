@@ -4,31 +4,31 @@
 \alias{truncateName}
 \title{Truncate names}
 \usage{
-truncateName(dfNameGroup, roundDigits = 2, nameGroup = FALSE)
+truncateName(groupname, roundDigits = 2)
 }
 \arguments{
-\item{dfNameGroup}{data.frame with group and unique idenfier (name)}
+\item{groupname}{vector with group and unique idenfier (name)}
 
 \item{roundDigits}{numeric, how many digits should be displayed?}
-
-\item{nameGroup}{logical, if TRUE name contains group name (e.g. "a_123/456")}
 }
 \value{
-\code{truncateName} returns dfNameGroup with truncated names
+\code{truncateName} returns groupname with truncated names 
+without group)
 }
 \description{
 A function to truncate names
 }
 \details{
-The column \code{name} of \code{dfNameGroup} is a vector of 
-     \code{character} strings of type consisting of retention time and m/z 
-     value. It is cumbersome to display such strings. \code{truncateName} 
+\code{groupname} is a vector of \code{character} strings consisting 
+     of a group, retention time and m/z value, separated by "_". It is 
+     cumbersome to display such long strings. \code{truncateName} 
      truncates these strings by rounding retention time and m/z values by 
      digits given by \code{roundDigits}. \code{truncateName} is an 
      internal function.
 }
 \examples{
-     \dontrun{truncateName(dfNameGroup, roundDigits = 2, nameGroup = FALSE)}
+     groupname <- "a_100.12345/10.12345"
+     truncateName(groupname, roundDigits = 2)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

@@ -9,10 +9,6 @@ printInformationHover(dfNameGroupOrder, msp = NULL, ind,
  similarityMatrix)
 }
 \arguments{
-\item{dfNameGroupOrder}{data.frame, an ordered data.frame derived from 
-dfNameGroup which contains columns "group" and "name", the column "name" 
-contains entries in the form of group_number_mz/rt}
-
 \item{msp}{MSP, an S4 object of class 'MSP' for information about 
 the hovered feature}
 
@@ -23,10 +19,12 @@ the hovered feature}
 \item{linkMatrixThreshold}{matrix that contains information of linked 
 features of a threshold or greater}
 
-\item{highlight}{logical only return character when set to TRUE}
-
 \item{similarityMatrix}{matrix that is used to get information on the degree 
 of similarity, similarityMat is an ordered version of a similarity matrix}
+
+\item{dfNameGroupOrder}{data.frame, an ordered data.frame derived from 
+dfNameGroup which contains columns "group" and "name", the column "name" 
+contains entries in the form of group_number_mz/rt}
 }
 \value{
 character that is in HTML format
@@ -40,22 +38,19 @@ printInformationHover is for internal use.
 \examples{
 data("idMSMStoMSP", package = "MetCirc")
 data("binnedMSP", package = "MetCirc")
+## use only a selection
 binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
 similarityMat <- createSimilarityMatrix(binnedMSP)
-namesPrec <- rownames(binnedMSP)
-dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"),
-                                                "[[", 1)), name = namesPrec)
-## order according to compartment
-dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),]
-dfNameGroupOrder <- orderNames(dfNameGroup, order = "mz")
-simMatO <- createOrderedSimMat(dfNameGroupOrder, similarityMat)
-linkMat_thr <- createLinkMatrix(simMatO, dfNameGroupOrder, 0.8) 
-ind <- 2
-linkMatIndsHover <- getLinkMatrixIndices(dfNameGroupOrder[ind,], linkMat_thr)
-MetCirc:::printInformationHover(dfNameGroupOrder = dfNameGroupOrder, 
+## order similarityMat according to mz
+simMat <- createOrderedSimMat(similarityMat, order = "mz")
+groupname <- rownames(simMat)
+linkMat_thr <- createLinkMatrix(simMat, 0.9) 
+ind <- 19
+linkMatIndsHover <- getLinkMatrixIndices(groupname[ind], linkMat_thr)
+MetCirc:::printInformationHover(groupname = groupname, 
  msp = NULL, ind = ind, lMatIndHover = linkMatIndsHover, 
- linkMatrixThreshold = linkMat_thr, highlight = TRUE, 
- similarityMatrix = simMatO)
+ linkMatrixThreshold = linkMat_thr, 
+ similarityMatrix = simMat)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

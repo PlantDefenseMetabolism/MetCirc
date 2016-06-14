@@ -31,8 +31,8 @@ according to the \code{tol} parameter.
 }
 \examples{
 data("idMSMStoMSP", package = "MetCirc")
-group <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), replace=TRUE) 
-binning(msp = finalMSP, tol = 0.01, group = group, method = "median")
+##group <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), replace=TRUE) 
+binning(msp = finalMSP, tol = 0.01, group = NULL, method = "median")
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

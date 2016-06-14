@@ -10,8 +10,9 @@ plotCircos(dfNameGroup, linkMat, initialize = c(TRUE, FALSE),
      links = c(TRUE, FALSE), highlight = c(TRUE, FALSE))
 }
 \arguments{
-\item{dfNameGroup}{data.frame containing column "group" and "name", which is 
-a unique identifier of the feature}
+\item{groupname}{vector containing "group" and "name" to display, that is 
+a unique identifier of the features, "group" and "name" have to be separated
+by "_" where "group" is the first and "name" is the last element}
 
 \item{linkMat}{data.frame containing linked features in each row, has 
 five columns (group1, name1, group2, name2, NDP)}
@@ -48,30 +49,18 @@ data("binnedMSP", package = "MetCirc")
 ## use only a selection 
 binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
 similarityMat <- createSimilarityMatrix(binnedMSP) 
-namesPrec <- rownames(binnedMSP)
-dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
-     name = namesPrec) 
- 
-## order according to compartment
-dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
-dfNameGroupRT <- orderNames(dfNameGroup = dfNameGroup, 
-     similarityMatrix = NULL, order = "retentionTime")
-     
-## create a new similarity matrix with updated rownames
-simM <- createOrderedSimMat(dfNameGroupRT, similarityMat)
+## order similarityMat according to retentionTime
+simM <- createOrderedSimMat(similarityMat, order = "retentionTime")
 ## create link matrix
-linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.8,
-     dfNameGroup = dfNameGroupRT)
+linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.8)
 ## cut link matrix (here: only display links between groups)
 linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
 ## set circlize paramters
 circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
          track.margin = c(0.0, 0))
-## here set selectedFeatures arbitrarily
-selectedFeatures <- as.character(dfNameGroupRT[c(1,21,41,61),2])
- 
+groupname <- rownames(simM)
 ## actual plotting
-plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, 
+plotCircos(groupname, linkMat_cut, initialize = TRUE, 
     featureNames = TRUE, cexFeatureNames = 0.2, groupSector = TRUE, 
      groupName = FALSE, links = FALSE, highlight = FALSE)
 }

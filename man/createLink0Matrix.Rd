@@ -9,8 +9,6 @@ createLink0Matrix(similarityMatrix, dfNameGroup)
 \arguments{
 \item{similarityMatrix}{matrix, a similarity matrix that contains the 
 NDP similarity measure between all precursors in the data set}
-
-\item{dfNameGroup}{data.frame, data.frame contains column "group" and "name"}
 }
 \value{
 createLink0Matrix returns a matrix that gives per each row 
@@ -27,15 +25,11 @@ exclude links which have a similarity of exactly 0.
 }
 \examples{
 data("binnedMSP", package = "MetCirc")
-## use only a selection 
-binnedMSP <- binnedMSP[c(c(1:20, 29:48, 113:132, 240:259)),]
+## truncate binnedMSP
+binnedMSP <- binnedMSP[1:28,]
 namesPrec <- rownames(binnedMSP)
 similarityMat <- createSimilarityMatrix(binnedMSP)
-dfNameGroup <- data.frame(group = unlist(
- lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
-dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
-createLink0Matrix(similarityMatrix = similarityMat,  
-     dfNameGroup = dfNameGroup)
+createLink0Matrix(similarityMatrix = similarityMat)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

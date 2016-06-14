@@ -4,11 +4,12 @@
 \alias{circosLegend}
 \title{Plot a legend for circos plot}
 \usage{
-circosLegend(dfNameGroup, highlight)
+circosLegend(groupname, highlight = c(TRUE, FALSE))
 }
 \arguments{
-\item{dfNameGroup}{data.frame , data.frame with group and unique idenfier 
-(name)}
+\item{groupname}{vector containing "group" and "name" to display, that is 
+a unique identifier of the features, "group" and "name" have to be separated
+by "_" where "group" is the first and "name" is the last element}
 
 \item{highlight}{logical, should colours be adjusted to highlight settings?}
 }
@@ -28,13 +29,10 @@ Internal use for shiny app or outside of shiny to reproduce
  data("binnedMSP", package = "MetCirc")
  ## use only a selection 
  binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
- similarityMat <- createSimilarityMatrix(binnedMSP)#'  
- namesPrec <- rownames(binnedMSP)
- dfNameGroup <- data.frame(
-     group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
-     name = namesPrec) 
+ similarityMat <- createSimilarityMatrix(binnedMSP)  
+ groupname <- rownames(similarityMat)
  ## plot legend
- circosLegend(dfNameGroup, highlight = TRUE)
+ circosLegend(groupname, highlight = TRUE)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

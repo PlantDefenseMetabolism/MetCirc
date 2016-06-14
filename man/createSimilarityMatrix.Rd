@@ -29,7 +29,9 @@ E4147--E4155.
 }
 \examples{
 data("binnedMSP", package = "MetCirc")
-similarityMat <- createSimilarityMatrix(binnedMSP)
+## truncate binnedMSP 
+binnedMSP <- binnedMSP[1:28,]
+createSimilarityMatrix(binnedMSP)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

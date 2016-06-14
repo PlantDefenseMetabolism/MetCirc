@@ -4,11 +4,12 @@
 \alias{highlight}
 \title{Add links and highlight sectors}
 \usage{
-highlight(dfNameGroup, ind, LinkMatrix)
+highlight(groupname, ind, LinkMatrix)
 }
 \arguments{
-\item{dfNameGroup}{data.frame , data.frame with group and unique idenfier 
-(name)}
+\item{groupname}{vector containing "group" and "name" to display, that is 
+a unique identifier of the features, "group" and "name" have to be separated
+by "_" where "group" is the first and "name" is the last element}
 
 \item{ind}{numerical, indices which will be highlighted}
 
@@ -31,37 +32,26 @@ Internal use for shiny app.
  data("binnedMSP", package = "MetCirc")
  ## use only a selection 
  binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
- similarityMat <- createSimilarityMatrix(binnedMSP)#'  
- namesPrec <- rownames(binnedMSP)
- dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), 
-     name = namesPrec) 
- 
- ## order according to compartment
- dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
- dfNameGroupRT <- orderNames(dfNameGroup = dfNameGroup, 
-     similarityMatrix = NULL, order = "retentionTime")
-     
- ## create a new similarity matrix with updated rownames
- simM <- createOrderedSimMat(dfNameGroupRT, similarityMat)
+ similarityMat <- createSimilarityMatrix(binnedMSP)
+ ## order similarityMat according to retentionTime and update rownames
+ simM <- createOrderedSimMat(similarityMat, order = "retentionTime")
  ## create link matrix
- linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.95,
-     dfNameGroup = dfNameGroupRT)
+ linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.95)
  ## cut link matrix (here: only display links between groups)
  linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
- ## set circlize paramters
+ ## set circlize parameters
  circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
          track.margin = c(0.0, 0))
- ## here set selectedFeatures arbitrarily
- selectedFeatures <- as.character(dfNameGroupRT[c(1,21,41,61),2])
- 
+ groupname <- rownames(simM)
+ ## here: set selectedFeatures arbitrarily
+ indSelected <- c(2,23,42,62)
+ selectedFeatures <- groupname[indSelected]
  ## actual plotting
- plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, 
-     featureNames = TRUE, cexFeatureNames = 0.2, groupSector = FALSE, 
-     groupName = TRUE, links = FALSE, highlight = TRUE)
- indSelected <- mapply(function(x) which(x == dfNameGroupRT$name), 
-         selectedFeatures)
+ plotCircos(groupname, linkMat_cut, initialize = TRUE, 
+     featureNames = TRUE, cexFeatureNames = 0.2, groupSector = TRUE, 
+     groupName = FALSE, links = FALSE, highlight = TRUE)
  ## highlight
- highlight(dfNameGroup = dfNameGroupRT, ind = indSelected, LinkMatrix = 
+ highlight(groupname = groupname, ind = indSelected, LinkMatrix = 
          linkMat_cut)
 }
 \author{

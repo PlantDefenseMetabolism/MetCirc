@@ -7,8 +7,6 @@
 shinyCircos(dfNameGroup, similarityMatrix, msp, size = 400)
 }
 \arguments{
-\item{dfNameGroup}{data.frame which contains columns "group" and "name"}
-
 \item{similarityMatrix}{matrix, similarityMatrix contains pair-wise 
 similarity coefficients which give information about the similarity between
 precursors}
@@ -37,10 +35,7 @@ finalMSP <- finalMSP[c(1:20, 29:48, 113:132, 240:259)]
 data("binnedMSP", package = "MetCirc")
 binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
 similarityMat <- createSimilarityMatrix(binnedMSP)
-namesPrec <- rownames(binnedMSP)
-dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"),
-                                                "[[", 1)), name = namesPrec)
-\dontrun{shinyCircos(dfNameGroup, similarityMat, finalMSP, size = 400)}
+\dontrun{shinyCircos(similarityMat, finalMSP, size = 400)}
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

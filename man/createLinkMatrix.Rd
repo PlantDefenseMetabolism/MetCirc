@@ -4,13 +4,11 @@
 \alias{createLinkMatrix}
 \title{Create a matrix which contains features to link (indices)}
 \usage{
-createLinkMatrix(similarityMatrix, dfNameGroup, threshold)
+createLinkMatrix(similarityMatrix, threshold)
 }
 \arguments{
 \item{similarityMatrix}{matrix, a similarity matrix that contains the 
 NDP similarity measure between all precursors in the data set}
-
-\item{dfNameGroup}{data.frame, data.frame contains column "group" and "name"}
 
 \item{threshold}{numerical, threshold value for NDP values, below this value 
 linked features will not be included}
@@ -30,14 +28,8 @@ filtering is currently based on the normalised dot product.
 data("binnedMSP", package = "MetCirc")
 ## use only a selection 
 binnedMSP <- binnedMSP[c(c(1:20, 29:48, 113:132, 240:259)),]
-namesPrec <- rownames(binnedMSP)
 similarityMat <- createSimilarityMatrix(binnedMSP)
-namesPrec <- rownames(binnedMSP)
-dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
-                             "[[", 1)), name = namesPrec)
-dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
-createLinkMatrix(similarityMatrix = similarityMat, dfNameGroup = dfNameGroup,
-     threshold = 0.5)
+createLinkMatrix(similarityMatrix = similarityMat, threshold = 0.5)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

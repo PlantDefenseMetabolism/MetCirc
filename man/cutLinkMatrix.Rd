@@ -31,13 +31,8 @@ groups.
 data("binnedMSP", package = "MetCirc")
 ## use only a selection 
 binnedMSP <- binnedMSP[c(c(1:20, 29:48, 113:132, 240:259)),]
-namesPrec <- rownames(binnedMSP)
 similarityMat <- createSimilarityMatrix(binnedMSP)
-dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
-                             "[[", 1)), name = namesPrec)
-dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
-linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold = 0.5, 
-     dfNameGroup = dfNameGroup)
+linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold = 0.5)
 cutLinkMatrix(LinkMatrix = linkMat, type = "all")
 }
 \author{
