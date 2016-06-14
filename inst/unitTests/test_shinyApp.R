@@ -13,7 +13,7 @@ simMat <- createOrderedSimMat(similarityMat, order = "mz")
 groupname <- rownames(simMat)
 linkMat_thr <- createLinkMatrix(simMat, 0.9) 
 ind <- 19
-linkMatIndsHover <- getLinkMatrixIndices(groupname, linkMat_thr)
+linkMatIndsHover <- getLinkMatrixIndices(groupname[ind], linkMat_thr)
 #' MetCirc:::printInformationHover(groupname = groupname, 
 #'  msp = NULL, ind = ind, lMatIndHover = linkMatIndsHover, 
 #'  linkMatrixThreshold = linkMat_thr, highlight = TRUE, 

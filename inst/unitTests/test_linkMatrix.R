@@ -4,20 +4,23 @@ data("binnedMSP", package = "MetCirc")
 ## use only a selection 
 binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
 similarityMat <- createSimilarityMatrix(binnedMSP)  
+groupname <- rownames(similarityMat)
+group <- unlist(lapply(strsplit(groupname, "_"), "[", 1))
 
+## create link0Matrix
 link0Matrix <- createLink0Matrix(similarityMatrix = similarityMat)
 ndps <- as.numeric(link0Matrix[,"NDP"])
 
+
 test_createLink0Matrix <- function() {
-    
     checkEquals(dim(link0Matrix)[2], 5)
     checkTrue(is.matrix(link0Matrix))
     checkTrue(all(
         colnames(link0Matrix) == c("group1", "name1", "group2", "name2", "NDP")))
     checkTrue(
-        all(unique(c(link0Matrix[,"group1"], link0Matrix[,"group2"])) %in% unique(dfNameGroup[,"group"])))
+        all(unique(c(link0Matrix[,"group1"], link0Matrix[,"group2"])) %in% unique(group)))
     checkTrue(
-        all(unique(c(link0Matrix[,"name1"], link0Matrix[,"name2"])) %in% unique(dfNameGroup[,"name"])))
+        all(unique(c(link0Matrix[,"name1"], link0Matrix[,"name2"])) %in% unique(groupname)))
     checkTrue(all(0 < ndps & ndps <= 1))
 }
 ## END unit test link0Matrix
@@ -59,5 +62,5 @@ test_cutLinkMatrix <- function() {
         all(unlist(lapply(1:dim(cutLMIntra)[1], 
                           function(x) cutLMIntra[x,1] == cutLMIntra[x,3])))
     )
-}
+    }
 ## END unit test cutLinkMatrix

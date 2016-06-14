@@ -1,10 +1,13 @@
 CHANGES IN VERSION 0.99.1
 -------------------------
- o the function binning uses now the function cut to create bins,
+ o rewrite functions that they do not require dfNameGroup data.frame any
+   longer [2016-06-14 Tue]
+ o the function binning uses now the function cut to create bins
    binning has two methods implemented to calculate from these bins
-   median and mean m/z values from the fragment m/z values [2016-06-16 Fri]
- o documentation about data sets is extended [2016-06-16 Fri]
- o include 'Suggests: BiocGenerics' in the DESCRIPTION file [2016-06-16 Fri]
+   median and mean m/z values from the fragment m/z values [2016-06-10 Fri]
+ o documentation about data sets is extended [2016-06-10 Fri]
+ o include 'Suggests: BiocGenerics' in the DESCRIPTION file [2016-06-10 Fri]
+
 
 CHANGES IN VERSION 0.99.0
 -------------------------

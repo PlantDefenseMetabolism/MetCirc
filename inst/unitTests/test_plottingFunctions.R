@@ -30,9 +30,6 @@ test_highlight <- function() {
     checkException(highlight(groupnameO, length(groupnameO)+1,NULL))
     ## names in linkMat do not match names in groupnameO
     checkException(highlight(groupnameO, 1, linkMat))
-    ## groupname instead of groupnameO
-    checkException(highlight(groupname, 1, linkMat)) 
-    
 }
 ## END unit test for highlight
 
