@@ -4,7 +4,7 @@
 \alias{shinyCircos}
 \title{Interactive visualisation of similar precursors}
 \usage{
-shinyCircos(dfNameGroup, similarityMatrix, msp, size = 400)
+shinyCircos(similarityMatrix, msp, size = 400)
 }
 \arguments{
 \item{similarityMatrix}{matrix, similarityMatrix contains pair-wise 

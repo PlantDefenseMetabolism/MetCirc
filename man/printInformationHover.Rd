@@ -4,11 +4,15 @@
 \alias{printInformationHover}
 \title{Display information on connected features of hovered features}
 \usage{
-printInformationHover(dfNameGroupOrder, msp = NULL, ind, 
- lMatIndHover, linkMatrixThreshold, highlight = c(TRUE, FALSE), 
- similarityMatrix)
+printInformationHover(groupname, msp = NULL, ind, 
+ lMatIndHover, linkMatrixThreshold, similarityMatrix)
 }
 \arguments{
+\item{groupname}{vector with groupname of selected feature,
+vector containing "group" and "name" to display, that is 
+a unique identifier of the features, "group" and "name" have to be separated
+by "_" where "group" is the first and "name" is the last element}
+
 \item{msp}{MSP, an S4 object of class 'MSP' for information about 
 the hovered feature}
 
@@ -21,10 +25,6 @@ features of a threshold or greater}
 
 \item{similarityMatrix}{matrix that is used to get information on the degree 
 of similarity, similarityMat is an ordered version of a similarity matrix}
-
-\item{dfNameGroupOrder}{data.frame, an ordered data.frame derived from 
-dfNameGroup which contains columns "group" and "name", the column "name" 
-contains entries in the form of group_number_mz/rt}
 }
 \value{
 character that is in HTML format

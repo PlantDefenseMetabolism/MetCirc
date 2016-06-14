@@ -501,9 +501,8 @@ plot(nlHClustMSP, labels = FALSE)
 
 \section{Visualisation using the \Rpackage{shiny}/\Rpackage{circlize} framework}
 \Rpackage{MetCirc} comprises functionality to visualise metabolomics
-data and exploring it interactively. To do this, we first need to create 
-a \Robject{data.frame} - \Robject{dfNameGroup} -  which contains all precursor 
-ions together with their respective group. A group 
+data and exploring it interactively. One of the key features of the implemented
+interactive framework is, that groups can be compared. A group 
 specifies the affiliation of the sample: it can be 
 any biological identifier relevant to the comparitive experiment conducted,
 e.g. it can be a specific tissue, different
@@ -511,24 +510,13 @@ times, different species, etc. The visualisation tools implemented in
 \Rpackage{MetCirc} allow then to display similarity between 
 precursor ions between and/or inside of groups.
 
-<<eval=TRUE>>=
-namesPrec <- rownames(binnedMSP)
-## for neutral losses
-## namesPrec <- rownames(binnedMSPNL) 
-
-## create data.frame dfNameGroup
-dfNameGroup <- data.frame(group = unlist(
-    lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec) 
-@
-
 \Rfunction{shinyCircos} uses the function \Rfunction{createLinkMatrix} which 
 comprises per row these precursor ions which are linked by a normalised dot 
 product $\geq$ \Robject{threshold} to the precursor ion in the same row. 
 Internally, in \Rfunction{shinyCircos}, \Rfunction{createLinkMatrix} will be 
 called to produce link matrices based on the given threshold. 
-<<eval=FALSE>>=
-linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold=0.5,
-                            dfNameGroup = dfNameGroup)
+<<eval=TRUE>>=
+linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold=0.5)
 @
 
 As we have calculated similarity coefficients between precursors, we would
@@ -552,7 +540,7 @@ be returned which are allocated here to \Robject{selectedFeatures}.
 
 To start the shiny app, run
 <<eval=FALSE>>=
-selectedFeatures <- shinyCircos(dfNameGroup, similarityMat)
+selectedFeatures <- shinyCircos(similarityMat)
 @
 
 \Rpackage{MetCirc} allows also to create such figures outside of an
@@ -563,15 +551,11 @@ support to export figures as they can be easily rebuilt outside of
 also promotes reproducibility of such figures.
 To rebuild the figure in a non-interactive environment, run 
 <<circos,eval=TRUE,results='hide',message=FALSE,fig.show='hide'>>=
-## order according to retention time and create object dfNameGroupRT
-dfNameGroupRT <- orderNames(dfNameGroup = dfNameGroup, 
-    similarityMatrix = NULL, order = "retentionTime")
-## create a new similarity matrix with updated rownames
-simM <- createOrderedSimMat(dfNameGroupRT, similarityMat)
-
+## order similarity matrix according to retention time
+simM <- createOrderedSimMat(similarityMat, order = "retentionTime")
+groupname <- rownames(simM)
 ## create link matrix
-linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.95,
-                            dfNameGroup = dfNameGroupRT)
+linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.95)
 ## cut link matrix (here: only display links between groups)
 linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
 
@@ -579,20 +563,20 @@ linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
 circos.par(gap.degree = 0, cell.padding = c(0, 0, 0, 0), 
             track.margin = c(0, 0))
 
-## here set selectedFeatures arbitrarily
-selectedFeatures <- as.character(dfNameGroupRT[c(1,101,201,300),2])
+## here set indSelected arbitrarily
+indSelected <- c(1, 101, 201, 300)
+selectedFeatures <- groupname[c(1,101,201,300)]
 
 ## actual plotting
-plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, featureNames = TRUE, 
+plotCircos(groupname, linkMat_cut, initialize = TRUE, featureNames = TRUE, 
     cexFeatureNames = 0.2, groupSector = TRUE, groupName = FALSE, 
     links = FALSE, highlight = TRUE)
-indSelected <- mapply(function(x) which(x == dfNameGroupRT$name), 
-            selectedFeatures)
-highlight(dfNameGroup = dfNameGroupRT, ind = indSelected, LinkMatrix = 
+
+highlight(groupname = groupname, ind = indSelected, LinkMatrix = 
             linkMat_cut)
 
 ## plot without highlighting
-plotCircos(dfNameGroupRT, linkMat_cut, initialize = TRUE, featureNames = TRUE, 
+plotCircos(groupname, linkMat_cut, initialize = TRUE, featureNames = TRUE, 
     cexFeatureNames = 0.2, groupSector = TRUE, groupName = FALSE, links = TRUE, 
     highlight = FALSE)
 @
