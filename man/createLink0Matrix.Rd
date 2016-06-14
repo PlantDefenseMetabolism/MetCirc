@@ -4,7 +4,7 @@
 \alias{createLink0Matrix}
 \title{Create a link matrix}
 \usage{
-createLink0Matrix(similarityMatrix, dfNameGroup)
+createLink0Matrix(similarityMatrix)
 }
 \arguments{
 \item{similarityMatrix}{matrix, a similarity matrix that contains the 
@@ -29,7 +29,7 @@ data("binnedMSP", package = "MetCirc")
 binnedMSP <- binnedMSP[1:28,]
 namesPrec <- rownames(binnedMSP)
 similarityMat <- createSimilarityMatrix(binnedMSP)
-createLink0Matrix(similarityMatrix = similarityMat)
+link0Mat <- createLink0Matrix(similarityMatrix = similarityMat)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

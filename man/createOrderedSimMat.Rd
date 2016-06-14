@@ -5,14 +5,14 @@
 \title{Update colnames and rownames of a similarity matrix according to 
 order m/z, retention time and clustering}
 \usage{
-createOrderedSimMat(similarityMatrix, order = c("mz", "retentionTime", "clustering"))
+createOrderedSimMat(similarityMatrix, order = c("retentionTime", "mz", "clustering"))
 }
 \arguments{
 \item{similarityMatrix}{matrix, similarityMatrix contains pair-wise 
 similarity coefficients which give information about the similarity between
 precursors}
 
-\item{order}{character, one of "mz", "retentionTime" or "clustering"}
+\item{order}{character, one of "retentionTime", "mz" or "clustering"}
 }
 \value{
 createOrderedSimMat returns a similarity matrix with ordered

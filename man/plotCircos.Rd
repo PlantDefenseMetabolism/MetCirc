@@ -4,7 +4,7 @@
 \alias{plotCircos}
 \title{Circular plot to visualise similarity}
 \usage{
-plotCircos(dfNameGroup, linkMat, initialize = c(TRUE, FALSE), 
+plotCircos(groupname, linkMat, initialize = c(TRUE, FALSE), 
      featureNames = c(TRUE, FALSE), cexFeatureNames = 0.2, 
      groupSector = c(TRUE, FALSE), groupName = c(TRUE, FALSE), 
      links = c(TRUE, FALSE), highlight = c(TRUE, FALSE))
