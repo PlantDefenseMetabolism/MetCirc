@@ -92,15 +92,18 @@ binning <- function(msp, tol = 0.01, group = NULL, method = c("median", "mean"))
     steps <- (max(frag_s) - min(frag_s)) / tol
 
     if (method == "median") {
+        ## calculate median of values in bins
         bins <- tapply(frag_s, cut(frag_s, steps), median)
     }
     
     if (method == "mean") {
+        ## calculate mean of values in bins
         bins <- tapply(frag_s, cut(frag_s, steps), mean)
     }
+    ## remove bins which no not show up
     bins <- bins[!is.na(bins)]
+    ## vectorise bins (do not use named vector)
     bins <- as.vector(bins)
-    ### new
     
     mm <- matrix(data = 0, nrow = length(precmz), ncol = length(bins))
     ## convoluted MZ is column names
@@ -129,7 +132,3 @@ binning <- function(msp, tol = 0.01, group = NULL, method = c("median", "mean"))
     class(mm) <- "numeric"
     return(mm)
 }
-
-
-
-

@@ -1,4 +1,3 @@
-
 #' @name createLink0Matrix
 #' @title Create a link matrix 
 #' @description Create a link matrix which links every feature in similarity
@@ -6,7 +5,6 @@
 #' @usage createLink0Matrix(similarityMatrix, dfNameGroup)
 #' @param similarityMatrix matrix, a similarity matrix that contains the 
 #' NDP similarity measure between all precursors in the data set
-#' @param dfNameGroup data.frame, data.frame contains column "group" and "name"
 #' @details createLink0Matrix creates a matrix from a similarityMatrix which 
 #' includes all connections between features in the similarityMatrix, but 
 #' exclude links which have a similarity of exactly 0.
@@ -19,65 +17,57 @@
 #' binnedMSP <- binnedMSP[1:28,]
 #' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
-#' dfNameGroup <- data.frame(group = unlist(
-#'  lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
-#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
-#' createLink0Matrix(similarityMatrix = similarityMat,  
-#'      dfNameGroup = dfNameGroup)
+#' createLink0Matrix(similarityMatrix = similarityMat)
 #' @export
-createLink0Matrix <- function(similarityMatrix, dfNameGroup) { 
+createLink0Matrix <- function(similarityMatrix) { 
     
-    name <- rownames(similarityMatrix)
-    if (!all(colnames(similarityMatrix) == name)) {
+    groupname <- rownames(similarityMatrix)
+    if (!all(colnames(similarityMatrix) == groupname)) {
         stop("colnames(similarityMatrix) != rownames(similarityMatrix)")
     } 
     
-    if (!all(colnames(dfNameGroup) == c("group", "name"))) {
-        stop("colnames of argument dfNameGroup are not group and name")
-    }
+    ##if (!all(colnames(dfNameGroup) == c("group", "name"))) {
+    ##    stop("colnames of argument dfNameGroup are not group and name")
+    ##}
     
 
-    dfName <- dfNameGroup[,2]
+    ##dfName <- dfNameGroup[,2]
     
-    if (!all(sort(colnames(similarityMatrix)) == sort(dfName))) {
-        stop("colnames/rownames of similarityMatrix are not identical to names in dfNameGroup")
-    }
+    ##if (!all(sort(colnames(similarityMatrix)) == sort(dfName))) {
+    ##    stop("colnames/rownames of similarityMatrix are not identical to names in dfNameGroup")
+    ##}
     
-    mat <- matrix(data = NA, ncol = 5, 
-                    nrow = (length(name)^ 2 - length(name)) / 2)
+    ## create vector with group names (e.g. compartments)
+    group <- lapply(strsplit(groupname, split = "_"), "[", 1)
+    group <- unlist(group)
+    
+    ## get matrix indices where similarity mat 
+    inds <- which(similarityMat > 0, arr.ind = TRUE)
+    indsrow <- as.vector(inds[,"row"])
+    indscol <- as.vector(inds[,"col"])
+
+    ##name <- name[-pairwise]
+    rowcol_s <- lapply(1:length(indsrow), function(x) sort(c(indsrow[x], indscol[x])))
+    ##rowcol_s <- lapply(rowcol, sort)
+    duplicatedRowCol <- duplicated(rowcol_s)
+    inds <- inds[!duplicatedRowCol,]
+    indsrow <- indsrow[!duplicatedRowCol]
+    indscol <- indscol[!duplicatedRowCol]
+    ## remove 1-1, 2-2, etc.
+    pairwise <- which(indsrow == indscol)
+    ##pairwiseCR <- which(indscol == indsrow)
+    indsrow <- indsrow[-pairwise]
+    indscol <- indscol[-pairwise]
+    
+    mat <- matrix(data = NA, ncol = 5, nrow = length(indsrow))
     colnames(mat) <- c("group1", "name1", "group2", "name2", "NDP") 
-    
-    for (i in 1:length(name)) { ## columns 
-        for (j in 1:length(name)) { ## rows
-            if (i < j) { ## do not include which link to the same
-                if (similarityMatrix[j,i] > 0) { ## do not include which have NDP of 0
-                    rowIndex <- min(which(is.na(mat[,1])))
-                    ## group1
-                    group1 <- dfNameGroup[which(dfNameGroup[,2] == name[i]),1]
-                    group1 <- as.character(group1)
-                    mat[rowIndex, "group1"] <- group1
-                    ## name1
-                    mat[rowIndex, "name1"] <- name[i] 
-                    ## group2
-                    group2 <- dfNameGroup[which(dfNameGroup[,2] == name[j]),1]
-                    group2 <- as.character(group2)
-                    mat[rowIndex, "group2"] <- group2
-                    ## name2
-                    mat[rowIndex, "name2"] <- name[j]
-                    ## NDP
-                    mat[rowIndex, "NDP"] <- similarityMatrix[j,i]
-                }
-            }
-        }
-    }
-    
-    lastIndex <- which(is.na(mat[,1]))
-    if (length(lastIndex) == 0) {
-        lastIndex <- dim(mat)[1] } else {
-            lastIndex <- min(lastIndex) - 1
-    }
 
-    mat <- mat[1:lastIndex, ]
+    mat[,"group1"] <- group[indsrow]
+    mat[,"group2"] <- group[indscol]
+    mat[,"name1"] <- groupname[indsrow]
+    mat[,"name2"] <- groupname[indscol]
+    ndps <- sapply(1:length(indsrow), function(x) similarityMatrix[indsrow[x], indscol[x]])
+    mat[, "NDP"] <- ndps
     
     return(mat)
 }
@@ -99,13 +89,8 @@ createLink0Matrix <- function(similarityMatrix, dfNameGroup) {
 #' data("binnedMSP", package = "MetCirc")
 #' ## use only a selection 
 #' binnedMSP <- binnedMSP[c(c(1:20, 29:48, 113:132, 240:259)),]
-#' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
-#' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
-#'                              "[[", 1)), name = namesPrec)
-#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
-#' linkMatrix <- createLink0Matrix(similarityMatrix = similarityMat,  
-#'      dfNameGroup = dfNameGroup)
+#' linkMatrix <- createLink0Matrix(similarityMatrix = similarityMat)
 #' thresholdLinkMatrix(linkMatrix = linkMatrix, threshold = 0.5)
 #' @export
 thresholdLinkMatrix <- function(linkMatrix, threshold) {
@@ -137,10 +122,9 @@ thresholdLinkMatrix <- function(linkMatrix, threshold) {
 #' @name createLinkMatrix
 #' @title Create a matrix which contains features to link (indices)
 #' @description Create a matrix which contains features to link (indices)
-#' @usage createLinkMatrix(similarityMatrix, dfNameGroup, threshold)
+#' @usage createLinkMatrix(similarityMatrix, threshold)
 #' @param similarityMatrix matrix, a similarity matrix that contains the 
 #' NDP similarity measure between all precursors in the data set
-#' @param dfNameGroup data.frame, data.frame contains column "group" and "name"
 #' @param threshold numerical, threshold value for NDP values, below this value 
 #' linked features will not be included
 #' @details threshold is a numerical value and filters linked precursor ions; 
@@ -152,19 +136,12 @@ thresholdLinkMatrix <- function(linkMatrix, threshold) {
 #' data("binnedMSP", package = "MetCirc")
 #' ## use only a selection 
 #' binnedMSP <- binnedMSP[c(c(1:20, 29:48, 113:132, 240:259)),]
-#' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
-#' namesPrec <- rownames(binnedMSP)
-#' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
-#'                              "[[", 1)), name = namesPrec)
-#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
-#' createLinkMatrix(similarityMatrix = similarityMat, dfNameGroup = dfNameGroup,
-#'      threshold = 0.5)
+#' createLinkMatrix(similarityMatrix = similarityMat, threshold = 0.5)
 #' @export
-createLinkMatrix <- function(similarityMatrix, dfNameGroup, threshold) {
+createLinkMatrix <- function(similarityMatrix, threshold) {
     ## first create a link0Matrix
-    linkMatrix <- createLink0Matrix(similarityMatrix = similarityMatrix, 
-                        dfNameGroup = dfNameGroup)
+    linkMatrix <- createLink0Matrix(similarityMatrix = similarityMatrix)
     ## than threshold link0Matrix
     thresholdLinkMatrix <- thresholdLinkMatrix(linkMatrix = linkMatrix, 
                         threshold = threshold)
@@ -191,13 +168,8 @@ createLinkMatrix <- function(similarityMatrix, dfNameGroup, threshold) {
 #' data("binnedMSP", package = "MetCirc")
 #' ## use only a selection 
 #' binnedMSP <- binnedMSP[c(c(1:20, 29:48, 113:132, 240:259)),]
-#' namesPrec <- rownames(binnedMSP)
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
-#' dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
-#'                              "[[", 1)), name = namesPrec)
-#' dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
-#' linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold = 0.5, 
-#'      dfNameGroup = dfNameGroup)
+#' linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold = 0.5)
 #' cutLinkMatrix(LinkMatrix = linkMat, type = "all")
 #' @export
 cutLinkMatrix <- function(LinkMatrix, type = c("all", "inter", "intra")) {
