@@ -4,21 +4,12 @@ data("binnedMSP", package = "MetCirc")
 ## use only a selection 
 binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
 similarityMat <- createSimilarityMatrix(binnedMSP)  
-namesPrec <- rownames(binnedMSP)
 
-## create dfNameGroup
-dfNameGroup <- data.frame(group = unlist(lapply(strsplit(namesPrec, "_"), 
-                                                "[[", 1)), name = namesPrec)
-## order according to compartment
-dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
-
-
-link0Matrix <- createLink0Matrix(
-    similarityMatrix = similarityMat, dfNameGroup = dfNameGroup)
+link0Matrix <- createLink0Matrix(similarityMatrix = similarityMat)
 ndps <- as.numeric(link0Matrix[,"NDP"])
 
 test_createLink0Matrix <- function() {
-    checkException(createLink0Matrix(similarityMat, dfNameGroup[1:10,]))
+    
     checkEquals(dim(link0Matrix)[2], 5)
     checkTrue(is.matrix(link0Matrix))
     checkTrue(all(
@@ -44,7 +35,7 @@ test_thresholdLinkMatrix <- function() {
 
 ## START unit test createLinkMatrix
 tLinkMatrix1 <- thresholdLinkMatrix(link0Matrix, 0.9)
-tLinkMatrix2 <- createLinkMatrix(similarityMat, dfNameGroup, 0.9)
+tLinkMatrix2 <- createLinkMatrix(similarityMat, 0.9)
 
 test_createLinkMatrix <- function() {
     checkTrue(identical(tLinkMatrix1, tLinkMatrix2))

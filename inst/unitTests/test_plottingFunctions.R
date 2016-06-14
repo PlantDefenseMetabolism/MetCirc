@@ -2,31 +2,22 @@
 data("binnedMSP", package = "MetCirc")
 ## use only a selection 
 binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
-similarityMat <- createSimilarityMatrix(binnedMSP)  
-namesPrec <- rownames(binnedMSP)
-
-## create dfNameGroup
-dfNameGroup <- data.frame(
-    group = unlist(lapply(strsplit(namesPrec, "_"), "[[", 1)), name = namesPrec)
-## order according to compartment
-dfNameGroup <- dfNameGroup[order(dfNameGroup[,"group"]),] 
-dfNameGroupRT <- orderNames(dfNameGroup = dfNameGroup, 
-                            similarityMatrix = NULL, order = "retentionTime")
-linkMat <- createLinkMatrix(similarityMatrix = similarityMat, 
-                threshold=0.95, dfNameGroup = dfNameGroup)
+similarityMat <- createSimilarityMatrix(binnedMSP)
+simMat <- createOrderedSimMat(similarityMat, order = "mz")
+groupname <- rownames(similarityMat)
+groupnameO <- rownames(simMat)
+## create link mat
+linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold=0.95)
 
 ## START unit test for plotCircos
 circos.clear()
 circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
            track.margin = c(0.0, 0))
 test_plotCircos <- function() {
-    checkException(plotCircos(dfNameGroup, NULL, 
+    checkException(plotCircos(groupname, NULL, 
         initialize = TRUE, featureNames = FALSE, groupSector = FALSE, 
         groupName = FALSE, links = TRUE, highlight = FALSE))
-    checkException(plotCircos(dfNameGroupRT, NULL, 
-        initialize = FALSE, featureNames = TRUE, groupSector = FALSE, 
-        groupName = FALSE, links = FALSE, highlight = FALSE))
-    checkException(plotCircos(dfNameGroupRT, linkMat, initialize = TRUE, 
+    checkException(plotCircos(groupnameO, linkMat, initialize = TRUE, 
         featureNames = FALSE, groupSector = FALSE, groupName = FALSE, 
         links = TRUE, highlight = FALSE)) ## names are different
 }
@@ -35,61 +26,54 @@ test_plotCircos <- function() {
 
 ## START unit test for highlight
 test_highlight <- function() {
-    checkException(highlight(dfNameGroup, 1, NULL))
-    checkException(highlight(dfNameGroup, dim(dfNameGroupRT)[1]+1,NULL))
-    checkException(highlight(dfNameGroupRT, 1, linkMat))
+    checkException(highlight(groupnameO, 1, NULL))
+    checkException(highlight(groupnameO, length(groupnameO)+1,NULL))
+    ## names in linkMat do not match names in groupnameO
+    checkException(highlight(groupnameO, 1, linkMat))
+    ## groupname instead of groupnameO
+    checkException(highlight(groupname, 1, linkMat)) 
+    
 }
 ## END unit test for highlight
 
 ## START unit test for circosLegend
-
+## no unit test for circosLegend
 ## END unit test for circosLegend
-test_circosLegend <- function() {
-    checkException(circosLegend(dfNameGroup[,1], TRUE))
-}
+
 
 ## START unit test for getLinkMatrixIndices
 circos.clear()
 ## set circlize paramters
 circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0), 
            track.margin = c(0.0, 0))
-plotCircos(dfNameGroup, NULL, initialize = TRUE, 
+plotCircos(groupname, NULL, initialize = TRUE, 
     featureNames = FALSE, groupSector = FALSE, groupName = FALSE, links = FALSE, highlight = FALSE)
 test_getLinkMatrixIndices <- function() {
-    checkEquals(getLinkMatrixIndices(dfNameGroup[1,], linkMat), 13)
-    checkEquals(getLinkMatrixIndices(dfNameGroup[2,], linkMat), integer())
-    checkEquals(getLinkMatrixIndices(dfNameGroup[3,], linkMat), 14)
-    checkEquals(getLinkMatrixIndices(dfNameGroup[4,], linkMat), 15)
-    checkEquals(getLinkMatrixIndices(dfNameGroup[5,], linkMat), 16)
-    checkEquals(getLinkMatrixIndices(dfNameGroup[1:5,], linkMat), c(13:16))
-    checkException(getLinkMatrixIndices(dfNameGroup[1,], NULL))
+    checkEquals(getLinkMatrixIndices(groupname[1], linkMat), 1)
+    checkEquals(getLinkMatrixIndices(groupname[2], linkMat), 2:6)
+    checkEquals(getLinkMatrixIndices(groupname[3], linkMat), 7)
+    checkEquals(getLinkMatrixIndices(groupname[4], linkMat), numeric())
+    checkEquals(getLinkMatrixIndices(groupname[5], linkMat), numeric())
+    checkEquals(getLinkMatrixIndices(groupname[1:5], linkMat), 1:7)
+    checkException(getLinkMatrixIndices(groupname[1], NULL))
 }
 ## END unit test for getLinkMatrixIndices
 
 ## START unit test for truncateName
 test_truncateName <- function() {
-    checkEquals(
-        as.character(truncateName(dfNameGroupRT[1,], 2, nameGroup=TRUE)[2]), 
-        "1398.71/1018.98")
-    checkEquals(
-        as.character(truncateName(dfNameGroup[1,], 2, nameGroup=FALSE)[2]), 
-        "231.05/1020.69")
-    checkEquals(dim(truncateName(dfNameGroup, 2, nameGroup = FALSE)), 
-                dim(dfNameGroup))
-    checkEquals(as.character(truncateName(dfNameGroup[1,], 2, nameGroup = TRUE)[2]),
-                "NA/NA")
-    checkEquals(
-        as.character(truncateName(dfNameGroupRT[1,], 2, nameGroup = FALSE)[2]),
-        "1/NA")
+    checkEquals(truncateName(groupname[1], 2), "1008.47/1020.97")
+    checkEquals(truncateName(groupname[1], 0), "1008/1021")
+    checkEquals(length(truncateName(groupname[1:10], 2)), 10)
 }
 ## END unit test truncateName
 
 ## START unit test minFragCart2Polar
-degreeFeatures <- lapply(dfNameGroup$name, 
+
+degreeFeatures <- lapply(groupname, 
     function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
 test_minFragCart2Polar <- function() {
-    checkEquals(minFragCart2Polar(1,0,degreeFeatures), 74)
-    checkEquals(minFragCart2Polar(0.1,0.9,degreeFeatures), 77)
+    checkEquals(minFragCart2Polar(1,0,degreeFeatures), 80)
+    checkEquals(minFragCart2Polar(0.1,0.9,degreeFeatures), 62)
     checkEquals(minFragCart2Polar(1,1, degreeFeatures), NA)
     checkEquals(minFragCart2Polar(1, 0, NULL), integer())
     checkException(minFragCart2Polar(NA, NA, degreeFeatures))
@@ -116,17 +100,3 @@ test_cart2Polar <- function() {
     checkException(cart2Polar(NA, 1))
 }
 ## END unit test cart2Polar
-
-## START unit test orderNames
-test_orderNames <- function() {
-    checkException(orderNames(dfNameGroup, NULL, "neworder"))
-    checkException(orderNames(NULL, NULL, "retentionTime"))
-    checkException(orderNames(dfNameGroup, NULL, "clustering"))
-    checkEquals(dim(orderNames(dfNameGroup, NULL, "retentionTime")), 
-                dim(dfNameGroup))
-    checkTrue(is.data.frame(orderNames(dfNameGroup, NULL, "retentionTime")))
-    checkTrue(is.data.frame(orderNames(dfNameGroup, NULL, "mz")))
-    checkTrue(
-        is.data.frame(orderNames(dfNameGroup, similarityMat, "clustering")))
-}
-## END unit test orderNames
