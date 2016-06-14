@@ -3,7 +3,7 @@
 #' @name shinyCircos
 #' @title Interactive visualisation of similar precursors
 #' @description Visualise similar precursors.
-#' @usage shinyCircos(dfNameGroup, similarityMatrix, msp, size = 400)
+#' @usage shinyCircos(similarityMatrix, msp, size = 400)
 #' @param similarityMatrix matrix, similarityMatrix contains pair-wise 
 #' similarity coefficients which give information about the similarity between
 #' precursors
@@ -28,25 +28,14 @@
 shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
     
     if (!is.numeric(size)) stop("size is not numerical")
-    # if (!is.null(msp)) {
-    #     if (class(msp) != "MSP") stop("msp is not of class MSP")
-    #     ## test if mz/rt constructer of msp and names of dfNameGroup are 
-    #     ## identical
-    #     dfNameGroupName <- as.character(dfNameGroup[, "name"])
-    #     mzRTdf <- sapply(
-    #         strsplit(dfNameGroupName, split="_"), 
-    #         function(x) x[2])
-    #     mzRTMSP <- paste(getPrecursorMZ(msp), getRT(msp), sep="/")
-    #     if(!all(mzRTdf == mzRTMSP)) 
-    #         stop("mz/rt in msp and names of dfNameGroup are not identical")
-    # }
+    if (!is.null(msp)) if (class(msp) != "MSP") stop("msp is not of class MSP")
+    
     ## circlize parameters
     circos.par(gap.degree = 0, cell.padding = c(0, 0, 0, 0), 
             track.margin = c(0.0, 0))
     
     ## create plots and assign to objects by recordPlot
     ## rt
-    ##dfNameGroupRT <- orderNames(dfNameGroup, order = "retentionTime")
     simMatRT <- createOrderedSimMat(similarityMatrix, order = "retentionTime")
     groupnameRT <- rownames(simMatRT)
     plotCircos(groupnameRT, NULL, initialize=TRUE, featureNames = TRUE, 
@@ -60,8 +49,6 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
     groupRT <- unlist(groupRT)
     nameRT <- lapply(strsplit(groupnameRT, split = "_"), function (x) x[length(x)])
     nameRT <- unlist(nameRT)
-    ##dfNameGroupRTName <- as.character(dfNameGroupRT[, "name"])
-    ##dfNameGroupRTGroup <- as.character(dfNameGroupRT[, "group"])
     ## get degree of features
     degreeFeaturesRT <- lapply(groupnameRT, 
         function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
@@ -74,7 +61,6 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
     plot.new()
     
     ## mz
-    ##dfNameGroupMZ <- orderNames(dfNameGroup, order = "mz")
     simMatMZ <- createOrderedSimMat(similarityMatrix, order = "mz")
     groupnameMZ <- rownames(simMatMZ)
     plotCircos(groupnameMZ, NULL, initialize=TRUE, featureNames = TRUE, 
@@ -89,15 +75,9 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
     nameMZ <- lapply(strsplit(groupnameMZ, split = "_"), function (x) x[length(x)])
     nameMZ <- unlist(nameMZ)
     ## get degree of features
-    ##dfNameGroupRTName <- as.character(dfNameGroupRT[, "name"])
-    ##dfNameGroupRTGroup <- as.character(dfNameGroupRT[, "group"])
-    degreeFeaturesMZ <- lapply(groupnameMZ, 
+        degreeFeaturesMZ <- lapply(groupnameMZ, 
         function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
     
-    ##dfNameGroupMZName <- as.character(dfNameGroupMZ[, "name"])
-    ##dfNameGroupMZGroup <- as.character(dfNameGroupMZ[, "group"])
-    ##degreeFeaturesMZ <- lapply(dfNameGroupMZName, 
-    ##    function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
     plot.new()
     plotCircos(groupnameMZ, NULL, initialize=TRUE, featureNames = TRUE, 
                groupSector = TRUE, groupName = FALSE, links = FALSE, 
@@ -106,8 +86,6 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
     plot.new()
     
     ## clustering
-    ##dfNameGroupCluster <- orderNames(dfNameGroup, 
-    ##    similarityMatrix = similarityMatrix, order = "clustering")
     simMatClustering <- createOrderedSimMat(similarityMatrix, 
                                             order = "clustering")
     groupnameClustering <- rownames(simMatClustering)
@@ -124,8 +102,6 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                              function (x) x[length(x)])
     nameClustering <- unlist(nameClustering)
     ## get degree of features
-    ##dfNameGroupClusterName <- as.character(dfNameGroupCluster[, "name"])
-    ##dfNameGroupClusterGroup <- as.character(dfNameGroupCluster[, "group"])
     degreeFeaturesClust <- lapply(groupnameClustering,
         function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
     plot.new()
@@ -189,12 +165,12 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
         })
             
         
-        ## ordering of features, use predefined dfNameGroup object
-        dfNG <- reactive({
-            if (input$order == "mz") dfNG <- groupnameMZ
-            if (input$order == "retentionTime") dfNG <- groupnameRT
-            if (input$order == "clustering") dfNG <- groupnameClustering
-            dfNG
+        ## ordering of features, use predefined groupname object
+        GN <- reactive({
+            if (input$order == "mz") GN <- groupnameMZ
+            if (input$order == "retentionTime") GN <- groupnameRT
+            if (input$order == "clustering") GN <- groupnameClustering
+            GN
         })
 
         ## get degree of features
@@ -281,8 +257,8 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                 minInd <- minFragCart2Polar(input$circosClick$x, 
                                             input$circosClick$y, 
                                             degreeFeatures()) 
-                dfNGselect <- dfNG()[minInd]
-                selected <- strsplit(dfNGselect, split = "_")[[1]]
+                GNselect <- GN()[minInd]
+                selected <- strsplit(GNselect, split = "_")[[1]]
                 groupSelected <- selected[1]
                 nameSelected <- selected[3] 
                 
@@ -344,7 +320,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
         })
         
         ## plotting
-        initializePlot <- reactive(plotCircos(dfNG(), NULL, initialize = TRUE, 
+        initializePlot <- reactive(plotCircos(GN(), NULL, initialize = TRUE, 
                 featureNames = FALSE, groupName = FALSE, groupSector = FALSE,
                 links = FALSE, highlight = FALSE))
         output$circos <- renderPlot({
@@ -420,13 +396,13 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
         
         ## show when hovering the feature which connects to it
         linkMatIndsHover <- reactive({
-            getLinkMatrixIndices(dfNG()[indHover$ind], LinkMatrix_threshold())
+            getLinkMatrixIndices(GN()[indHover$ind], LinkMatrix_threshold())
         })
         
         output$hoverConnectedFeature <- renderUI({ 
             if (!is.null(onCircle$is)) {
                 if (onCircle$is)
-                    HTML(printInformationHover(dfNG(), msp = msp, 
+                    HTML(printInformationHover(GN(), msp = msp, 
                         ind = indHover$ind, lMatIndHover = linkMatIndsHover(), 
                         linkMatrixThreshold = LinkMatrix_threshold(), 
                         similarityMatrix = simMat()))  
@@ -468,12 +444,12 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
 #' @name printInformationHover
 #' @title Display information on connected features of hovered features
 #' @description Displays information on connected features of hovered features.
-#' @usage printInformationHover(dfNameGroupOrder, msp = NULL, ind, 
-#'  lMatIndHover, linkMatrixThreshold, highlight = c(TRUE, FALSE), 
-#'  similarityMatrix)
-#' @param dfNameGroupOrder data.frame, an ordered data.frame derived from 
-#'  dfNameGroup which contains columns "group" and "name", the column "name" 
-#'  contains entries in the form of group_number_mz/rt
+#' @usage printInformationHover(groupname, msp = NULL, ind, 
+#'  lMatIndHover, linkMatrixThreshold, similarityMatrix)
+#' @param groupname vector with groupname of selected feature,
+#' vector containing "group" and "name" to display, that is 
+#' a unique identifier of the features, "group" and "name" have to be separated
+#' by "_" where "group" is the first and "name" is the last element
 #' @param msp MSP, an S4 object of class 'MSP' for information about 
 #'  the hovered feature
 #' @param ind numeric
@@ -537,7 +513,7 @@ printInformationHover <- function(groupname, msp = NULL,
         mzRTMSP <- paste(getPrecursorMZ(msp), getRT(msp), sep="/")
         matchedHovMZRT <- match(name, mzRTMSP)
         hoveredFeat <- msp[matchedHovMZRT[ind]]
-        hovFeat <- groupname[ind] ## dfNGo[ind, "name"]
+        hovFeat <- groupname[ind] 
         ## connected features
         connect <- unique(as.vector(lMatThr[lMatIndHover, c("name1", "name2")]))
         mzRTdfcon <- sapply(strsplit(connect, split="_"), function(x) x[3])

@@ -80,8 +80,8 @@ plotCircos <- function(groupname, linkMat, initialize = c(TRUE, FALSE),
     
     ## display feature names
     if (featureNames) {
-        groupnameFeatName <- paste(group, name, sep="_")
-        truncatedName <- truncateName(dfNameGroup, nameGroup = TRUE)
+        ##groupnameFeatName <- paste(group, name, sep="_")
+        truncatedName <- truncateName(groupname)
         for (i in 1:groupname_l) {
             circos.text(x = 0.5, y = 0.5, labels = truncatedName[i],
                         sector.index = groupname[i], 
