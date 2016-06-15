@@ -183,7 +183,6 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
         ## calculateLink0Matrix
         link0Matrix <- reactive(createLink0Matrix(simMat()))
         
-        ## create reactive expression for LinkMatrix
         ## create reactive expression for LinkMatrix which is cut according to 
         ## set radioButton (input$choiceLinks)
         LinkMatrix_cut <- reactive(cutLinkMatrix(link0Matrix(), 
@@ -229,7 +228,6 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                 indHover$ind <- minFragCart2Polar(input$circosHover$x, 
                                                   input$circosHover$y, 
                                                   degreeFeatures()) 
-            
         })
         
         ## click: which is the current sector?
@@ -248,7 +246,8 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
             }
         })
         
-        
+        ## reactive value which stores clicked indices (inds = storage, 
+        ## new = new indices)
         indClick <- reactiveValues(ind = NULL, new = NULL)
         observe({
             if (!is.null(input$circosClick$x)) {
