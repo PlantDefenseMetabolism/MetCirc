@@ -233,12 +233,11 @@ highlight <- function(groupname, ind, LinkMatrix) {
     ## get length of vector namegroup
     groupname_l <- length(groupname)
     
+    ## create vector that contains selected (ind) groupname instances
     groupnameselected <- groupname[ind]
     nameselected <- name[ind]
     
-    ##dfDim <- dim(dfNameGroup)
-    
-    ##dfInd <- dfNameGroup[ind,]
+    ## retrieve name1 and name2 from LinkMatrix
     lMatName1 <- LinkMatrix[,"name1"]
     lMatName2 <- LinkMatrix[,"name2"]
     
@@ -252,7 +251,6 @@ highlight <- function(groupname, ind, LinkMatrix) {
         LinkMatrixInd <- getLinkMatrixIndices(groupnameselected, LinkMatrix)
     } else {LinkMatrixInd <- NULL}
 
-    #######
     ## plot all links
     if (dim(LinkMatrix)[1] != 0) {
         for (i in 1:dim(LinkMatrix)[1]) {
@@ -263,7 +261,6 @@ highlight <- function(groupname, ind, LinkMatrix) {
                     col = alpha("black", 0.1))
         }
     }
-    #######
     
     ## plot highlighted links
     if (!is.null(LinkMatrixInd)) {
