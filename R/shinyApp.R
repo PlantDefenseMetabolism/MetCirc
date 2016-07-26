@@ -147,6 +147,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                         plotOutput("circosLegend"))
                 ), 
                         htmlOutput("hoverConnectedFeature"),
+                        verbatimTextOutput("help"),
                         verbatimTextOutput("clickFeature")
             )
         )
@@ -395,6 +396,9 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
             getLinkMatrixIndices(GN()[indHover$ind], LinkMatrix_threshold())
         })
         
+        ##
+        output$help <- renderText({c(dim(LinkMatrix_threshold()))})
+        
         output$hoverConnectedFeature <- renderUI({ 
             if (!is.null(onCircle$is)) {
                 if (onCircle$is)
@@ -512,8 +516,10 @@ printInformationHover <- function(groupname, msp = NULL,
         hovFeat <- groupname[ind] 
         ## connected features
         connect <- unique(as.vector(lMatThr[lMatIndHover, c("name1", "name2")]))
+        ## remove duplicated hovFeat in connect
+        if (hovFeat %in% connect) connect <- connect[-which(connect == hovFeat)]
         mzRTcon <- sapply(strsplit(connect, split="_"), function(x) x[3])
-                
+        
         if (length(connect) == 0) {
             return(paste0(hovFeat, " (", getName(hoveredFeat), ", ", 
                 getMetaboliteName(hoveredFeat), ", ", 
@@ -524,7 +530,7 @@ printInformationHover <- function(groupname, msp = NULL,
             connFeat <- msp[matchedConn]
             connChar <- character()
             degreeSimilarity <- similarityMatrix[hovFeat, ]
-            for (i in 1:length(connFeat)) {
+            for (i in 1:length(connect)) {
                 connFeatI <- connFeat[i]
                 connectI <- connect[i]
                 degreeSimilarityI <- round(degreeSimilarity[connectI],3)

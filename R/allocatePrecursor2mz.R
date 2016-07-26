@@ -21,6 +21,9 @@
 #' @param mzVsRTbalance numerical, multiplicator for mz value before calculating 
 #' the (euclidean) distance between two peaks, high value means that there is 
 #' a strong weight on the deviation m/z value 
+#' @param splitPattern character, character vector to use for splitting, see
+#'  ?strsplit for further information
+#' @param splitInd numeric, extract precursor mz at position splitInd
 #' @details This function combines different data sources. 
 #' \code{convertExampleDF} is a \code{data.frame} which comprises information 
 #' on a specific metabolite per 
@@ -56,27 +59,33 @@
 #'      kNN = 10, mzCheck = 1, rtCheck = 30, mzVsRTbalance = 10000)
 #' @export
 allocatePrecursor2mz <- function(sd01, sd02, kNN = 10, mzCheck = 1, 
-                                 rtCheck = 30, mzVsRTbalance = 10000) {
+    rtCheck = 30, mzVsRTbalance = 10000, splitPattern = " _ ", splitInd = 2) {
     ## Multiplicator for mz value before calculating the (euclidean) distance 
     ## between two peaks high value means that there is a strong weight on the 
     ## dev m/z value mzVsRTbalance
-    if (kNN < 0) break
-    if (mzCheck < 0) break
-    if (rtCheck < 0) break
-    if (mzVsRTbalance < 0) break
-    
-    precursor <- sd02[,4]
-    
+    if (kNN <= 0) stop("kNN has to be > 0")
+    if (mzCheck <= 0) stop("mzCheck has to be > 0")
+    if (rtCheck <= 0) stop("rtCheck has to be > 0")
+    if (mzVsRTbalance <= 0) stop("mzVsRTbalance has to be > 0")
+    if (!all(sort(colnames(sd02)) == c("intensity", "mz", "pcgroup_precursorMZ", "rt"))) 
+        stop("colnames(sd02) have to be 'mz', 'rt', 'intensity', 'pcgroup_precursorMZ' ")
+    colNamesSd01 <- colnames(sd01)
+    if (!all(c("mz", "rt", "npeaks", "isotopes", "adduct", "pcgroup") %in% colNamesSd01)) 
+        stop("colnames(sd01) have to have 'mz', 'rt', 'npeaks', 'isotopes', 'adduct', 'pcgroup'")
+    precursor <- sd02[, "pcgroup_precursorMZ"]
     ## isolated mz values from e.g. pcgroup_precursorMZ column in 
     ## sd02_deconvoluted
-    uniquePrecursor <- cutUniquePreMZ(precursor, splitPattern=" _ ", splitInd=2)
-
+    uniquePrecursor <- cutUniquePreMZ(precursor, 
+                                      splitPattern = splitPattern, splitInd= splitInd)
+    
     ## create finalCluster, which is the data.frame to store data
-    finalCluster <- matrix(nrow = length(uniquePrecursor), ncol = (5 + 183 + 4))
-    colnames(finalCluster) <- c("Average Rt(min)", "Average mz", "Metabolite Name",
+    finalCluster <- matrix(nrow = length(uniquePrecursor), ncol = dim(sd01)[2] + 7)
+    colnames(finalCluster) <- c(colnames(sd01), "Metabolite Name", 
                 "Adduct ion name", "Spectrum reference file name", 
-                as.character(1:183), "check RT", "dev RT", "check mz", 
-                "deviation m/z")
+                "check RT", "dev RT", "check mz", "deviation m/z")
+    colnames(finalCluster)[which(colnames(finalCluster)=="mz")] <- "average mz"
+    colnames(finalCluster)[which(colnames(finalCluster)=="rt")] <- "average rt"
+    
     finalCluster <- as.data.frame(finalCluster)
     
     uniquePreMZ <- unique(precursor)
@@ -142,35 +151,34 @@ allocatePrecursor2mz <- function(sd01, sd02, kNN = 10, mzCheck = 1,
         
         ## find smallest value for objective function 
         minInd <- which.min(objective) 
-        ## get index in sd01_outputXCMS 
+        ## get index in sd01 
         minInd <- which(devmz[minInd] == devmzOld) 
         
-        ## get the entry of sd01_outputXCMS with the smallest value
-        XCMS <- sd01[minInd,]
         
-        ## write new entry
-        entry <- matrix(0, nrow = 1, ncol = ncol(finalCluster))
-        colnames(entry) <- colnames(finalCluster)
-        entry[, "Average Rt(min)"] <- sd02rt
-        entry[, "Average mz"] <- uniquePrecursor[i]
-        entry[, "Metabolite Name"] <- "Unknown"
-        entry[, "Adduct ion name"] <- 
+        ## write to finalCluster:
+        ## get the entry of sd01 with the smallest value
+        XCMS <- sd01[minInd,]
+        replaceInd <- !is.na(match(colnames(finalCluster), colNamesSd01))
+        finalCluster[i, replaceInd] <- as.vector(as.matrix(XCMS[replaceInd]))
+
+        finalCluster[i, "average rt"] <- sd02rt
+        finalCluster[i, "average mz"] <- uniquePrecursor[i]
+        finalCluster[i, "Metabolite Name"] <- "Unknown"
+        finalCluster[i, "Adduct ion name"] <- 
             if (nchar(as.character(XCMS[, "adduct"]) == 0)) "Unknown" else XCMS[,"adduct"]
         
-        entry[, "Spectrum reference file name"] <- "Unknown"
+        finalCluster[i, "Spectrum reference file name"] <- "Unknown"
         
-        x <- XCMS[,which(colnames(XCMS) == "1"):which(colnames(XCMS) == "183")]
-        x <- as.matrix(x)
-        x <- as.vector(x)
-        entry[, which(colnames(entry)=="1"):which(colnames(entry)=="183")] <- x
+        ##x <- XCMS[,which(colnames(XCMS) == "1"):which(colnames(XCMS) == "183")]
+        ##x <- as.matrix(x)
+        ##x <- as.vector(x)
+        ##entry[, which(colnames(entry)=="1"):which(colnames(entry)=="183")] <- x
         
-        entry[, "check RT"] <- ToleranceCheckRT
-        entry[, "dev RT"] <- sd02rt - as.numeric(as.character(XCMS[,"rt"]))
-        entry[, "check mz"] <- ToleranceCheckMZ
-        entry[, "deviation m/z"] <- sd02mz - as.numeric(as.character(XCMS[,"mz"]))
-        
-        ## write to finalCluster
-        finalCluster[i, ] <- entry
+        finalCluster[i, "check RT"] <- ToleranceCheckRT
+        finalCluster[i, "dev RT"] <- sd02rt - as.numeric(as.character(XCMS[,"rt"]))
+        finalCluster[i, "check mz"] <- ToleranceCheckMZ
+        finalCluster[i, "deviation m/z"] <- sd02mz - as.numeric(as.character(XCMS[,"mz"]))
+
     }
     
     return(finalCluster)

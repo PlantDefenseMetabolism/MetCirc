@@ -185,9 +185,11 @@ createOrderedSimMat <- function(similarityMatrix, order = c("retentionTime","mz"
                         counter[x], groupNameNewSplit[[x]][2], sep="_"))
     groupNameNew <- unlist(groupNameNew)
     
-    ## reorder due to clustering
-    orderNew <- order(groupNameNew)
-    groupNameNew <- groupNameNew[orderNew]
+   ## if (order == "clustering") {
+   ##     ## reorder due to clustering
+    ##    orderNew <- order(groupNameNew)
+    ##    groupNameNew <- groupNameNew[orderNew]    
+   ## }
     
     simM <- similarityMatrix[orderNew, orderNew]
     colnames(simM) <- rownames(simM) <- groupNameNew
