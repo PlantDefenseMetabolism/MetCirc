@@ -1,3 +1,9 @@
+CHANGES IN VERSION 0.99.2
+-------------------------
+ o do not reorder again in createOrderedSimMat function [2016-07-26 Tue]
+ o change allocatePrecursor2mz function such, that it is compatible with 
+   all sd01 and sd02 objects [2016-07-26 Tue]
+
 CHANGES IN VERSION 0.99.1
 -------------------------
  o rewrite functions that they do not require the argument dfNameGroup (data.frame
