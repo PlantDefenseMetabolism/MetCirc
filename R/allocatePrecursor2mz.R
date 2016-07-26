@@ -3,7 +3,7 @@
 #' @description Allocates precursor ions to candidate m / z values based on 
 #' minimal distance of m / z and deviance of rt based on an objective function
 #' @usage allocatePrecursor2mz(sd01, sd02, kNN = 10, mzCheck = 1, rtCheck = 30, 
-#'      mzVsRTbalance = 10000)
+#'      mzVsRTbalance = 10000, splitPattern = "_", splitInd = 2)
 #' @param sd01 is the output of the \code{XCMS} and \code{CAMERA} 
 #' processing and statistical analysis and \code{XCMS} and \code{CAMERA} 
 #' scripts (see Li et al. 2015 and vignette for further information)
@@ -46,7 +46,7 @@
 #' especially when data were acquired under different conditions.
 #' @return allocatePrecursor2mz returns a data.frame containing average 
 #'      retention time, average mz, metabolite name, adduct ion name, 
-#'      spectrum refereh
+#'      spectrum reference
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @references Li et al. (2015): Navigating natural variation in 
 #' herbivory-induced secondary metabolism in coyote tobacco populations using 
@@ -56,10 +56,10 @@
 #' data("sd02_deconvoluted", package = "MetCirc") 
 #' data("convertExampleDF", package = "MetCirc")
 #' allocatePrecursor2mz(sd01 = sd01_outputXCMS, sd02 = sd02_deconvoluted, 
-#'      kNN = 10, mzCheck = 1, rtCheck = 30, mzVsRTbalance = 10000)
+#'      kNN = 10, mzCheck = 1, rtCheck = 30, mzVsRTbalance = 10000, splitPattern = "_", splitInd = 2)
 #' @export
 allocatePrecursor2mz <- function(sd01, sd02, kNN = 10, mzCheck = 1, 
-    rtCheck = 30, mzVsRTbalance = 10000, splitPattern = " _ ", splitInd = 2) {
+    rtCheck = 30, mzVsRTbalance = 10000, splitPattern = "_", splitInd = 2) {
     ## Multiplicator for mz value before calculating the (euclidean) distance 
     ## between two peaks high value means that there is a strong weight on the 
     ## dev m/z value mzVsRTbalance
