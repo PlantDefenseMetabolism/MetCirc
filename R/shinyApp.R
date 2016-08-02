@@ -316,15 +316,15 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
         })
         
         ## plotting
-        ##initializePlot <- reactive(plotCircos(GN(), NULL, initialize = TRUE, 
-        ##        featureNames = FALSE, groupName = FALSE, groupSector = FALSE,
-        ##        links = FALSE, highlight = FALSE))
-        output$circos <- renderPlot({
+        initializePlot <- reactive({
             circos.initialize(GN(),
-                              xlim = matrix(rep(c(0,1), dim(similarityMatrix)[1]), ncol = 2, 
-                                            byrow = TRUE) )
-            circos.trackPlotRegion(GN(), ylim=c(0,1))
-            ##initializePlot()
+                xlim = matrix(rep(c(0,1), dim(similarityMatrix)[1]), ncol = 2, 
+                byrow = TRUE) )
+            circos.trackPlotRegion(GN(), ylim=c(0,1))  
+        })
+        
+        output$circos <- renderPlot({
+            initializePlot()
             ##if (!is.null(PlotFilled2)) {
             if (onCircle$is) {
                 if (input$order == "mz") {
