@@ -72,7 +72,7 @@ plotCircos <- function(groupname, linkMat, initialize = c(TRUE, FALSE),
     if (!is.logical(highlight)) stop("highlight is not logical")
 
     if (initialize) {
-        circos.initialize(groupname,
+        circos.initialize(factor(groupname),
                 xlim = matrix(rep(c(0,1), groupname_l), ncol = 2, 
                 byrow = TRUE) )
         circos.trackPlotRegion(groupname, ylim=c(0,1))
@@ -409,7 +409,7 @@ getLinkMatrixIndices <- function(groupnameselected, linkMatrix) {
 #' simM <- createSimilarityMatrix(binnedMSP)
 #' groupname <- rownames(simM)
 #' plotCircos(groupname, NULL, initialize = TRUE, featureNames = FALSE, 
-#'      groupName = FALSE, groupSector = TRUE, links = FALSE, highlight = FALSE)
+#'      groupName = FALSE, groupSector = FALSE, links = FALSE, highlight = FALSE)
 #' x <- 1
 #' y <- 0
 #' degreeFeatures <- lapply(groupname, 

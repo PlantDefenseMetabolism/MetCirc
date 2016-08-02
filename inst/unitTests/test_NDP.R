@@ -26,7 +26,7 @@ test_createSimilarityMatrix <- function() {
     checkEquals(dim(simMat)[1], dim(binnedMSP)[1])
     checkEquals(dim(simMat)[2], dim(binnedMSP)[1])
     checkEquals(colnames(simMat), rownames(simMat))
-    checkEquals(rownames(simMat), sort(rownames(binnedMSP)))
+    checkEquals(rownames(simMat), rownames(binnedMSP))
     checkTrue(is.numeric(simMat))
     checkTrue(is.matrix(simMat))
 }

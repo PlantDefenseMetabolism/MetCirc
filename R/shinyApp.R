@@ -317,7 +317,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
         
         ## plotting
         initializePlot <- reactive({
-            circos.initialize(GN(),
+            circos.initialize(factor(GN()),
                 xlim = matrix(rep(c(0,1), dim(similarityMatrix)[1]), ncol = 2, 
                 byrow = TRUE) )
             circos.trackPlotRegion(GN(), ylim=c(0,1))  

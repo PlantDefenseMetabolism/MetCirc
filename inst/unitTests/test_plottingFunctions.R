@@ -46,20 +46,20 @@ circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0),
 plotCircos(groupname, NULL, initialize = TRUE, 
     featureNames = FALSE, groupSector = FALSE, groupName = FALSE, links = FALSE, highlight = FALSE)
 test_getLinkMatrixIndices <- function() {
-    checkEquals(getLinkMatrixIndices(groupname[1], linkMat), 1)
-    checkEquals(getLinkMatrixIndices(groupname[2], linkMat), 2:6)
-    checkEquals(getLinkMatrixIndices(groupname[3], linkMat), 7)
     checkEquals(getLinkMatrixIndices(groupname[4], linkMat), numeric())
-    checkEquals(getLinkMatrixIndices(groupname[5], linkMat), numeric())
-    checkEquals(getLinkMatrixIndices(groupname[1:5], linkMat), 1:7)
+    checkEquals(getLinkMatrixIndices(groupname[5], linkMat), 1:3)
+    checkEquals(getLinkMatrixIndices(groupname[6], linkMat), c(1, 4:5))
+    checkEquals(getLinkMatrixIndices(groupname[7], linkMat), c(2, 4, 6))
+    checkEquals(getLinkMatrixIndices(groupname[8], linkMat), c(3, 5, 6))
+    checkEquals(getLinkMatrixIndices(groupname[4:6], linkMat), c(1:3, 1, 4, 5))
     checkException(getLinkMatrixIndices(groupname[1], NULL))
 }
 ## END unit test for getLinkMatrixIndices
 
 ## START unit test for truncateName
 test_truncateName <- function() {
-    checkEquals(truncateName(groupname[1], 2), "1008.47/1020.97")
-    checkEquals(truncateName(groupname[1], 0), "1008/1021")
+    checkEquals(truncateName(groupname[1], 2), "579.35/991.14")
+    checkEquals(truncateName(groupname[1], 0), "579/991")
     checkEquals(length(truncateName(groupname[1:10], 2)), 10)
 }
 ## END unit test truncateName
@@ -69,8 +69,8 @@ test_truncateName <- function() {
 degreeFeatures <- lapply(groupname, 
     function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
 test_minFragCart2Polar <- function() {
-    checkEquals(minFragCart2Polar(1,0,degreeFeatures), 80)
-    checkEquals(minFragCart2Polar(0.1,0.9,degreeFeatures), 62)
+    checkEquals(minFragCart2Polar(1,0,degreeFeatures), 74)
+    checkEquals(minFragCart2Polar(0.1,0.9,degreeFeatures), 77)
     checkEquals(minFragCart2Polar(1,1, degreeFeatures), NA)
     checkEquals(minFragCart2Polar(1, 0, NULL), integer())
     checkException(minFragCart2Polar(NA, NA, degreeFeatures))
