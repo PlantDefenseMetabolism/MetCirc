@@ -1,3 +1,15 @@
+CHANGES IN VERSION 0.99.4
+-------------------------
+ o add arguments splitIndMZ and splitIndRT in function convert2MSP and
+   fix bug (colnames classes instead of class) in convert2MSP [2016-08-17 Wed]
+ o update vignette, unit tests and manuals [2016-08-17 Wed]
+
+CHANGES IN VERSION 0.99.3
+-------------------------
+ o remove verbatim Textouput(help) in shinyApp [2016-08-01 Mon]
+ o change function createSimilarityMatrix in order that it does not
+   change ordering of row names [2016-08-01 Mon]
+ o update unit tests and manuals [2016-08-01 Mon]
 CHANGES IN VERSION 0.99.2
 -------------------------
  o do not reorder again in createOrderedSimMat function [2016-07-26 Tue]
