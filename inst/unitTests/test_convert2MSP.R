@@ -16,7 +16,7 @@ test_cutUniquePreMZ <- function() {
 
 ## START unit test convert2MSP
 testMSP <- convert2MSP(sd02_deconvoluted, 
-    splitPattern = " _ ", splitInd = 2)
+    splitPattern = " _ ", splitIndMZ = 2, splitIndRT = 3)
 
 test_convert2MSP <- function() {
     checkTrue(class(testMSP) == "MSP")

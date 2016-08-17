@@ -1,7 +1,8 @@
 
 
 ## START unit test getBegEndIndMSP
-testMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+testMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+                       splitIndMZ = 2, splitIndRT = NULL)
 testMSPmsp <- getMSP(testMSP)
 BegEndIndMSP <- getBegEndIndMSP(testMSPmsp)
 test_getBegEndIndMSP <- function() {
