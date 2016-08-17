@@ -163,7 +163,8 @@ of all fragment ions belonging to the specific precursor. The actual \code{msp}
 Here, we convert \Robject{sd02\_deconvoluted} into an object in .msp format. 
 <<eval=c(1:2)>>=
 ## identify precursor mz
-finalMSPLi2015 <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+finalMSPLi2015 <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+                              splitIndMZ = 2, splitIndRT = 3)
 
 ## optional:
 ## write finalMSPLi2015 to idMSMStoMSPLi2015.RData
