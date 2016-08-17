@@ -40,8 +40,8 @@ cutUniquePreMZ <- function(precursor, splitPattern = splitPattern,
 #' @name convert2MSP
 #' @title Convert deconvoluted matrix into MSP format
 #' @description Convert deconvoluted matrix into MSP format
-#' @usage convert2MSP(mm, splitPattern = "_", splitInd = 1, names = FALSE, 
-#'  metNames = FALSE, class = FALSE)
+#' @usage convert2MSP(mm, splitPattern = "_", splitIndMZ = 1, splitIndRT = 2, 
+#'  names = FALSE, metNames = FALSE, class = FALSE)
 #' @param mm matrix, mm has to have four columns with colnames 
 #'  mz, rt, intensity (order is not important). In the fourth column there has 
 #'  to information about the precursor ion which will be assessed by 
@@ -49,8 +49,12 @@ cutUniquePreMZ <- function(precursor, splitPattern = splitPattern,
 #'  metNames, class. 
 #' @param splitPattern character, splitPattern is the pattern which separates 
 #'      elements and precursor m/z
-#' @param splitInd numeric, the position of the precursor m/z concerning 
-#'      separation by splitPattern
+#' @param splitIndMZ numeric, the position of the precursor m/z in the 
+#'      character string concerning separation by splitPattern
+#' @param splitIndRT numeric or NULL, the position of the retention time in the 
+#'      character string concerning separation by splitPattern, if NULL
+#'      the retention time will be the mean of all retention time in the 
+#'      pcgroup
 #' @param names logical, should names be retrieved? If set to TRUE, convert2MSP
 #'      will access the column "names" in mm which contains the names of the 
 #'      metabolites
@@ -75,11 +79,11 @@ cutUniquePreMZ <- function(precursor, splitPattern = splitPattern,
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
-#' convert2MSP(mm = sd02_deconvoluted, splitPattern = "_", splitInd = 1, 
-#'  names = FALSE, metNames = FALSE, class = FALSE)
+#' convert2MSP(mm = sd02_deconvoluted, splitPattern = "_", splitIndMZ = 1, 
+#'  splitIndRT = 2, names = FALSE, metNames = FALSE, class = FALSE)
 #' @export
-convert2MSP <- function (mm, splitPattern = "_", splitInd = 1, names = FALSE, 
-                    metNames = FALSE, class = FALSE) {
+convert2MSP <- function (mm, splitPattern = "_", splitIndMZ = 1, splitIndRT = 2,
+                    names = FALSE, metNames = FALSE, class = FALSE) {
     
     colNames <- colnames(mm)
     if (!("mz" %in% colNames)) stop("no column 'mz' found")
@@ -97,7 +101,13 @@ convert2MSP <- function (mm, splitPattern = "_", splitInd = 1, names = FALSE,
     
     uniquePreMZ <- unique(precursor)
     uniquePreMZ_cut <- cutUniquePreMZ(precursor = precursor, 
-            splitPattern = splitPattern, splitInd = splitInd)
+            splitPattern = splitPattern, splitInd = splitIndMZ)
+    ## get Retention time, mz_rt_pcgroup
+    if (!is.null(splitIndRT)) {
+        uniquePreRT_cut <- cutUniquePreMZ(precursor = precursor, 
+                        splitPattern = splitPattern, splitInd = splitIndRT)        
+    }
+
     
     ## check if pcgroup_grecursorMZ is in fourth column and unique precursor
     ## mz were assessed correctly
@@ -111,7 +121,7 @@ convert2MSP <- function (mm, splitPattern = "_", splitInd = 1, names = FALSE,
     ## names, metabolite names or metabolite class
     if (names) namesMM <- mm[, "names"]
     if (metNames) metNamesMM <- mm[, "metNames"]
-    if (class) classesMM <- mm[, "classes"]
+    if (class) classesMM <- mm[, "class"]
 
     ## create data frame for MSP file
     finalMSP <- matrix(data = NA, nrow = 8 * lenUniquePreMZ + dim(mm)[1], 
@@ -124,7 +134,7 @@ convert2MSP <- function (mm, splitPattern = "_", splitInd = 1, names = FALSE,
         entry <- rbind(
             c("NAME: ", if (names) {
                 unique(as.character(namesMM[ind])[1])} else "Unknown"),
-            c("RETENTIONTIME: ", mean(mm[ind,"rt"])),
+            c("RETENTIONTIME: ", if (!is.null(splitIndRT)) {uniquePreRT_cut[i]} else mean(mm[ind,"rt"])),
             c("PRECURSORMZ: ", uniquePreMZ_cut[i]),
             c("METABOLITENAME: ", if (metNames) {
                 unique(as.character(metNamesMM[ind])[1])} else "Unknown"),
@@ -159,7 +169,8 @@ convert2MSP <- function (mm, splitPattern = "_", splitInd = 1, names = FALSE,
 #' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
 #' @examples \dontrun{msp2FunctionalLossesMSP(msp)}
 #' data("sd02_deconvoluted", package = "MetCirc")
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+#'                      splitIndMZ = 2, splitIndRT = NULL)
 #' finalMSPNL <- msp2FunctionalLossesMSP(msp = finalMSP)
 #' @export
 msp2FunctionalLossesMSP <- function(msp) {
@@ -239,7 +250,8 @@ MSP <- setClass("MSP", slots = c(msp = "data.frame"))
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+#'                          splitIndMZ = 2, splitIndRT = NULL)
 #' length(finalMSP)
 #' @export
 setMethod("length", signature = "MSP", 
@@ -256,7 +268,8 @@ setMethod("length", signature = "MSP",
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+#'                      splitIndMZ = 2, splitIndRT = NULL)
 #' show(finalMSP)
 #' @export
 setMethod("show", signature = "MSP", 
@@ -274,7 +287,8 @@ setMethod("show", signature = "MSP",
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+#'                      splitIndMZ = 2, splitIndRT = NULL)
 #' getMSP(finalMSP)
 #' @export
 setGeneric("getMSP", function(object) standardGeneric("getMSP"))
@@ -294,8 +308,10 @@ setMethod("getMSP", signature = "MSP", definition = function(object) {object@msp
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
-#' finalMSP1 <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
-#' finalMSP2 <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' finalMSP1 <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+#'                          splitIndMZ = 2, splitIndRT = NULL)
+#' finalMSP2 <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+#'                          splitIndMZ = 2, splitIndRT = NULL)
 #' combine(finalMSP1, finalMSP2)
 #' @export
 setGeneric("combine", function(object1, object2) standardGeneric("combine"))
@@ -315,7 +331,8 @@ setMethod("combine", signature = c("MSP", "MSP"), definition = function(object1,
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+#'                          splitIndMZ = 2, splitIndRT = NULL)
 #' getName(finalMSP)
 #' @export
 setGeneric("getName", function(object) standardGeneric("getName"))
@@ -340,7 +357,8 @@ getName <- function(object) {
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc") 
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = "_ ", splitInd = 2)
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = "_ ", 
+#'                          splitIndMZ = 2, splitIndRT = NULL)
 #' setMetaboliteName(finalMSP, c(rep("unknown", 358), "name1", "name2"))
 #' @export
 setGeneric("setName", function(object) standardGeneric("setName"))
@@ -365,7 +383,8 @@ setName <- function(object, name) {
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+#'                          splitIndMZ = 2, splitIndRT = NULL)
 #' getMetaboliteName(finalMSP)
 #' @export
 setGeneric("getMetaboliteName", 
@@ -391,7 +410,8 @@ getMetaboliteName <- function(object) {
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc") 
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = "_ ", splitInd = 2)
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = "_ ", 
+#'                          splitIndMZ = 2, splitIndRT = NULL)
 #' setMetaboliteName(finalMSP, c(rep("unknown", 358), "met1", "met2"))
 #' @export
 setGeneric("setMetaboliteName", 
@@ -417,7 +437,8 @@ setMetaboliteName <- function(object, metName) {
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+#'                          splitIndMZ = 2, splitIndRT = NULL)
 #' getMetaboliteClass(finalMSP)
 #' @export
 setGeneric("getMetaboliteClass", 
@@ -445,7 +466,8 @@ getMetaboliteClass <- function(object) {
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc") 
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = "_ ", splitInd = 2)
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = "_ ", 
+#'                      splitIndMZ = 2, splitIndRT = NULL)
 #' setMetaboliteClass(finalMSP, c(rep("unknown", 359), "class1"))
 #' @export
 setGeneric("setMetaboliteClass", 
@@ -471,7 +493,8 @@ setMetaboliteClass <- function(object, class) {
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+#'                      splitIndMZ = 2, splitIndRT = NULL)
 #' getRT(finalMSP)
 #' @export
 setGeneric("getRT", function(object) standardGeneric("getRT"))
@@ -499,7 +522,8 @@ getRT <- function(object) {
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+#'                          splitIndMZ = 2, splitIndRT = NULL)
 #' getPrecursorMZ(finalMSP)
 #' @export
 setGeneric("getPrecursorMZ", function(object) standardGeneric("getPrecursorMZ"))
@@ -530,7 +554,8 @@ getPrecursorMZ <- function(object) {
 #' @rdname extract-methods
 #' @examples
 #' data("sd02_deconvoluted", package = "MetCirc")
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+#'                          splitIndMZ = 2, splitIndRT = NULL)
 #' finalMSP[1]
 #' @export
 setMethod("[", 
