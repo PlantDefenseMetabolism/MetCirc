@@ -36,7 +36,7 @@ binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
 simM <- createSimilarityMatrix(binnedMSP)
 groupname <- rownames(simM)
 plotCircos(groupname, NULL, initialize = TRUE, featureNames = FALSE, 
-     groupName = FALSE, groupSector = TRUE, links = FALSE, highlight = FALSE)
+     groupName = FALSE, groupSector = FALSE, links = FALSE, highlight = FALSE)
 x <- 1
 y <- 0
 degreeFeatures <- lapply(groupname, 

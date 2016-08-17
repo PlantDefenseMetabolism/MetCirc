@@ -4,8 +4,8 @@
 \alias{convert2MSP}
 \title{Convert deconvoluted matrix into MSP format}
 \usage{
-convert2MSP(mm, splitPattern = "_", splitInd = 1, names = FALSE, 
- metNames = FALSE, class = FALSE)
+convert2MSP(mm, splitPattern = "_", splitIndMZ = 1, splitIndRT = 2, 
+ names = FALSE, metNames = FALSE, class = FALSE)
 }
 \arguments{
 \item{mm}{matrix, mm has to have four columns with colnames 
@@ -17,8 +17,13 @@ metNames, class.}
 \item{splitPattern}{character, splitPattern is the pattern which separates 
 elements and precursor m/z}
 
-\item{splitInd}{numeric, the position of the precursor m/z concerning 
-separation by splitPattern}
+\item{splitIndMZ}{numeric, the position of the precursor m/z in the 
+character string concerning separation by splitPattern}
+
+\item{splitIndRT}{numeric or NULL, the position of the retention time in the 
+character string concerning separation by splitPattern, if NULL
+the retention time will be the mean of all retention time in the 
+pcgroup}
 
 \item{names}{logical, should names be retrieved? If set to TRUE, convert2MSP
 will access the column "names" in mm which contains the names of the 
@@ -53,8 +58,8 @@ return object has the following information: NAME, RETENTIONTIME,
 }
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-convert2MSP(mm = sd02_deconvoluted, splitPattern = "_", splitInd = 1, 
- names = FALSE, metNames = FALSE, class = FALSE)
+convert2MSP(mm = sd02_deconvoluted, splitPattern = "_", splitIndMZ = 1, 
+ splitIndRT = 2, names = FALSE, metNames = FALSE, class = FALSE)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

@@ -25,7 +25,8 @@ objects
 }}
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+                         splitIndMZ = 2, splitIndRT = NULL)
 getMetaboliteClass(finalMSP)
 }
 \keyword{datasets}

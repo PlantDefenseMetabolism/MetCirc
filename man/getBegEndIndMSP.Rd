@@ -23,7 +23,8 @@ Internal use to retrieve indices when fragments start and end.
 }
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", splitInd = 2)
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+                         splitIndMZ = 2, splitIndRT = 3)
 finalMSPdf <- getMSP(finalMSP)
 getBegEndIndMSP(finalMSPdf)
 }
