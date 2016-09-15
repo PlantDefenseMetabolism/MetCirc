@@ -7,7 +7,8 @@
 plotCircos(groupname, linkMat, initialize = c(TRUE, FALSE), 
      featureNames = c(TRUE, FALSE), cexFeatureNames = 0.2, 
      groupSector = c(TRUE, FALSE), groupName = c(TRUE, FALSE), 
-     links = c(TRUE, FALSE), highlight = c(TRUE, FALSE))
+     links = c(TRUE, FALSE), highlight = c(TRUE, FALSE), colour = NULL,
+     transparency = 0.2)
 }
 \arguments{
 \item{groupname}{vector containing "group" and "name" to display, that is 
@@ -32,6 +33,11 @@ individual names) be displayed?}
 \item{links}{logical, should links be plotted?}
 
 \item{highlight}{logical, are we in highlighting mode?}
+
+\item{colour}{NULL or character, colour defines the colours which are used
+for plotting, if NULL default colours are used}
+
+\item{transparency}{numerical, defines the transparency of the colours}
 }
 \value{
 The function will initialize a circlize plot and/or will plot 
@@ -62,7 +68,8 @@ groupname <- rownames(simM)
 ## actual plotting
 plotCircos(groupname, linkMat_cut, initialize = TRUE, 
     featureNames = TRUE, cexFeatureNames = 0.2, groupSector = TRUE, 
-     groupName = FALSE, links = FALSE, highlight = FALSE)
+     groupName = FALSE, links = FALSE, highlight = FALSE, colour = NULL, 
+     transparency = 0.2)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

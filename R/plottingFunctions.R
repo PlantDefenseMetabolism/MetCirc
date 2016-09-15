@@ -7,7 +7,8 @@
 #' @usage plotCircos(groupname, linkMat, initialize = c(TRUE, FALSE), 
 #'      featureNames = c(TRUE, FALSE), cexFeatureNames = 0.2, 
 #'      groupSector = c(TRUE, FALSE), groupName = c(TRUE, FALSE), 
-#'      links = c(TRUE, FALSE), highlight = c(TRUE, FALSE))
+#'      links = c(TRUE, FALSE), highlight = c(TRUE, FALSE), colour = NULL,
+#'      transparency = 0.2)
 #' @param groupname vector containing "group" and "name" to display, that is 
 #' a unique identifier of the features, "group" and "name" have to be separated
 #' by "_" where "group" is the first and "name" is the last element
@@ -22,6 +23,9 @@
 #'      individual names) be displayed?
 #' @param links logical, should links be plotted? 
 #' @param highlight logical, are we in highlighting mode?
+#' @param colour NULL or character, colour defines the colours which are used
+#'  for plotting, if NULL default colours are used
+#' @param transparency numerical, defines the transparency of the colours
 #' @details Internal use for shiny app
 #' @return The function will initialize a circlize plot and/or will plot 
 #'  features of a circlize plot. 
@@ -45,12 +49,14 @@
 #' ## actual plotting
 #' plotCircos(groupname, linkMat_cut, initialize = TRUE, 
 #'     featureNames = TRUE, cexFeatureNames = 0.2, groupSector = TRUE, 
-#'      groupName = FALSE, links = FALSE, highlight = FALSE)
+#'      groupName = FALSE, links = FALSE, highlight = FALSE, colour = NULL, 
+#'      transparency = 0.2)
 #' @export
 plotCircos <- function(groupname, linkMat, initialize = c(TRUE, FALSE), 
         featureNames = c(TRUE, FALSE), cexFeatureNames = 0.2, 
         groupSector = c(TRUE, FALSE), groupName = c(TRUE, FALSE), 
-        links = c(TRUE, FALSE), highlight = c(TRUE, FALSE)) {
+        links = c(TRUE, FALSE), highlight = c(TRUE, FALSE), 
+        colour = NULL, transparency = 0.2) {
     
     ## get group and name from groupname argument
     ## groupname is a vector containing information about group and name,
@@ -59,6 +65,7 @@ plotCircos <- function(groupname, linkMat, initialize = c(TRUE, FALSE),
     group <- unlist(group)
     name <- lapply(strsplit(groupname, split = "_"), function (x) x[length(x)])
     name <- unlist(name)
+    
     
     ## get length of vector groupname
     groupname_l <- length(groupname)
@@ -70,7 +77,11 @@ plotCircos <- function(groupname, linkMat, initialize = c(TRUE, FALSE),
     if (!is.logical(groupName)) stop("groupName is not logical")
     if (!is.logical(links)) stop("links is not logical")
     if (!is.logical(highlight)) stop("highlight is not logical")
-
+    if (!is.null(transparency)) {
+        if(!is.numeric(transparency)) stop("transparency is not numeric")
+    }
+    
+    
     if (initialize) {
         circos.initialize(factor(groupname),
                 xlim = matrix(rep(c(0,1), groupname_l), ncol = 2, 
@@ -93,16 +104,31 @@ plotCircos <- function(groupname, linkMat, initialize = c(TRUE, FALSE),
     ## create vector with unique groups
     uniqueGroup <- unique(group)
     
+    if (!is.null(colour)) {
+        if (length(colour) != length(uniqueGroup)) {
+            if (length(colour) != 1) {
+                stop("length of colour does not match with length of group")
+            }
+        }
+    }
+    
+    
     ## group sector
     if (groupSector) {
 
-        transparency <- if (highlight) 0.1 else 0.2
+        transparency <- if (highlight) transparency - 0.1 else transparency 
+        if (is.null(colour)) {
+            colour <- alpha(1:length(uniqueGroup) + 1, transparency)
+        } else {
+            colour <- alpha(colour, transparency)
+        }
+        
         for( i in 1:length(uniqueGroup)) {
             ind <- which(uniqueGroup[i] == group)
             minInd <- min(ind)
             maxInd <- max(ind)
             circlize::highlight.sector(groupname[minInd:maxInd], 
-                                       col = alpha(i + 1, transparency))
+                                       col = colour[i])
         }
     }
     
@@ -118,47 +144,6 @@ plotCircos <- function(groupname, linkMat, initialize = c(TRUE, FALSE),
         }
     }
     
-#     if (dendrogram) {
-#         if (is.null(similarityMatrix)) stop("no similarity matrix")
-#         if (rownames(similarityMatrix) != dfName) stop("no correct feature names")
-#         dfGroupLevel <- unique(dfGroup)
-#         for (i in dfGroupLevel) {
-#             inds <- which(dfGroup == i)
-#             dfNameGroupLevel <- dfNameGroup[inds,]
-#             simMatI <- similarityMatrix[inds, inds]
-#             hClust <- hcluster(simMatI, method = "spearman") 
-#             hClust <- as.dendrogram(hClust)
-#             circos.initialize(dfNameGroupLevel[,1],xlim=c(1,0))
-#             circos.dendrogram(hClust, facing="outside")
-#         }
-#     }
-# 
-#     load(paste0(system.file(package = "circlize"), "/extdata/bird.orders.RData"))
-#     
-#     labels = hc$labels  # name of birds
-#     ct = cutree(hc, 6)  # cut tree into 6 pieces
-#     n = length(labels)  # number of bird species
-#     dend = as.dendrogram(hc)
-#     
-#     circos.par(cell.padding = c(0, 0, 0, 0))
-#     circos.initialize(factors = "a", xlim = c(0, n)) # only one sector
-#     max_height = attr(dend, "height")  # maximum height of the trees
-#     circos.trackPlotRegion(ylim = c(0, 1), bg.border = NA, track.height = 0.3, 
-#                            panel.fun = function(x, y) {
-#                                for(i in seq_len(n)) {
-#                                    circos.text(i-0.5, 0, labels[i], adj = c(0, 0.5), 
-#                                                facing = "clockwise", niceFacing = TRUE,
-#                                                col = ct[labels[i]], cex = 0.7)
-#                                }
-#                            })
-#     
-#     require(dendextend)
-#     dend = color_branches(dend, k = 6, col = 1:6)
-#     
-#     circos.trackPlotRegion(ylim = c(0, max_height), bg.border = NA, 
-#                            track.height = 0.4, panel.fun = function(x, y) {
-#                                circos.dendrogram(dend, max_height = max_height)
-#                            })
     ## plot links
     if (links) {
         colourLink <- if (highlight) {
@@ -182,13 +167,16 @@ plotCircos <- function(groupname, linkMat, initialize = c(TRUE, FALSE),
 #' @title Add links and highlight sectors
 #' @description A function to add links and highlight sectors to an initialised
 #'      and plotted \code{circlize} plot with one track.
-#' @usage highlight(groupname, ind, LinkMatrix)
+#' @usage highlight(groupname, ind, LinkMatrix, colour = NULL, transparency = 0.4)
 #' @param groupname vector containing "group" and "name" to display, that is 
 #' a unique identifier of the features, "group" and "name" have to be separated
 #' by "_" where "group" is the first and "name" is the last element
 #' @param ind numerical, indices which will be highlighted
 #' @param LinkMatrix matrix, in each row there is information about features 
 #'      to be connected 
+#' @param colour NULL or character, colour defines the colours which are used
+#'  for plotting, if NULL default colours are used
+#' @param transparency numerical, defines the transparency of the colours
 #' @details Internal use for shiny app.
 #' @return The function will update an existing plot by highlighting a 
 #'  specified sector and connected links.
@@ -218,9 +206,9 @@ plotCircos <- function(groupname, linkMat, initialize = c(TRUE, FALSE),
 #'      groupName = FALSE, links = FALSE, highlight = TRUE)
 #'  ## highlight
 #'  highlight(groupname = groupname, ind = indSelected, LinkMatrix = 
-#'          linkMat_cut)
+#'          linkMat_cut, colour = NULL, transparency = 0.4)
 #' @export
-highlight <- function(groupname, ind, LinkMatrix) {
+highlight <- function(groupname, ind, LinkMatrix, colour = NULL, transparency = 0.4) {
     
     ## get group and name from groupname argument
     ## groupname is a vector containing information about group and name,
@@ -230,6 +218,7 @@ highlight <- function(groupname, ind, LinkMatrix) {
     name <- lapply(strsplit(groupname, split = "_"), function (x) x[length(x)])
     name <- unlist(name)
     
+    ##if (length(colour))
     ## get length of vector namegroup
     groupname_l <- length(groupname)
     
@@ -241,9 +230,16 @@ highlight <- function(groupname, ind, LinkMatrix) {
     lMatName1 <- LinkMatrix[,"name1"]
     lMatName2 <- LinkMatrix[,"name2"]
     
+    if (is.null(colour)) {
+        colours <- alpha(palette()[as.numeric(as.factor(group))[ind]+1], transparency)   
+    } else {
+        colours <- alpha(colour[as.numeric(as.factor(group))[ind]], transparency)
+    }
+    
     for (h in 1:length(ind)) {
         highlight.sector(sector.index = as.character(groupnameselected[h]), 
-            col = alpha(palette()[as.numeric(as.factor(group)[ind])[h] + 1], 0.4))
+            ##col = alpha(palette()[as.numeric(as.factor(group)[ind])[h] + 1], 0.4))
+            col = colours[h])
     }
     
     ## get indices in LinkMatrix of selected features 
@@ -312,11 +308,13 @@ truncateName <- function (groupname, roundDigits = 2) {
 #' @name circosLegend
 #' @title Plot a legend for circos plot
 #' @description circosLegend plots a legend for circos plot using group names .
-#' @usage circosLegend(groupname, highlight = c(TRUE, FALSE))
+#' @usage circosLegend(groupname, highlight = c(TRUE, FALSE), colour = NULL)
 #' @param groupname vector containing "group" and "name" to display, that is 
 #' a unique identifier of the features, "group" and "name" have to be separated
 #' by "_" where "group" is the first and "name" is the last element
 #' @param highlight logical, should colours be adjusted to highlight settings?
+#' @param colour NULL or character, colour defines the colours which are used
+#'  for plotting, if NULL default colours are used
 #' @details Internal use for shiny app or outside of shiny to reproduce 
 #'      figures.
 #' @return The function will open a new plot and display colours together 
@@ -330,9 +328,9 @@ truncateName <- function (groupname, roundDigits = 2) {
 #'  similarityMat <- createSimilarityMatrix(binnedMSP)  
 #'  groupname <- rownames(similarityMat)
 #'  ## plot legend
-#'  circosLegend(groupname, highlight = TRUE)
+#'  circosLegend(groupname, highlight = TRUE, colour = NULL)
 #' @export
-circosLegend <- function(groupname, highlight = c(TRUE, FALSE)) {
+circosLegend <- function(groupname, highlight = c(TRUE, FALSE), colour = NULL) {
     
     ## get group and name from groupname argument
     ## groupname is a vector containing information about group and name,
@@ -342,17 +340,22 @@ circosLegend <- function(groupname, highlight = c(TRUE, FALSE)) {
     group <- as.factor(group)
     
     uniqNumGroup <- unique(as.numeric(group))
+    
+    if (is.null(colour)) {
+        colours <- palette()[uniqNumGroup + 1]
+    } else {
+        colours <- colour[uniqNumGroup + 1]
+    }
+    
     plot(x=c(0,1), y=c(0,1), type="n", xlab = "", ylab = "",
          axes = FALSE, frame.plot = FALSE)
     if (highlight) {
         legend(x = c(0,1), y = c(1,0), legend = levels(group), 
                bty = "n",
-               fill =  alpha(palette()[uniqNumGroup + 1], 0.3),
-               border = alpha(palette()[uniqNumGroup + 1]), 0.3)
+               fill =  alpha(colours, 0.3),  border = alpha(colours, 0.3))
     } else { ## if not highlight
         legend(x = c(0,1), y = c(1,0), legend = levels(group), bty = "n",
-               fill =  palette()[uniqNumGroup + 1],
-               border = palette()[uniqNumGroup + 1])
+               fill =  colours, border = colours)
     }
 }
 

@@ -16,20 +16,20 @@ circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0),
 test_plotCircos <- function() {
     checkException(plotCircos(groupname, NULL, 
         initialize = TRUE, featureNames = FALSE, groupSector = FALSE, 
-        groupName = FALSE, links = TRUE, highlight = FALSE))
+        groupName = FALSE, links = TRUE, highlight = FALSE, colour = NULL, transparency = 0.2))
     checkException(plotCircos(groupnameO, linkMat, initialize = TRUE, 
         featureNames = FALSE, groupSector = FALSE, groupName = FALSE, 
-        links = TRUE, highlight = FALSE)) ## names are different
+        links = TRUE, highlight = FALSE, colour = NULL, transparency = 0.2)) ## names are different
 }
 ## END unit test for plotCircos
 
 
 ## START unit test for highlight
 test_highlight <- function() {
-    checkException(highlight(groupnameO, 1, NULL))
-    checkException(highlight(groupnameO, length(groupnameO)+1,NULL))
+    checkException(highlight(groupnameO, 1, NULL, NULL, 0.4))
+    checkException(highlight(groupnameO, length(groupnameO)+1,NULL, NULL, 0.4))
     ## names in linkMat do not match names in groupnameO
-    checkException(highlight(groupnameO, 1, linkMat))
+    checkException(highlight(groupnameO, 1, linkMat, NULL, 0.4))
 }
 ## END unit test for highlight
 

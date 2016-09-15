@@ -1,5 +1,10 @@
 CHANGES IN VERSION 0.99.4
 -------------------------
+ o add arguments colour and transparency for functions plotCircos and highlight
+   [2016-09-15 Thu]
+
+CHANGES IN VERSION 0.99.4
+-------------------------
  o add arguments splitIndMZ and splitIndRT in function convert2MSP and
    fix bug (colnames classes instead of class) in convert2MSP [2016-08-17 Wed]
  o update vignette, unit tests and manuals [2016-08-17 Wed]

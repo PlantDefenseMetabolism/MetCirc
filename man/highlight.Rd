@@ -4,7 +4,7 @@
 \alias{highlight}
 \title{Add links and highlight sectors}
 \usage{
-highlight(groupname, ind, LinkMatrix)
+highlight(groupname, ind, LinkMatrix, colour = NULL, transparency = 0.4)
 }
 \arguments{
 \item{groupname}{vector containing "group" and "name" to display, that is 
@@ -15,6 +15,11 @@ by "_" where "group" is the first and "name" is the last element}
 
 \item{LinkMatrix}{matrix, in each row there is information about features 
 to be connected}
+
+\item{colour}{NULL or character, colour defines the colours which are used
+for plotting, if NULL default colours are used}
+
+\item{transparency}{numerical, defines the transparency of the colours}
 }
 \value{
 The function will update an existing plot by highlighting a 
@@ -52,7 +57,7 @@ Internal use for shiny app.
      groupName = FALSE, links = FALSE, highlight = TRUE)
  ## highlight
  highlight(groupname = groupname, ind = indSelected, LinkMatrix = 
-         linkMat_cut)
+         linkMat_cut, colour = NULL, transparency = 0.4)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}
