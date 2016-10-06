@@ -147,7 +147,7 @@ plotCircos <- function(groupname, linkMat, initialize = c(TRUE, FALSE),
     ## plot links
     if (links) {
         colourLink <- if (highlight) {
-            rep(alpha("black", 0.1), dim(linkMat)[1]) 
+            rep(alpha("black", 0.05), dim(linkMat)[1]) 
             } else {
                 alpha("black", alpha = (as.numeric(linkMat[,"NDP"]))^6)}
         
