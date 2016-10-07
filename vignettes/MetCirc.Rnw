@@ -108,9 +108,9 @@ assignment to a similarity matrix and visualisation of similarity based
 on interactive and non-interactive graphical tools using the 
 \Rpackage{circlize} framework \citep{Gu2014}. \newline
 
-\Rpackage{MetabolomicsTools} is currently under active development. If you 
+\Rpackage{MetCirc} is currently under active development. If you 
 discover any bugs, typos or develop ideas of improving 
-\Rpackage{MetabolomicsTools} feel free to raise an issue via 
+\Rpackage{MetCirc} feel free to raise an issue via 
 \href{https://github.com/PlantDefenseMetabolism/MetCirc}{GitHub} or 
 send a mail to the developers. 
 
