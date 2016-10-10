@@ -98,11 +98,12 @@ improve the interactive exploration of metabolomics data obtained from
 cross-species/cross-tissues comparative experiments. Notably, \Rpackage{MetCirc} 
 includes functions to calculate the similarity between individual MS/MS 
 spectra based on a normalised dot product (NDP, see \citet{Li2015} for further 
-details) calculation taking into account shared fragments and main neutral 
+details) calculation taking into account shared fragments or main neutral 
 losses. This vignette 
-uses as a case study data from \citet{Li2015} and unpublished MS/MS data 
+uses as a case study indiscriminant MS/MS (idMS/MS) data from \citet{Li2015} 
+and unpublished MS/MS data 
 collected from different organs of tobacco flowers to navigate through the 
-analysis pipeline. The pipeline includes creation of an \code{.msp} object, 
+analysis pipeline. The pipeline includes creation of an MSP-object, 
 binning of fragment ions, calculation of a similarity measure (NDP), 
 assignment to a similarity matrix and visualisation of similarity based 
 on interactive and non-interactive graphical tools using the 
@@ -146,21 +147,21 @@ data("similarityMat", package = "MetCirc")
 @
 
 \section{Prepare data for mass spectral similarity calculations}
-Here, we convert examplatory data into objects in .msp format that
-is used later as input for mass spectral similarity calculations. The .msp
-format is an ASCII text format used by mass spectral libraries. The 
-function \Rfunction{convert2MSP} creates an entry for each precursor and 
+Here, we convert examplatory data into MSP-objects that
+are used later as input for mass spectral similarity calculations. 
+The MSP-class mimicks the .msp format is ASCII text format used by mass spectral 
+libraries. The function \Rfunction{convert2MSP} creates an entry for each precursor and 
 identifies the m/z and retention time of fragment ions. Each entry of 
-.msp formats have the following entries: \code{NAME}, \code{RETENTIONTIME},
-\code{PRECURSORMZ}, \code{METABOLITENAME}, \code{ADDUCTIONNAME}, 
+MSP-objects has the following entries: \code{NAME}, \code{RETENTIONTIME},
+\code{PRECURSORMZ}, \code{METABOLITENAME}, \code{METABOLITECLASS}, \code{ADDUCTIONNAME}, 
 \code{Num Peaks} (Number of peaks) and all fragment ions together with their 
-relative intensity in \%. The retention time calcuated by the function 
+relative intensity in \%. The retention time calculated by the function 
 \Rfunction{convert2MSP} is the average value of the retention time values 
 of all fragment ions belonging to the specific precursor. The actual \code{msp}
-\Robject{data.frame} can be accessed by \Robject{getMSP(mspObject)}.
+\Robject{data.frame} can be accessed by \Robject{getMSP(MSP-object)}.
 
 \subsection{Preparing the sd02\_deconvoluted data set for analysis}
-Here, we convert \Robject{sd02\_deconvoluted} into an object in .msp format. 
+Here, we convert \Robject{sd02\_deconvoluted} into a \Robject{MSP-object}. 
 <<eval=c(1:2)>>=
 ## identify precursor mz
 finalMSPLi2015 <- convert2MSP(sd02_deconvoluted, split = " _ ", 
@@ -209,7 +210,7 @@ We would like to restrict the proof-of-function analysis to four tissues
 (sepal, SPL; limb, LIM; anther, ANT; 
 style, STY). We will truncate \Robject{tissue} in order that it contains only these 
 instances belonging to these types of tissue. In a next step, we will 
-create a msp object, \Robject{finalMSP}, comprising the features found 
+create a MSP-object, \Robject{finalMSP}, comprising the features found 
 in the tissues SPL, LIM, ANT and STY. 
 <<eval=c(1:18)>>=
 ## create vectors with precursor names present in tissue
@@ -239,7 +240,7 @@ For the \Rfunction{binning} function, we will derive a vector,
 \Robject{compartment}, which gives the compartment for each entry of 
 \Robject{finalMSP}. \Robject{compartment} refers here to floral organs, but 
 could be species names, experimental conditions, etc., too; i.e. the object can
-be any biological identifier relevant to the comparitive experiment conducted.
+be any biological identifier relevant to the comparative experiment conducted. 
 <<eval=TRUE>>=
 ## create vector with compartments
 compSPL <- rep("SPL", length(convert2MSP(tissueSPL)))
@@ -249,44 +250,6 @@ compSTY <- rep("STY", length(convert2MSP(tissueSTY)))
 
 compartment <- c(compSPL, compLIM, compANT, compSTY)
 @
-
-%' \section{Convert \Robject{sd02\_deconvoluted} precursor ions and 
-%' \Robject{sd01\_outputXCMS} into a format as in \Robject{convertExampleDF} 
-%' (not part of the workflow)}
-%' 
-%' First, we would like to have a look on the format of \Robject{convertExampleDF}:
-%' <<eval=TRUE>>=
-%' data("convertExampleDF", package = "MetCirc")
-%' head(convertExampleDF)
-%' @
-%' \Robject{convertExampleDF} is a \Robject{data.frame} which comprises information 
-%' on a specific metabolite per row stating the average retention time, 
-%' average m/z, the name of the metabolite, the adduct ion name, the spectrum 
-%' reference file name and TRIO/LVS???. \Rfunction{allocatePrecursor2mz} uses 
-%' \Robject{data.frame}s of the kind of \Robject{sd01\_outputXCMS} and 
-%' \Robject{sd02\_deconvoluted} to create a \Robject{data.frame} of the kind of 
-%' \Robject{convertExampleDF}. Allocation of precursor ions to candidate
-%' m/z values is based on minimal distance of m/z and deviance of retention time 
-%' based on an objective function. We can specify threshold values for m/z and
-%' retention time to be used in \Rfunction{allocatePrecursor2mz}, as well as 
-%' the number of neighbours based on deviation from m/z values. Also, we can 
-%' specify the weight to base the selection on the m/z compared to
-%' the retention time (\code{mzVsRTbalance}). This might be useful because 
-%' m/z values might differ less than the retention time in 
-%' \Robject{sd01\_outputXCMS} and \Robject{sd02\_deconvoluted}. Please note, 
-%' that it might be problematic to compare \Robject{sd01\_outputXCMS} and 
-%' \Robject{sd02\_deconvoluted} and allocate precursor ions therefrom, 
-%' especially when data were acquired under different conditions.
-%' 
-%' <<eval=c(1:2),results='hide',message=FALSE>>=
-%' finalCluster <- allocatePrecursor2mz(sd01 = sd01_outputXCMS, 
-%'     sd02 = sd02_deconvoluted, rtCheck = 60, mzVsRTbalance = 1000) 
-%' 
-%' ## optional:
-%' ## write finalCluster to finalCluster.csv
-%' write.table(finalCluster, file = "finalCluster.csv", sep=";", dec=".",
-%'             row.names=FALSE, col.names=TRUE,quote=FALSE)
-%' @
 
 \section{Binning and calculation of similarity matrix}
 
@@ -324,7 +287,7 @@ according to:
     NDP = \frac{\sum(W_{S1, i} \cdot W_{S2, i}) ^ 2}{ \sum(W_{S1, i} ^ 2) * \sum(W_{S2, i} ^ 2) },
 \end{equation}
 with $W = [ peak~intensity] ^{m} \cdot [m/z]^n$
-For further information see \parencite{Li2015}.
+For further information see \parencite{Li2015}. \newline
 
 \Rfunction{createSimilarityMatrix} calculates the NDP between all 
 precursor ions and their respective fragment ions. 
@@ -334,6 +297,7 @@ as columns. Entries of such a matrix are intensities for a specific
 fragment ion (intensity will be zero if fragment ion does not occur for the 
 respective precursor). The function \Rfunction{binning} will return 
 a matrix with such properties.
+
 <<eval=FALSE>>=
 ## similarity Matrix 
 similarityMat <- createSimilarityMatrix(binnedMSP)
@@ -341,7 +305,7 @@ similarityMat <- createSimilarityMatrix(binnedMSP)
 \Rfunction{createSimilarityMatrix} returns a matrix with 
 precursor m/z / retention time as column and row names. The entries of 
 the returned matrix are NDP scores ranging between 0 and 1 which indicate 
-the similarity between the features.
+the similarity between the features. 
 
 \paragraph{Clustering/Visualisation.} At this stage, we would like to visualise 
 the similarity after clustering them.
@@ -368,34 +332,14 @@ plot(hClustMSP, labels = FALSE, xlab="", sub="")
 To promote readibility we will not show labels. These can be printed to the 
 \R~console by \code{colnames(similarityMat)[hClustMSP\$order]}. \newline
 
-% To create a similarityMatrix with ordered rows and columns according to
-% clustering
-% <<eval=TRUE>>=
-% ## order newSim according to order of clustering
-% newSim <- matrix(data=NA, nrow = dim(similarityMat)[1], 
-%                  ncol = dim(similarityMat)[1])
-% newColnames <- colnames(similarityMat)[hClustMSP$order]
-% colnames(newSim) <- rownames(newSim) <- newColnames
-% @
-
-% reorder rows in similarityMatrix according to clustering
-%<<eval=c(1:6)>>=
-%for (i in 1:dim(similarityMat)[1]) {
-%    newValues <- similarityMat[hClustMSP$order, hClustMSP$order[i]] 
-%    if (all(names(newSim[,i]) == names(newValues))) {
-%        newSim[,i] <- newValues
-%    } else {print("error");break}
-%}
-%@
-
 \subsection{Workflow for \Robject{tissue} data set using neutral losses}
 Another way to compare the similarity of metabolites is based on neutral losses
 (cf. \ref{tab:neutrallosses} for a selection of common neutral losses):
 common neutral losses are shared among structurally-related metabolites. 
 \Rpackage{MetCirc} contains functionality to 
-calculate neutral losses from \Robject{MSP} objects. 
-To convert an object in .msp file format to an object in .msp file format 
-with neutral losses we enter:
+calculate neutral losses from \Robject{MSP}-objects. 
+To convert a \Robject{MSP-object} into a \Robject{MSP-object}  
+with neutral losses enter:
 
 <<eval=TRUE>>=
 nlMSP <- msp2FunctionalLossesMSP(finalMSP)
@@ -463,7 +407,7 @@ nlMSP <- msp2FunctionalLossesMSP(finalMSP)
 
 
 \paragraph{Binning and calculation of the similarity matrix.} Analogously to 
-the MSP object with fragments we can bin the \Robject{nlMSP} and create a 
+the \Rpackage{MSP-object} with fragments we can bin the \Robject{nlMSP} and create a 
 similarity matrix:
 <<eval=FALSE>>=
 ## bin msp file with functional losses, create table with same fragments 
@@ -474,7 +418,7 @@ nlSimilarityMat <- createSimilarityMatrix(nlBinnedMSP)
 @
 
 
-\paragraph{Clustering/Visualisation.} Analogously to the \Robject{MSP} object 
+\paragraph{Clustering/Visualisation.} Analogously to the \Robject{MSP-object} 
 with fragment ions, we are able to 
 cluster the similarity matrix based on neutral losses. 
 <<eval=FALSE>>=
@@ -491,16 +435,8 @@ plot(nlHClustMSP, labels = FALSE)
 @
 
 
-% ordering according to clustering
-%<<eval=FALSE>>=
-%for (i in 1:dim(nlSimilarityMat)[1]) {
-%    nlNewValues <- nlSimilarityMat[nlHClustMSP$order, nlHClustMSP$order[i]] 
-%    if (all(names(nlNewSim[,i]) == names(nlNewValues))) {
-%        nlNewSim[,i] <- nlNewValues
-%    } else {print("error"); break}
-%}
-
 \section{Visualisation using the \Rpackage{shiny}/\Rpackage{circlize} framework}
+
 \Rpackage{MetCirc} comprises functionality to visualise metabolomics
 data and exploring it interactively. One of the key features of the implemented
 interactive framework is, that groups can be compared. A group 
@@ -509,7 +445,7 @@ any biological identifier relevant to the comparitive experiment conducted,
 e.g. it can be a specific tissue, different
 times, different species, etc. The visualisation tools implemented in 
 \Rpackage{MetCirc} allow then to display similarity between 
-precursor ions between and/or inside of groups.
+precursor ions between and/or inside of groups. \newline
 
 \Rfunction{shinyCircos} uses the function \Rfunction{createLinkMatrix} which 
 comprises per row these precursor ions which are linked by a normalised dot 
@@ -524,7 +460,7 @@ As we have calculated similarity coefficients between precursors, we would
 like to visualise these connections interactively and explore the data. 
 The \Rpackage{MetCirc} package implements \Rfunction{shinyCircos} 
 that allows for such kind of exploration. It is based on the \Rpackage{shiny}
-and on \Rpackage{circlize} framework. Inside of \Rfunction{shinyCircos} 
+and on the \Rpackage{circlize} \citep{Gu2014} framework. Inside of \Rfunction{shinyCircos} 
 information of precursor ions are displayed by hovering over precursors. 
 Precursors can also be permanently selected by clicking on them. The similarity
 coefficients can be thresholded by changing the slider input. Also, on the 
@@ -537,7 +473,7 @@ the m/z or the retention time of the precursor ion.
 On exiting the shiny application
 via the exit button in the sidebar panel, selected precursors will
 be returned which are allocated here to \Robject{selectedFeatures}. 
-\Robject{selectedFeatures} is a vector of the precursor names.
+\Robject{selectedFeatures} is a vector of the precursor names. \newline
 
 To start the shiny app, run
 <<eval=FALSE>>=
@@ -549,7 +485,8 @@ interactive context, which might be helpful to create figures and export them
 e.g. in .pdf or .jpeg format. \Rfunction{shinyCircos} does currently not 
 support to export figures as they can be easily rebuilt outside of 
 \Rfunction{shinyCircos}; building figures outside of the interactive context
-also promotes reproducibility of such figures.
+also promotes reproducibility of such figures. \newline 
+
 To rebuild the figure in a non-interactive environment, run 
 <<circos,eval=TRUE,results='hide',message=FALSE,fig.show='hide'>>=
 ## order similarity matrix according to retention time
