@@ -75,7 +75,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
     nameMZ <- lapply(strsplit(groupnameMZ, split = "_"), function (x) x[length(x)])
     nameMZ <- unlist(nameMZ)
     ## get degree of features
-        degreeFeaturesMZ <- lapply(groupnameMZ, 
+    degreeFeaturesMZ <- lapply(groupnameMZ, 
         function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
     
     plot.new()
@@ -125,8 +125,9 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                     sliderInput("threshold", "Threshold for similarity to display",
                         min = 0, max = 1, value = 0.75),
                     radioButtons("order", "order within groups",
-                        choices = c("retention time" = "retentionTime",
-                            "m/z" = "mz", "clustering" = "clustering")),
+                        choices = c("clustering" = "clustering", "m/z" = "mz",
+                                    "retention time" = "retentionTime"), 
+                        selected = "mz"),
                     actionButton("resetClickIndices", "Reset features"),
                     actionButton("stop", "Stop and export \n selected features")
                 )
@@ -137,7 +138,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                         plotOutput("circos",
                             click = "circosClick",
                             #dblclick = "circosDblClick",
-                            hover = hoverOpts(id = "circosHover", delay = 200, 
+                            hover = hoverOpts(id = "circosHover", delay = 100, 
                                 clip = TRUE, nullOutside = FALSE),
                             width = size, height = size)
                             ##brush = brushOpts(id = "circosBrush",
@@ -255,14 +256,16 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                 minInd <- minFragCart2Polar(input$circosClick$x, 
                                             input$circosClick$y, 
                                             degreeFeatures()) 
-                GNselect <- GN()[minInd]
-                selected <- strsplit(GNselect, split = "_")[[1]]
-                groupSelected <- selected[1]
-                nameSelected <- selected[3] 
-                
-                newNG <- paste(groupSelected, nameSelected, sep = "_")
-                indClick$new <- newNG ## write truncated name to indClick$new
-            } else indClick$new <- NULL
+                if (!is.na(minInd)) {
+                    GNselect <- GN()[minInd]
+                    selected <- strsplit(GNselect, split = "_")[[1]]
+                    groupSelected <- selected[1]
+                    nameSelected <- selected[3] 
+                    
+                    newNG <- paste(groupSelected, nameSelected, sep = "_")
+                    indClick$new <- newNG ## write truncated name to indClick$new
+                } else  indClick$new <- NULL
+            } #else indClick$new <- NULL
         })
         
         observe({
@@ -278,43 +281,52 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
         indClickMZ <- reactiveValues(ind = NULL)
         observe({
             if (!is.null(input$circosClick$x)) {
+            if (!is.null(indClick$new)) {
 
                 newMZ <- paste(groupMZ, nameMZ, sep = "_")
                 newIndMZ <- match(indClick$new, newMZ)
-             
-                if (isolate(newIndMZ %in% indClickMZ$ind)) {
-                    indClickMZ$ind <- isolate(indClickMZ$ind[-which(newIndMZ == indClickMZ$ind)]) 
-                } else {indClickMZ$ind <- isolate(c(indClickMZ$ind, newIndMZ))}
-             }
+                
+                if (onCircle$is) {
+                    if (isolate(newIndMZ %in% indClickMZ$ind)) {
+                        indClickMZ$ind <- isolate(indClickMZ$ind[-which(newIndMZ == indClickMZ$ind)]) 
+                    } else {indClickMZ$ind <- isolate(c(indClickMZ$ind, newIndMZ))}
+                } 
+            } 
+            }
          })
         
         indClickRT <- reactiveValues(ind = NULL)
         observe({
-            if (!is.null(input$circosClick$x)) {
-  
-                newRT <- paste(groupRT, nameRT, sep = "_")
-                newIndRT <- match(indClick$new, newRT)
-                
-                if (isolate(newIndRT %in% indClickRT$ind)) {
-                    indClickRT$ind <- isolate(indClickRT$ind[-which(newIndRT == indClickRT$ind)])
-                } else {indClickRT$ind <- isolate(c(indClickRT$ind, newIndRT))}
-                
+             if (!is.null(input$circosClick$x)) {
+                 if (!is.null(indClick$new)) {
+         
+                    newRT <- paste(groupRT, nameRT, sep = "_")
+                    newIndRT <- match(indClick$new, newRT)
+                 
+                    if (onCircle$is) 
+                    if (isolate(newIndRT %in% indClickRT$ind)) {
+                        indClickRT$ind <- isolate(indClickRT$ind[-which(newIndRT == indClickRT$ind)])
+                    } else {indClickRT$ind <- isolate(c(indClickRT$ind, newIndRT))}
+            }
             }
         })
-        
+        # 
         indClickCluster <- reactiveValues(ind = NULL)
         observe({
             if (!is.null(input$circosClick$x)) {
-                newCl <- paste(groupClustering, nameClustering, sep = "_")
-                newIndCl <- match(indClick$new, newCl)
-                
-                if (isolate(newIndCl %in% indClickCluster$ind)) {
-                    indClickCluster$ind <- isolate(indClickCluster$ind[-which(newIndCl == indClickCluster$ind)])
-                } else {indClickCluster$ind <- isolate(c(indClickCluster$ind, newIndCl))}
-                
-            }
+                if(!is.null(indClick$new)) {
+                    newCl <- paste(groupClustering, nameClustering, sep = "_")
+                    newIndCl <- match(indClick$new, newCl)
+                 
+                    if (onCircle$is) {
+                    if (isolate(newIndCl %in% indClickCluster$ind)) {
+                        indClickCluster$ind <- isolate(indClickCluster$ind[-which(newIndCl == indClickCluster$ind)])
+                    } else {indClickCluster$ind <- isolate(c(indClickCluster$ind, newIndCl))}   
+                    } 
+                }
+             }
         })
-        
+         
         ## plotting
         initializePlot <- reactive({
             circos.initialize(factor(GN()),
@@ -329,8 +341,16 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
             if (onCircle$is) {
                 if (input$order == "mz") {
                     replayPlot(PlotHighlightMZ)
-                    highlight(groupnameMZ, c(indHover$ind, indClickMZ$ind), 
-                              LinkMatrix_threshold())  
+                    ##if (length(indClickMZ$ind) > 0) {
+                        highlight(groupnameMZ, c(indHover$ind, indClickMZ$ind), 
+                                  LinkMatrix_threshold())  
+                    ##} else {
+                    ##    plotCircos(groupnameMZ, LinkMatrix_threshold(), 
+                    ##               initialize=FALSE, featureNames = FALSE, 
+                    ##               groupSector = FALSE, groupName = FALSE, 
+                    ##               links = TRUE, highlight = TRUE)
+                    ##}
+                    
                 }
                         
                 if (input$order == "retentionTime") {
