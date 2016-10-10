@@ -1,8 +1,8 @@
 Package: MetCirc
 Type: Package
 Title: MetCirc - a workflow to analyse and visualise metabolomics data
-Version: 0.99.5
-Date: 2016-10-06
+Version: 0.99.6
+Date: 2016-10-10
 Authors@R: c(person(given = "Thomas", family = "Naake",
     email = "naake@stud.uni-heidelberg.de",
     role = c("aut","cre")),
