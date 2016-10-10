@@ -101,9 +101,9 @@ spectra based on a normalised dot product (NDP, see \citet{Li2015} for further
 details) calculation taking into account shared fragments or main neutral 
 losses. This vignette 
 uses as a case study indiscriminant MS/MS (idMS/MS) data from \citet{Li2015} 
-and unpublished MS/MS data 
+and unpublished idMS/MS data 
 collected from different organs of tobacco flowers to navigate through the 
-analysis pipeline. The pipeline includes creation of an MSP-object, 
+analysis pipeline. The pipeline includes creation of an \Rpackage{MSP-object}, 
 binning of fragment ions, calculation of a similarity measure (NDP), 
 assignment to a similarity matrix and visualisation of similarity based 
 on interactive and non-interactive graphical tools using the 
@@ -147,12 +147,12 @@ data("similarityMat", package = "MetCirc")
 @
 
 \section{Prepare data for mass spectral similarity calculations}
-Here, we convert examplatory data into MSP-objects that
+Here, we convert examplatory data into \Robject{MSP-objects} that
 are used later as input for mass spectral similarity calculations. 
-The MSP-class mimicks the .msp format is ASCII text format used by mass spectral 
+The \Robject{MSP-class} mimicks the .msp format is ASCII text format used by mass spectral 
 libraries. The function \Rfunction{convert2MSP} creates an entry for each precursor and 
-identifies the m/z and retention time of fragment ions. Each entry of 
-MSP-objects has the following entries: \code{NAME}, \code{RETENTIONTIME},
+identifies the m/z and retention time of fragment ions. Each entry of the
+\Robject{MSP-object} has the following entries: \code{NAME}, \code{RETENTIONTIME},
 \code{PRECURSORMZ}, \code{METABOLITENAME}, \code{METABOLITECLASS}, \code{ADDUCTIONNAME}, 
 \code{Num Peaks} (Number of peaks) and all fragment ions together with their 
 relative intensity in \%. The retention time calculated by the function 
@@ -184,7 +184,7 @@ compartment <- sample(c("yl", "ol", "s","r"), size = length(finalMSPLi2015),
 @
 
 \subsection{Preparing the tissue data set for analysis}
-\paragraph{Convert \Robject{idMSMStissueproject} into .msp file format.} 
+\paragraph{Convert \Robject{idMSMStissueproject} into \Rpackage{MSP-object}.} 
 The data set used in this section comes from the data-independent MS/MS 
 collection of different floral organs from tobacco plants. Using our pipeline, 
 this data set will be used to visualise shared metabolites between tissues as 
@@ -210,7 +210,7 @@ We would like to restrict the proof-of-function analysis to four tissues
 (sepal, SPL; limb, LIM; anther, ANT; 
 style, STY). We will truncate \Robject{tissue} in order that it contains only these 
 instances belonging to these types of tissue. In a next step, we will 
-create a MSP-object, \Robject{finalMSP}, comprising the features found 
+create a \Rpackage{MSP-object}, \Robject{finalMSP}, comprising the features found 
 in the tissues SPL, LIM, ANT and STY. 
 <<eval=c(1:18)>>=
 ## create vectors with precursor names present in tissue
@@ -338,7 +338,7 @@ Another way to compare the similarity of metabolites is based on neutral losses
 common neutral losses are shared among structurally-related metabolites. 
 \Rpackage{MetCirc} contains functionality to 
 calculate neutral losses from \Robject{MSP}-objects. 
-To convert a \Robject{MSP-object} into a \Robject{MSP-object}  
+To convert a \Robject{MSP-object} with fragments into a \Robject{MSP-object}  
 with neutral losses enter:
 
 <<eval=TRUE>>=
