@@ -37,7 +37,7 @@
   linktocpage = {true},
   plainpages = {false},
   linkcolor = {blue},
- % citecolor = {blue},
+  citecolor = {blue},
  % urlcolor = {red},
   pdfstartview = {Fit},
   pdfpagemode = {UseOutlines},
@@ -157,8 +157,8 @@ identifies the m/z and retention time of fragment ions. Each entry of the
 \code{Num Peaks} (Number of peaks) and all fragment ions together with their 
 relative intensity in \%. The retention time calculated by the function 
 \Rfunction{convert2MSP} is the average value of the retention time values 
-of all fragment ions belonging to the specific precursor. The actual \code{msp}
-\Robject{data.frame} can be accessed by \Robject{getMSP(MSP-object)}.
+of all fragment ions belonging to the specific precursor. The actual \code{MSP}
+\Robject{data frame} can be accessed by \Robject{getMSP(MSP-object)}.
 
 \subsection{Preparing the sd02\_deconvoluted data set for analysis}
 Here, we convert \Robject{sd02\_deconvoluted} into a \Robject{MSP-object}. 
@@ -201,9 +201,8 @@ and that the data contains the column names \code{mz}, \code{intensity} and
 important. \Rfunction{convert2MSP} will check internally if the data complies 
 these requirements.
 <<eval=TRUE>>=
-## load idMSMStissueproject and display the first six rows
+## load idMSMStissueproject
 data("idMSMStissueproject", package = "MetCirc")
-head(tissue)
 @
 
 We would like to restrict the proof-of-function analysis to four tissues 
@@ -273,8 +272,9 @@ the length of the \Robject{msp} object). We use here the \Robject{tissue} data
 set.
 
 <<eval=FALSE>>=
-## create data.frame with binned fragments
-binnedMSP <- binning(msp = finalMSP, tol = 0.001, group = compartment, method = "median")
+## create data frame with binned fragments
+binnedMSP <- binning(msp = finalMSP, tol = 0.01, 
+                     group = compartment, method = "median")
 @
 
 \paragraph{Calculation of the similarity matrix.} The normalised dot product 
@@ -283,9 +283,9 @@ the similarity between two precursor ions and their fragments, respectively.
 The NDP uses the m/z value of fragment/precursor ions and their 
 peak intensityof two metabolites, respectively. The NDP is calculated 
 according to:
-\begin{equation}
+\begin{equation*}
     NDP = \frac{\sum(W_{S1, i} \cdot W_{S2, i}) ^ 2}{ \sum(W_{S1, i} ^ 2) * \sum(W_{S2, i} ^ 2) },
-\end{equation}
+\end{equation*}
 with $W = [ peak~intensity] ^{m} \cdot [m/z]^n$
 For further information see \parencite{Li2015}. \newline
 
@@ -322,9 +322,9 @@ hClustMSP <- hcluster(similarityMat, method = "spearman")
 plot(hClustMSP, labels = FALSE, xlab="", sub="")
 @
 
-\begin{figure}
+\begin{figure}[t!]
     \center
-    \includegraphics{./figure/cluster-1}
+    \includegraphics[scale=0.6]{./figure/cluster-1}
     \caption{Cluster dendrogramm for similarity matrix based on fragment 
     ion NDP calculation}
 \end{figure}
@@ -334,7 +334,7 @@ To promote readibility we will not show labels. These can be printed to the
 
 \subsection{Workflow for \Robject{tissue} data set using neutral losses}
 Another way to compare the similarity of metabolites is based on neutral losses
-(cf. \ref{tab:neutrallosses} for a selection of common neutral losses):
+(cf. table \ref{tab:neutrallosses} in the appendix for a selection of common neutral losses):
 common neutral losses are shared among structurally-related metabolites. 
 \Rpackage{MetCirc} contains functionality to 
 calculate neutral losses from \Robject{MSP}-objects. 
@@ -346,73 +346,14 @@ nlMSP <- msp2FunctionalLossesMSP(finalMSP)
 @
 
 
-\begin{longtable}{l | l } 
-    \caption{The following table gives examplatory fractionation of precursors 
-    into neutral losses (given their m/z and the corresponding atoms):} 
-    \label{tab:neutrallosses} \\
-    CH$_2$ & 14.0157 \\
-    CH$_4$ & 16.0313 \\
-    NH$_3$ &  17.0265 \\
-    H$_2$O & 18.0106 \\
-    K$^+$ to NH$_4$$^+$" & 20.9293 \\
-    Na$^+$ to H$^+$ & 21.9819 \\
-    C$_2$H$_2$ & 26.0157 \\
-    CO & 27.9949 \\
-    C$_2$H$_4$ & 28.0313 \\
-    CH$_3$N & 29.0266 \\
-    CH$_2$O & 30.0106 \\
-    CH$_5$N & 31.0422 \\
-    S & 31.9721 \\
-    H$_2$S & 33.9877 \\
-    K$^+$to H$^+$ &  37.9559 \\
-    C$_2$H$_2$O & 42.0106 \\
-    C$_3$H$_6$ & 42.0470 \\
-    CHNO & 43.0058 \\
-    CO$_2$ & 43.9898 \\
-    CH$_2$ O$_2$ & 46.0055 \\
-    C$_4$H$_8$ & 56.0626 \\
-    C$_3$H$_9$N & 59.0735 \\
-    C$_2$H$_4$ O$_2$ & 60.0211 \\
-    CH$_4$N$_2$O & 60.0324 \\
-    SO$_2$ & 63.9619 \\
-    C$_5$H$_8$ & 68.0626 \\
-    C$_3$H$_6$ O$_2$ & 74.0368 \\
-    C$_6$H$_6$ & 78.0470 \\
-    SO$_3$ & 79.9568 \\
-    C$_3$H$_2$O$_3$ & 86.0004 \\
-    C$_4$H$_8$O$_2$ & 88.0517 \\
-    C$_4$H$_{12}$N$_2$ & 88.1000 \\
-    H$_2$(SO)$_4$ & 97.9674 \\
-    H$_3$(PO)$_4$ & 97.9769 \\
-    C$_5$H$_{10}$O$_2$ & 102.0618 \\
-    C$_3$H$_4$O$_4$ & 104.0110 \\
-    C$_6$H$_{12}$O$_2$ & 116.0861 \\
-    C$_2$H$_5$O$_4$P & 123.9926 \\
-    C$_5$H$_8$O$_4$ & 132.0423 \\
-    C$_7$H$_{19}$N$_3$ & 145.1579 \\
-    C$_6$H$_{10}$O$_4$ & 146.0579 \\
-    C$_6$H$_{10}$O$_5$ & 162.0528 \\
-    C$_6$H$_{12}$O$_5$ & 164.0685 \\ 
-    C$_6$H$_8$O$_6$ & 176.0321 \\
-    C$_6$H$_{12}$O$_6$ & 180.0634 \\
-    C$_6$H$_{10}$O$_7$ & 194.0427 \\
-    C$_8$H$_{12}$O$_6$ & 204.0655 \\
-    C$_{11}$H$_{10}$O$_4$ & 206.0579 \\
-    C$_{10}$H$_{15}$N$_3$ O$_6$ S & 305.0682 \\
-    C$_{10}$H$_{17}$N$_3$ O$_6$ S & 307.0838 \\
-    C$_{12}$H$_{20}$O$_{10}$ & 324.1057 \\
-    C$_{12}$H$_{22}$O$_{11}$ & 342.1162 \\
-    \hline
-\end{longtable}
-
 
 \paragraph{Binning and calculation of the similarity matrix.} Analogously to 
-the \Rpackage{MSP-object} with fragments we can bin the \Robject{nlMSP} and create a 
-similarity matrix:
+the \Rpackage{MSP-object} with fragments we can bin the \Robject{nlMSP} 
+\Robject{MSP-object} with neutral losses and create a similarity matrix:
 <<eval=FALSE>>=
 ## bin msp file with functional losses, create table with same fragments 
 ## (binning)
-mlBinnedMSP <- binning(nlMSP, tol = 0.001, group = compartment, method = "median")
+nlBinnedMSP <- binning(nlMSP, tol = 0.01, group = compartment, method = "median")
 ## similarity Matrix
 nlSimilarityMat <- createSimilarityMatrix(nlBinnedMSP)
 @
@@ -427,11 +368,13 @@ nlHClustMSP <- hcluster(nlSimilarityMat, method = "spearman")
 @
 
 To visualise the clustering enter the following line of code 
-(labels will not be displayed due to readibility but can be reproduced 
-in the console by entering 
-\code{colnames(nlSimilarityMat)[nlHClustMSP\$order]}):
+(labels will not be displayed due to readibility): 
+
 <<eval=FALSE>>=
 plot(nlHClustMSP, labels = FALSE)
+
+## labels can be reproduced by entering in the console
+colnames(nlSimilarityMat)[nlHClustMSP$order]
 @
 
 
@@ -493,7 +436,7 @@ To rebuild the figure in a non-interactive environment, run
 simM <- createOrderedSimMat(similarityMat, order = "retentionTime")
 groupname <- rownames(simM)
 ## create link matrix
-linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.95)
+linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.99)
 ## cut link matrix (here: only display links between groups)
 linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
 
@@ -502,8 +445,8 @@ circos.par(gap.degree = 0, cell.padding = c(0, 0, 0, 0),
             track.margin = c(0, 0))
 
 ## here set indSelected arbitrarily
-indSelected <- c(1, 101, 201, 300)
-selectedFeatures <- groupname[c(1,101,201,300)]
+indSelected <- 1
+selectedFeatures <- groupname[1]
 
 ## actual plotting
 plotCircos(groupname, linkMat_cut, initialize = TRUE, featureNames = TRUE, 
@@ -533,12 +476,75 @@ plotCircos(groupname, linkMat_cut, initialize = TRUE, featureNames = TRUE,
 \newpage
 \printbibliography
 
-\section{Session information}
+\section*{Appendix}
+
+\subsection*{Session information}
 
 All software and respective versions to build this vignette are listed here:
 <<session,eval=TRUE,echo=FALSE>>=
 sessionInfo()
 @
+
+\newpage
+\subsection*{Neutral losses}
+\begin{longtable}{l | l } 
+    \caption{The table gives examplatory fractionation of precursors 
+    into neutral losses (given their m/z and the corresponding atoms):} 
+    \label{tab:neutrallosses} \\
+    CH$_2$ & 14.0157 \\
+    CH$_4$ & 16.0313 \\
+    NH$_3$ &  17.0265 \\
+    H$_2$O & 18.0106 \\
+    K$^+$ to NH$_4$$^+$" & 20.9293 \\
+    Na$^+$ to H$^+$ & 21.9819 \\
+    C$_2$H$_2$ & 26.0157 \\
+    CO & 27.9949 \\
+    C$_2$H$_4$ & 28.0313 \\
+    CH$_3$N & 29.0266 \\
+    CH$_2$O & 30.0106 \\
+    CH$_5$N & 31.0422 \\
+    S & 31.9721 \\
+    H$_2$S & 33.9877 \\
+    K$^+$to H$^+$ &  37.9559 \\
+    C$_2$H$_2$O & 42.0106 \\
+    C$_3$H$_6$ & 42.0470 \\
+    CHNO & 43.0058 \\
+    CO$_2$ & 43.9898 \\
+    CH$_2$ O$_2$ & 46.0055 \\
+    C$_4$H$_8$ & 56.0626 \\
+    C$_3$H$_9$N & 59.0735 \\
+    C$_2$H$_4$ O$_2$ & 60.0211 \\
+    CH$_4$N$_2$O & 60.0324 \\
+    SO$_2$ & 63.9619 \\
+    C$_5$H$_8$ & 68.0626 \\
+    C$_3$H$_6$ O$_2$ & 74.0368 \\
+    C$_6$H$_6$ & 78.0470 \\
+    SO$_3$ & 79.9568 \\
+    C$_3$H$_2$O$_3$ & 86.0004 \\
+    C$_4$H$_8$O$_2$ & 88.0517 \\
+    C$_4$H$_{12}$N$_2$ & 88.1000 \\
+    H$_2$(SO)$_4$ & 97.9674 \\
+    H$_3$(PO)$_4$ & 97.9769 \\
+    C$_5$H$_{10}$O$_2$ & 102.0618 \\
+    C$_3$H$_4$O$_4$ & 104.0110 \\
+    C$_6$H$_{12}$O$_2$ & 116.0861 \\
+    C$_2$H$_5$O$_4$P & 123.9926 \\
+    C$_5$H$_8$O$_4$ & 132.0423 \\
+    C$_7$H$_{19}$N$_3$ & 145.1579 \\
+    C$_6$H$_{10}$O$_4$ & 146.0579 \\
+    C$_6$H$_{10}$O$_5$ & 162.0528 \\
+    C$_6$H$_{12}$O$_5$ & 164.0685 \\ 
+    C$_6$H$_8$O$_6$ & 176.0321 \\
+    C$_6$H$_{12}$O$_6$ & 180.0634 \\
+    C$_6$H$_{10}$O$_7$ & 194.0427 \\
+    C$_8$H$_{12}$O$_6$ & 204.0655 \\
+    C$_{11}$H$_{10}$O$_4$ & 206.0579 \\
+    C$_{10}$H$_{15}$N$_3$ O$_6$ S & 305.0682 \\
+    C$_{10}$H$_{17}$N$_3$ O$_6$ S & 307.0838 \\
+    C$_{12}$H$_{20}$O$_{10}$ & 324.1057 \\
+    C$_{12}$H$_{22}$O$_{11}$ & 342.1162 \\
+    \hline
+\end{longtable}
 
 
 \end{document}
