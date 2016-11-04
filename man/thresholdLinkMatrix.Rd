@@ -4,14 +4,17 @@
 \alias{thresholdLinkMatrix}
 \title{Threshold a link matrix}
 \usage{
-thresholdLinkMatrix(linkMatrix, threshold)
+thresholdLinkMatrix(linkMatrix, threshold_low, threshold_high)
 }
 \arguments{
 \item{linkMatrix}{matrix, a link matrix that gives per each row 
 information on linked features}
 
-\item{threshold}{numerical, threshold value for NDP values, below this value 
-linked features will not be returned}
+\item{threshold_low}{numerical, threshold value for NDP values, below this 
+value linked features will not be returned}
+
+\item{threshold_high}{numerical, threshold value for NDP values, above this 
+value linked features will not be returned}
 }
 \value{
 thresholdLinkMatrix returns a matrix that gives per each row 
@@ -21,8 +24,9 @@ information on linked features which are linked above a certain threshold
 Threshold a link matrix
 }
 \details{
-threshold is a numerical value and filters linked precursor ions; 
-filtering is currently based on the normalised dot product.
+threshold_low and threshold_high are numerical values and truncates 
+similar/identical precursor ions; 
+similarity is momentarily based on the normalised dot product.
 }
 \examples{
 data("binnedMSP", package = "MetCirc")
@@ -30,7 +34,8 @@ data("binnedMSP", package = "MetCirc")
 binnedMSP <- binnedMSP[c(c(1:20, 29:48, 113:132, 240:259)),]
 similarityMat <- createSimilarityMatrix(binnedMSP)
 linkMatrix <- createLink0Matrix(similarityMatrix = similarityMat)
-thresholdLinkMatrix(linkMatrix = linkMatrix, threshold = 0.5)
+thresholdLinkMatrix(linkMatrix = linkMatrix, 
+     threshold_low = 0.5, threshold_high=1)
 }
 \author{
 Thomas Naake, \email{naake@stud.uni-heidelberg.de}

@@ -44,7 +44,7 @@ similarityMat <- createSimilarityMatrix(binnedMSP)
 ## order similarityMat according to mz
 simMat <- createOrderedSimMat(similarityMat, order = "mz")
 groupname <- rownames(simMat)
-linkMat_thr <- createLinkMatrix(simMat, 0.9) 
+linkMat_thr <- createLinkMatrix(simMat, 0.9, 1) 
 ind <- 19
 linkMatIndsHover <- getLinkMatrixIndices(groupname[ind], linkMat_thr)
 MetCirc:::printInformationHover(groupname = groupname, 

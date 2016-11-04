@@ -27,18 +27,19 @@ test_createLink0Matrix <- function() {
 
 ## START unit test thresholdLinkMatrix
 test_thresholdLinkMatrix <- function() {
-    checkEquals(dim(thresholdLinkMatrix(link0Matrix, 0)), dim(link0Matrix))
-    checkException(thresholdLinkMatrix(similarityMat, 0))
-    checkEquals(dim(thresholdLinkMatrix(link0Matrix, 1.1)), c(0, 5))
+    checkEquals(dim(thresholdLinkMatrix(link0Matrix, 0, 1)), dim(link0Matrix))
+    checkException(thresholdLinkMatrix(similarityMat, 0, 1))
+    checkException(thresholdLinkMatrix(similarityMat, 0.6, 0.5))
+    checkException(thresholdLinkMatrix(link0Matrix, 1.05, 1.1))
     checkTrue(
-        dim(thresholdLinkMatrix(link0Matrix, 0.2))[1] >= 
-            dim(thresholdLinkMatrix(link0Matrix, 0.3))[1])
+        dim(thresholdLinkMatrix(link0Matrix, 0.2, 1))[1] >= 
+            dim(thresholdLinkMatrix(link0Matrix, 0.3, 1))[1])
 }
 ## END unit test thresholdLinkMatrix
 
 ## START unit test createLinkMatrix
-tLinkMatrix1 <- thresholdLinkMatrix(link0Matrix, 0.9)
-tLinkMatrix2 <- createLinkMatrix(similarityMat, 0.9)
+tLinkMatrix1 <- thresholdLinkMatrix(link0Matrix, 0.9, 1)
+tLinkMatrix2 <- createLinkMatrix(similarityMat, 0.9, 1)
 
 test_createLinkMatrix <- function() {
     checkTrue(identical(tLinkMatrix1, tLinkMatrix2))
@@ -62,5 +63,5 @@ test_cutLinkMatrix <- function() {
         all(unlist(lapply(1:dim(cutLMIntra)[1], 
                           function(x) cutLMIntra[x,1] == cutLMIntra[x,3])))
     )
-    }
+}
 ## END unit test cutLinkMatrix

@@ -123,7 +123,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                             "intra-class links" = "intra"),
                         selected = "all"),
                     sliderInput("threshold", "Threshold for similarity to display",
-                        min = 0, max = 1, value = 0.75),
+                        min = 0, max = 1, value = c(0.8, 1)),
                     radioButtons("order", "order within groups",
                         choices = c("clustering" = "clustering", "m/z" = "mz",
                                     "retention time" = "retentionTime"), 
@@ -191,7 +191,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
         
         ## threshold linkMatrix_cut
         LinkMatrix_threshold <- reactive(thresholdLinkMatrix(LinkMatrix_cut(), 
-                                                             input$threshold))
+                                        input$threshold[1], input$threshold[2]))
         
         ## reactiveValues for hover Coordinates
         CoordinatesNewHover <- reactiveValues(X = 0, Y = 0)
@@ -489,7 +489,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
 #' ## order similarityMat according to mz
 #' simMat <- createOrderedSimMat(similarityMat, order = "mz")
 #' groupname <- rownames(simMat)
-#' linkMat_thr <- createLinkMatrix(simMat, 0.9) 
+#' linkMat_thr <- createLinkMatrix(simMat, 0.9, 1) 
 #' ind <- 19
 #' linkMatIndsHover <- getLinkMatrixIndices(groupname[ind], linkMat_thr)
 #' MetCirc:::printInformationHover(groupname = groupname, 

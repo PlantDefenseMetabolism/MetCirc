@@ -391,12 +391,14 @@ times, different species, etc. The visualisation tools implemented in
 precursor ions between and/or inside of groups. \newline
 
 \Rfunction{shinyCircos} uses the function \Rfunction{createLinkMatrix} which 
-comprises per row these precursor ions which are linked by a normalised dot 
-product $\geq$ \Robject{threshold} to the precursor ion in the same row. 
+selects these precursor ions that have a normalised dot 
+product within the range defined by \Robject{threshold\_low} and 
+\Robject{threshold\_high} to a precursor ion. 
 Internally, in \Rfunction{shinyCircos}, \Rfunction{createLinkMatrix} will be 
-called to produce link matrices based on the given threshold. 
+called to produce link matrices based on the given thresholds. 
 <<eval=TRUE>>=
-linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold=0.5)
+linkMat <- createLinkMatrix(similarityMatrix = similarityMat, 
+                            threshold_low=0.5, threshold_high=1)
 @
 
 As we have calculated similarity coefficients between precursors, we would
@@ -436,7 +438,8 @@ To rebuild the figure in a non-interactive environment, run
 simM <- createOrderedSimMat(similarityMat, order = "retentionTime")
 groupname <- rownames(simM)
 ## create link matrix
-linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.99)
+linkMat <- createLinkMatrix(similarityMatrix = simM, 
+                    threshold_low = 0.99, threshold_high = 1)
 ## cut link matrix (here: only display links between groups)
 linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
 

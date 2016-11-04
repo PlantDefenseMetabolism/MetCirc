@@ -58,7 +58,8 @@ similarityMat <- createSimilarityMatrix(binnedMSP)
 ## order similarityMat according to retentionTime
 simM <- createOrderedSimMat(similarityMat, order = "retentionTime")
 ## create link matrix
-linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.8)
+linkMat <- createLinkMatrix(similarityMatrix = simM, 
+     threshold_low=0.8, threshold_high=1)
 ## cut link matrix (here: only display links between groups)
 linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
 ## set circlize paramters

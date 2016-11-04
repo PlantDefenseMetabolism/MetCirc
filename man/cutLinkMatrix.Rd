@@ -32,7 +32,7 @@ data("binnedMSP", package = "MetCirc")
 ## use only a selection 
 binnedMSP <- binnedMSP[c(c(1:20, 29:48, 113:132, 240:259)),]
 similarityMat <- createSimilarityMatrix(binnedMSP)
-linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold = 0.5)
+linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold_low = 0.75, threshold_high = 1)
 cutLinkMatrix(LinkMatrix = linkMat, type = "all")
 }
 \author{

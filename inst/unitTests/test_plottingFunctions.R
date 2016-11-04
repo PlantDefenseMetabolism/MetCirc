@@ -7,7 +7,8 @@ simMat <- createOrderedSimMat(similarityMat, order = "mz")
 groupname <- rownames(similarityMat)
 groupnameO <- rownames(simMat)
 ## create link mat
-linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold=0.95)
+linkMat <- createLinkMatrix(similarityMatrix = similarityMat, 
+                            threshold_low = 0.95, threshold_high = 1)
 
 ## START unit test for plotCircos
 circos.clear()
@@ -16,7 +17,8 @@ circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0),
 test_plotCircos <- function() {
     checkException(plotCircos(groupname, NULL, 
         initialize = TRUE, featureNames = FALSE, groupSector = FALSE, 
-        groupName = FALSE, links = TRUE, highlight = FALSE, colour = NULL, transparency = 0.2))
+        groupName = FALSE, links = TRUE, highlight = FALSE, colour = NULL, 
+        transparency = 0.2))
     checkException(plotCircos(groupnameO, linkMat, initialize = TRUE, 
         featureNames = FALSE, groupSector = FALSE, groupName = FALSE, 
         links = TRUE, highlight = FALSE, colour = NULL, transparency = 0.2)) ## names are different

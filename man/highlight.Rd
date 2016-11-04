@@ -41,7 +41,8 @@ Internal use for shiny app.
  ## order similarityMat according to retentionTime and update rownames
  simM <- createOrderedSimMat(similarityMat, order = "retentionTime")
  ## create link matrix
- linkMat <- createLinkMatrix(similarityMatrix = simM, threshold=0.95)
+ linkMat <- createLinkMatrix(similarityMatrix = simM, 
+     threshold_low = 0.95, threshold_high = 1)
  ## cut link matrix (here: only display links between groups)
  linkMat_cut <- cutLinkMatrix(linkMat, type = "inter")
  ## set circlize parameters
