@@ -119,8 +119,7 @@ plotCircos <- function(groupname, linkMat, initialize = c(TRUE, FALSE),
 
         transparency <- if (highlight) transparency - 0.1 else transparency 
         if (is.null(colour)) {
-            colour <- alpha(palette()[as.numeric(as.factor(uniqueGroup))+1], transparency)##1:length(uniqueGroup) + 1, transparency)
-            #alpha(palette()[as.numeric(as.factor(group))[ind]+1], transparency)   
+            colour <- alpha(palette()[as.numeric(as.factor(uniqueGroup))+1], transparency)
         } else {
             colour <- alpha(colour, transparency)
         }
