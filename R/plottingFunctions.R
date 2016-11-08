@@ -147,18 +147,15 @@ plotCircos <- function(groupname, linkMat, initialize = c(TRUE, FALSE),
     
     ## plot links
     if (links) {
-        colourLink <- ##if (highlight) {
-            rep(alpha("black", 0.05), dim(linkMat)[1]) 
-            ##} else {
-            ##    alpha("black", alpha = max(0.1, as.numeric(linkMat[,"NDP"])))}
+        ##colourLink <- rep(alpha("black", 0.05), dim(linkMat)[1]) 
         
         if (dim(linkMat)[1] != 0) {
             for (i in 1:dim(linkMat)[1]) {
                 circos.link(linkMat[i,][["name1"]], 0.5,
                     linkMat[i,][["name2"]], 0.5,
-                    lwd = if (highlight) 0.5 else max(0.5, as.numeric(linkMat[i,][["NDP"]])),
+                    lwd = if (highlight) 0.3 else max(0.5, as.numeric(linkMat[i,][["NDP"]])),
                     ## transparency
-                    col = colourLink[i])
+                    col = rep(alpha("black", 0.05))) ##colourLink[i])
             }
         }
     }
@@ -251,14 +248,15 @@ highlight <- function(groupname, ind, LinkMatrix, colour = NULL, transparency = 
 
     ## plot all links
     if (dim(LinkMatrix)[1] != 0) {
-        for (i in 1:dim(LinkMatrix)[1]) {
-            circos.link(lMatName1[i], 0.5,
-                    lMatName2[i], 0.5,
-                    lwd = 0.5,
-                    ## transparency
-                    col = alpha("black", 0.1))
-        }
+         for (i in 1:dim(LinkMatrix)[1]) {
+             circos.link(lMatName1[i], 0.5,
+                     lMatName2[i], 0.5,
+                     lwd = 0.3,
+                     ## transparency
+                     col = alpha("black", 0.1))
+         }
     }
+     
     
     ## plot highlighted links
     if (!is.null(LinkMatrixInd)) {
