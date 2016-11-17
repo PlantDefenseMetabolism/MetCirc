@@ -1,3 +1,10 @@
+CHANGES IN VERSION 1.1.2
+------------------------
+ o use absolute masses when calculating similarities in 
+   createSimilarityMatrix (bug fix) [2016-11-17 Thu]
+ o add option links in highlight, i.e. should links be plotted
+   or not? [2016-11-17 Thu]
+
 CHANGES IN VERSION 1.1.1
 ------------------------
  o change slider input as such that one is able to select a lower 
