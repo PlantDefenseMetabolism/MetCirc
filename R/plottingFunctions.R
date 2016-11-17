@@ -165,7 +165,7 @@ plotCircos <- function(groupname, linkMat, initialize = c(TRUE, FALSE),
 #' @title Add links and highlight sectors
 #' @description A function to add links and highlight sectors to an initialised
 #'      and plotted \code{circlize} plot with one track.
-#' @usage highlight(groupname, ind, LinkMatrix, colour = NULL, transparency = 0.4)
+#' @usage highlight(groupname, ind, LinkMatrix, colour = NULL, transparency = 0.4, links = TRUE)
 #' @param groupname vector containing "group" and "name" to display, that is 
 #' a unique identifier of the features, "group" and "name" have to be separated
 #' by "_" where "group" is the first and "name" is the last element
@@ -175,6 +175,7 @@ plotCircos <- function(groupname, linkMat, initialize = c(TRUE, FALSE),
 #' @param colour NULL or character, colour defines the colours which are used
 #'  for plotting, if NULL default colours are used
 #' @param transparency numerical, defines the transparency of the colours
+#' @param links logical, should links of unselected features be plotted
 #' @details Internal use for shiny app.
 #' @return The function will update an existing plot by highlighting a 
 #'  specified sector and connected links.
@@ -205,9 +206,9 @@ plotCircos <- function(groupname, linkMat, initialize = c(TRUE, FALSE),
 #'      groupName = FALSE, links = FALSE, highlight = TRUE)
 #'  ## highlight
 #'  highlight(groupname = groupname, ind = indSelected, LinkMatrix = 
-#'          linkMat_cut, colour = NULL, transparency = 0.4)
+#'          linkMat_cut, colour = NULL, transparency = 0.4, links = TRUE)
 #' @export
-highlight <- function(groupname, ind, LinkMatrix, colour = NULL, transparency = 0.4) {
+highlight <- function(groupname, ind, LinkMatrix, colour = NULL, transparency = 0.4, links = TRUE) {
     
     ## get group and name from groupname argument
     ## groupname is a vector containing information about group and name,
@@ -247,14 +248,16 @@ highlight <- function(groupname, ind, LinkMatrix, colour = NULL, transparency = 
     } else {LinkMatrixInd <- NULL}
 
     ## plot all links
-    if (dim(LinkMatrix)[1] != 0) {
-         for (i in 1:dim(LinkMatrix)[1]) {
-             circos.link(lMatName1[i], 0.5,
-                     lMatName2[i], 0.5,
-                     lwd = 0.3,
-                     ## transparency
-                     col = alpha("black", 0.1))
-         }
+    if (links) {
+        if (dim(LinkMatrix)[1] != 0) {
+            for (i in 1:dim(LinkMatrix)[1]) {
+                circos.link(lMatName1[i], 0.5,
+                    lMatName2[i], 0.5,
+                    lwd = 0.3,
+                    ## transparency
+                    col = alpha("black", 0.1))
+            }
+        }
     }
      
     

@@ -78,7 +78,9 @@ createSimilarityMatrix <- function(mm) {
     ##mm <- mm[orderNew,]
     ##rownames(mm) <- groupname <- groupname[orderNew]
     colnames(similarity) <- rownames(similarity) <- groupname
-
+    
+    colNames <- as.numeric(colNames)
+    colNames <- abs(colNames)
     ## write to similarity matrix similarity measure
     for (i in 1:n) {
         for (j in 1:n) {
