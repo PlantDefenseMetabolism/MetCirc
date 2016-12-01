@@ -36,13 +36,13 @@ convertMSP2MSP <- function(msp) {
     ## create MSP entry
     msp_l <- lapply(1:length(names), function(x) {
         rbind(
-        c("NAME:", names[x]),
-        c("RETENTIONTIME:", rettime[x]),
-        c("PRECURSORMZ:", max(peakentry_fragment_l_s[[x]])),
-        c("METABOLITENAME:", names[x]),
-        c("METABOLITECLASS:", "Unknown"),
-        c("ADDUCTIONNAME:", "Unknown"),
-        c("Num Peaks:", strsplit(as.character(MSP[numpeaks[x],]), " ")[[1]][3]),
+        c("NAME: ", names[x]),
+        c("RETENTIONTIME: ", rettime[x]),
+        c("PRECURSORMZ: ", max(peakentry_fragment_l_s[[x]])),
+        c("METABOLITENAME: ", names[x]),
+        c("METABOLITECLASS: ", "Unknown"),
+        c("ADDUCTIONNAME: ", "Unknown"),
+        c("Num Peaks: ", strsplit(as.character(MSP[numpeaks[x],]), " ")[[1]][3]),
         cbind(peakentry_fragment_l_s[[x]], peakentry_intensity_l_s[[x]]),
         c("", ""))})
 
