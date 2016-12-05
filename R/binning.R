@@ -8,7 +8,7 @@
 #' @details Internal use to retrieve indices when fragments start and end. 
 #' @return getBegEndIndMSP returns a list of length 2 where the first entry
 #' contains the start indices and the second the end indices
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
 #' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
@@ -26,7 +26,7 @@ getBegEndIndMSP <- function(msp) {
     ## <=: to get all possibilities
     if (length(indPeaks) <= length(indLosses)) indNumPeaks <- indLosses 
     
-    indEnd <- as.numeric(msp[indNumPeaks, 2])
+    indEnd <- as.numeric(as.character(msp[indNumPeaks, 2]))
     indBeg <- indNumPeaks + 1 
     indEnd <- indEnd + indBeg - 1 
     
@@ -48,7 +48,7 @@ getBegEndIndMSP <- function(msp) {
 #' @return binning returns a matrix where rownames are precursor ions
 #' (m/z / retention time) and colnames are newly calculated m/z values which 
 #' were binned. 
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples data("idMSMStoMSP", package = "MetCirc")
 #' ##group <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), replace=TRUE) 
 #' binning(msp = finalMSP, tol = 0.01, group = NULL, method = "median")
@@ -84,6 +84,7 @@ binning <- function(msp, tol = 0.01, group = NULL, method = c("median", "mean"))
     IndFrag <- unlist(l)
     ## fragments 
     frag <- msp[IndFrag, 1] 
+    frag <- as.character(frag)
     frag <- as.numeric(frag)
     frag <- unique(frag)
     ## sort frag and get order
@@ -116,7 +117,9 @@ binning <- function(msp, tol = 0.01, group = NULL, method = c("median", "mean"))
     for (i in 1:length(l)) {
         ## get ith entry of msp
         mspI <- msp[l[[i]],]
-        mspI <- data.matrix(mspI)
+        mspI <- as.matrix(mspI)
+        class(mspI) <- "numeric"
+        #mspI <- data.matrix(mspI)
         ## inds hosts the column indices for the respective fragment
         inds <- lapply(mspI[,1], FUN = function(x) which.min(abs(x - bins)))
         inds <- as.numeric(unlist(inds))

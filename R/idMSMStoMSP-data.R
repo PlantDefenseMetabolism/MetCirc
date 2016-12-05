@@ -9,5 +9,5 @@
 #' @return object of class MSP
 #' @format object of class MSP
 #' @source internal 
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 NULL  

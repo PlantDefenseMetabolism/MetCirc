@@ -10,7 +10,7 @@
 #' exclude links which have a similarity of exactly 0.
 #' @return createLink0Matrix returns a matrix that gives per each row 
 #' information on linked features
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' data("binnedMSP", package = "MetCirc")
 #' ## truncate binnedMSP
@@ -75,7 +75,7 @@ createLink0Matrix <- function(similarityMatrix) {
 #' similarity is momentarily based on the normalised dot product.
 #' @return thresholdLinkMatrix returns a matrix that gives per each row 
 #' information on linked features which are linked above a certain threshold
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' data("binnedMSP", package = "MetCirc")
 #' ## use only a selection 
@@ -128,7 +128,7 @@ thresholdLinkMatrix <- function(linkMatrix,
 #' normalised dot product.
 #' @return createLinkMatrix returns a matrix that gives per each row 
 #' information on linked features
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' data("binnedMSP", package = "MetCirc")
 #' ## use only a selection 
@@ -161,7 +161,7 @@ createLinkMatrix <- function(similarityMatrix, threshold_low, threshold_high) {
 #' groups.
 #' @return cutLinkMatrix returns a matrix that gives per each row 
 #' information on linked features
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' data("binnedMSP", package = "MetCirc")
 #' ## use only a selection 

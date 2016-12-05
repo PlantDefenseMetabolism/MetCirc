@@ -47,7 +47,7 @@
 #' @return allocatePrecursor2mz returns a data.frame containing average 
 #'      retention time, average mz, metabolite name, adduct ion name, 
 #'      spectrum reference
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@googlemail.com}
 #' @references Li et al. (2015): Navigating natural variation in 
 #' herbivory-induced secondary metabolism in coyote tobacco populations using 
 #' MS/MS structural analysis. PNAS, 112, E4147--E4155, 10.1073/pnas.1503106112.

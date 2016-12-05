@@ -21,7 +21,7 @@
 #' indicates no similarity between the two precursors, while 1 indicates 
 #' a strong similarity between the two precursors.
 #' @return NDP returns a numeric similarity coefficient between 0 and 1
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' data("binnedMSP", package = "MetCirc")
 #' NDP(matrow1 = binnedMSP[1,], matrow2 = binnedMSP[2,], m = 0.5, n = 2,
@@ -62,7 +62,7 @@ NDP <- function(matrow1, matrow2, m = 0.5, n = 2, mass) {
 #' E4147--E4155.
 #' @return createSimilarityMatrix returns a similarity matrix that contains the 
 #' NDP similarity measure between all precursors in the data set
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' data("binnedMSP", package = "MetCirc")
 #' ## truncate binnedMSP 
@@ -118,7 +118,7 @@ createSimilarityMatrix <- function(mm) {
 #' of the reactive environment (see vignette for a workflow).
 #' @return createOrderedSimMat returns a similarity matrix with ordered
 #' rownames according to the character vector given to order
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' data("binnedMSP", package = "MetCirc")
 #' data("similarityMat", package = "MetCirc")

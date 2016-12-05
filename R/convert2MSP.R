@@ -11,7 +11,7 @@
 #'      return numeric
 #' @details Internal function.
 #' @return cutUniquePreMZ returns character as specified by parameters
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples \dontrun{cutUniquePreMZ(precursor, splitPattern = splitPattern, 
 #'      splitInd = splitInd, returnCharacter = TRUE)}
 #' @export
@@ -76,7 +76,7 @@ cutUniquePreMZ <- function(precursor, splitPattern = splitPattern,
 #'      \code{splitPattern = "_"} and \code{splitInd = 2} to access the m/z 
 #'      value of the precursor ion (here: 162.23). 
 #' @return convert2MSP returns an object of class MSP
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
 #' convert2MSP(mm = sd02_deconvoluted, splitPattern = "_", splitIndMZ = 1, 
@@ -166,7 +166,7 @@ convert2MSP <- function (mm, splitPattern = "_", splitIndMZ = 1, splitIndRT = 2,
 #' the similarity based on neutral losses instead of fragments
 #' @return msp2FunctionalLossesMSP returns a data.frame in msp format 
 #' (with neutral losses).
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples \dontrun{msp2FunctionalLossesMSP(msp)}
 #' data("sd02_deconvoluted", package = "MetCirc")
 #' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
@@ -234,7 +234,7 @@ NULL
 #' @aliases MSP-class
 #' @description MSP class for msp data.frame. Allows easy computation of 
 #' length of entries by entering length(msp), where msp is of class MSP.
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @param msp a data.frame in msp format
 #' @export
 MSP <- setClass("MSP", slots = c(msp = "data.frame"))
@@ -506,7 +506,7 @@ getRT <- function(object) {
     df <- object@msp
     ind <- which(df[,1] == "RETENTIONTIME: ")
     ## get rt 
-    rt <- df[ind,2]
+    rt <- as.character(df[ind,2])
     ## change to numeric
     rt <- as.numeric(rt)
     return(rt)
@@ -535,7 +535,7 @@ getPrecursorMZ <- function(object) {
     df <- object@msp
     ind <- which(df[,1] == "PRECURSORMZ: ")
     ## get m/z
-    mz <- df[ind,2]
+    mz <- as.character(df[ind,2])
     ## change to numeric
     mz <- as.numeric(mz)
     return(mz)

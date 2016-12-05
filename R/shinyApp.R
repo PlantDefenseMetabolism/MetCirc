@@ -15,7 +15,7 @@
 #' precursors.
 #' @return shinyCircos returns a character vector with the selected 
 #' precursors
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' data("idMSMStoMSP", package = "MetCirc")
 #' ## truncate files
@@ -496,7 +496,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
 #'  msp = NULL, ind = ind, lMatIndHover = linkMatIndsHover, 
 #'  linkMatrixThreshold = linkMat_thr, 
 #'  similarityMatrix = simMat)
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 printInformationHover <- function(groupname, msp = NULL, 
                             ind, lMatIndHover, linkMatrixThreshold, 
                             similarityMatrix) {

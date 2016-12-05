@@ -8,5 +8,5 @@
 #' @return data.frame
 #' @format data.frame
 #' @source Li et al. (2015)
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 NULL 

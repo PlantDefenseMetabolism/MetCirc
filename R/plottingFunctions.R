@@ -29,7 +29,7 @@
 #' @details Internal use for shiny app
 #' @return The function will initialize a circlize plot and/or will plot 
 #'  features of a circlize plot. 
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' ## load binnedMSP
 #' data("binnedMSP", package = "MetCirc")
@@ -179,7 +179,7 @@ plotCircos <- function(groupname, linkMat, initialize = c(TRUE, FALSE),
 #' @details Internal use for shiny app.
 #' @return The function will update an existing plot by highlighting a 
 #'  specified sector and connected links.
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #'  ## load binnedMSP
 #'  data("binnedMSP", package = "MetCirc")
@@ -288,7 +288,7 @@ highlight <- function(groupname, ind, LinkMatrix, colour = NULL, transparency = 
 #'      internal function.
 #' @return \code{truncateName} returns groupname with truncated names 
 #' without group)
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #'      groupname <- "a_100.12345/10.12345"
 #'      truncateName(groupname, roundDigits = 2)
@@ -322,7 +322,7 @@ truncateName <- function (groupname, roundDigits = 2) {
 #'      figures.
 #' @return The function will open a new plot and display colours together 
 #'      with labels. 
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #'  ## load binnedMSP
 #'  data("binnedMSP", package = "MetCirc")
@@ -375,7 +375,7 @@ circosLegend <- function(groupname, highlight = c(TRUE, FALSE), colour = NULL) {
 #' @details Internal use for function highlight.
 #' @return \code{getLinkMatrixIndices} returns indices concerning linkMatrix to 
 #'      which groupnameselected connects
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples \dontrun{getLinkMatrixIndices(groupnameselected, linkMatrix)}
 #' @export
 getLinkMatrixIndices <- function(groupnameselected, linkMatrix) {
@@ -406,7 +406,7 @@ getLinkMatrixIndices <- function(groupnameselected, linkMatrix) {
 #'  smallest distance to the given coordinates. As \code{minFragCart2Polar} is 
 #'  used in \code{shinyCircos} for the track 1 only polar r coordinates between
 #'  0.8 and 1 will be used to find the feature with smallest distance.
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' ## load binnedMSP
 #' data("binnedMSP", package = "MetCirc")
@@ -440,7 +440,7 @@ minFragCart2Polar <- function(x, y, degreeOfFeatures) {
 #'  into polar coordinates especially in interactive shiny applications when
 #'  using hovering and clicking features.
 #' @return \code{cart2Polar} returns a list of colar coordinates r and theta
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' x <- 1; y <- 1
 #' cart2Polar(x, y)

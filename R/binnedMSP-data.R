@@ -11,5 +11,5 @@
 #' @return matrix
 #' @format matrix
 #' @source internal 
-#' @author Thomas Naake, \email{naake@@stud.uni-heidelberg.de}
+#' @author Thomas Naake, \email{thomasnaake@googlemail.com}
 NULL  
