@@ -27,6 +27,6 @@ x <- 1; y <- 1
 cart2Polar(x, y)
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

@@ -29,6 +29,6 @@ finalMSPdf <- getMSP(finalMSP)
 getBegEndIndMSP(finalMSPdf)
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

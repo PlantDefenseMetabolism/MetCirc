@@ -13,6 +13,6 @@ MSP class for msp data.frame. Allows easy computation of
 length of entries by entering length(msp), where msp is of class MSP.
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

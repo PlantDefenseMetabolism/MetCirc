@@ -53,6 +53,6 @@ MetCirc:::printInformationHover(groupname = groupname,
  similarityMatrix = simMat)
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

@@ -44,6 +44,6 @@ degreeFeatures <- lapply(groupname,
 minFragCart2Polar(x, y, degreeOfFeatures = degreeFeatures)
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

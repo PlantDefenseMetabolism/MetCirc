@@ -40,6 +40,6 @@ data("similarityMat", package = "MetCirc")
 createOrderedSimMat(similarityMatrix = similarityMat, order = "retentionTime")
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

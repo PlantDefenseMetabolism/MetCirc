@@ -23,6 +23,6 @@ certain m/z value. \code{binnedMSP} is derived from the object \code{tissue}
 and \code{compartmentTissue}.
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

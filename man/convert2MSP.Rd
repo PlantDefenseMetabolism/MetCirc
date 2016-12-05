@@ -62,6 +62,6 @@ convert2MSP(mm = sd02_deconvoluted, splitPattern = "_", splitIndMZ = 1,
  splitIndRT = 2, names = FALSE, metNames = FALSE, class = FALSE)
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

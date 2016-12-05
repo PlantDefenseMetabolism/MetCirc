@@ -36,6 +36,6 @@ linkMat <- createLinkMatrix(similarityMatrix = similarityMat, threshold_low = 0.
 cutLinkMatrix(LinkMatrix = linkMat, type = "all")
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

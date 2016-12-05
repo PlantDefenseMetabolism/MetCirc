@@ -20,6 +20,6 @@ similarity scores derived from the \code{idMSMStissueproject} data set.
 See the vignette for a workflow to reproduce the object \code{similarityMat}.
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

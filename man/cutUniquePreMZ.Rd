@@ -32,6 +32,6 @@ Internal function.
      splitInd = splitInd, returnCharacter = TRUE)}
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

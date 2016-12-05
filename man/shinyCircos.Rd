@@ -38,6 +38,6 @@ similarityMat <- createSimilarityMatrix(binnedMSP)
 \dontrun{shinyCircos(similarityMat, finalMSP, size = 400)}
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

@@ -38,6 +38,6 @@ thresholdLinkMatrix(linkMatrix = linkMatrix,
      threshold_low = 0.5, threshold_high=1)
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

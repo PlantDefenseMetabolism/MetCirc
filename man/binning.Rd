@@ -35,6 +35,6 @@ data("idMSMStoMSP", package = "MetCirc")
 binning(msp = finalMSP, tol = 0.01, group = NULL, method = "median")
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

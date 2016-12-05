@@ -73,6 +73,6 @@ plotCircos(groupname, linkMat_cut, initialize = TRUE,
      transparency = 0.2)
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

@@ -34,6 +34,6 @@ binnedMSP <- binnedMSP[1:28,]
 createSimilarityMatrix(binnedMSP)
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

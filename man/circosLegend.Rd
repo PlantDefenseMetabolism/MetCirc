@@ -38,6 +38,6 @@ Internal use for shiny app or outside of shiny to reproduce
  circosLegend(groupname, highlight = TRUE, colour = NULL)
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

@@ -21,6 +21,6 @@ The data.frame \code{tissue} is used in the subsection
 in this data.frame.
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

@@ -31,6 +31,6 @@ A function to truncate names
      truncateName(groupname, roundDigits = 2)
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

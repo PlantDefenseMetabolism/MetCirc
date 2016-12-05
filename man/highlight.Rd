@@ -63,6 +63,6 @@ Internal use for shiny app.
          linkMat_cut, colour = NULL, transparency = 0.4, links = TRUE)
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

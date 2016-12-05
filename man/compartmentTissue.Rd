@@ -21,6 +21,6 @@ of \code{MetCirc}. In \code{compartmentTissue}, information on the
 organ-localisation of each MS/MS spectrum is stored.
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

@@ -27,6 +27,6 @@ based on an objective function. See \code{?allocatePrecursor2mz} for further
 information.
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

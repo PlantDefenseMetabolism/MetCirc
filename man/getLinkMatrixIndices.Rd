@@ -29,6 +29,6 @@ Internal use for function highlight.
 \dontrun{getLinkMatrixIndices(groupnameselected, linkMatrix)}
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

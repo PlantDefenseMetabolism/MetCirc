@@ -29,6 +29,6 @@ finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
 finalMSPNL <- msp2FunctionalLossesMSP(msp = finalMSP)
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 

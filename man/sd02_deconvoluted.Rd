@@ -21,6 +21,6 @@ respective precursor m/z values. sd02_deconvoluted originates from
 Li et al. (2015). See Li et al. (2015) for further information.
 }
 \author{
-Thomas Naake, \email{naake@stud.uni-heidelberg.de}
+Thomas Naake, \email{thomasnaake@googlemail.com}
 }
 
