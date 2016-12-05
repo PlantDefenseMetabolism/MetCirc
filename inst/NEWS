@@ -1,3 +1,8 @@
+CHANGES IN VERSION 1.1.3
+------------------------
+ o use new email adress [2016-12-05 Mon]
+ o use option to calculate MSP-object from msp-file directly [2016-12-05 Mon]
+
 CHANGES IN VERSION 1.1.2
 ------------------------
  o use absolute masses when calculating similarities in 

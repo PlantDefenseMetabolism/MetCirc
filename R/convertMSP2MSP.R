@@ -6,7 +6,7 @@
 #'  "Num Peaks:" and information on fragments and peak areas 
 #' @details msp data frame from other sources. 
 #' @return convertMSP2MSP returns an object of class MSP
-#' @author Thomas Naake, \email{naake@@mpimp-golm.mpg.de}
+#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' \dontrun{convertMSP2MSP(msp = msp)}
 #' @export
