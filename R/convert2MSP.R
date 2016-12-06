@@ -200,7 +200,7 @@ msp2FunctionalLossesMSP <- function(msp) {
         indBeg <- indBegL[i]
         indEnd <- indEndL[i]
         
-        neutralL <- (as.numeric(precmz[i]) - as.numeric(msp[indBeg:indEnd,1]))
+        neutralL <- as.numeric(precmz[i]) - as.numeric(as.character(msp[indBeg:indEnd,1]))
         neutralL <- -1 * neutralL
         
         entry <- rbind(
