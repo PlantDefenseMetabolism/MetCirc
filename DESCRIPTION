@@ -8,7 +8,7 @@ Authors@R: c(person(given = "Thomas", family = "Naake",
     role = c("aut","cre")),
   person(given = "Emmanuel", family = "Gaquerel",
     email = "emmanuel.gaquerel@cos.uni-heidelberg.de", role = "aut"))
-Author: Thomas Naake <naake@stud.uni-heidelberg.de> and Emmanuel Gaquerel
+Author: Thomas Naake <thomasnaake@googlemail.com> and Emmanuel Gaquerel
     <emmanuel.gaquerel@cos.uni-heidelberg.de>
 Maintainer: Thomas Naake <thomasnaake@googlemail.com>
 VignetteBuilder: knitr
