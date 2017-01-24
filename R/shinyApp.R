@@ -230,7 +230,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
             if (!is.null(input$circosClick$x))
                 indClick$ind <- minFragCart2Polar(input$circosClick$x, 
                                                   input$circosClick$y, 
-                                                  degreeFeaturesMZ()) 
+                                                  degreeFeatures()) 
         })
         
         ## double click: which is the current sector?
@@ -276,11 +276,20 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
             isolate(indDblClickRT$ind <- NULL)
             isolate(indDblClickCluster$ind <- NULL)
             isolate(indDblClick$new <- NULL)
-            ##isolate(indClick$ind <- NULL)
+            isolate(onCircle$is <- FALSE)
+            isolate(indClick$ind <- NULL)
             ##isolate(indClickRT$ind <- NULL)
             ##isolate(indClickCluster$ind <- NULL)
             ##isolate(indClick$new <- NULL)
         })
+        
+        ## reset indClick when changing radio button order
+        observe({
+            input$order
+            isolate(onCircle$is <- FALSE)
+            isolate(indClick$ind <- NULL)
+        })
+           
         
         ## write double-clicked (truncated) names to indDblClickMZ, indDblClickRT, 
         ## indDblClickCluster
