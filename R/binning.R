@@ -91,21 +91,31 @@ binning <- function(msp, tol = 0.01, group = NULL, method = c("median", "mean"))
     frag_s <- sort(frag)
     ##frag_order <- order(frag)
     
-    steps <- (max(frag_s) - min(frag_s)) / tol
-
-    if (method == "median") {
-        ## calculate median of values in bins
-        bins <- tapply(frag_s, cut(frag_s, steps), median)
+    
+    ## three cases for tol: smaller 0, equal to 0, greater to 0
+    if (tol < 0) stop("tol has to be positive ")
+    
+    if (tol == 0) {
+        bins <- frag_s
     }
     
-    if (method == "mean") {
-        ## calculate mean of values in bins
-        bins <- tapply(frag_s, cut(frag_s, steps), mean)
+    if (tol > 0) {
+        steps <- (max(frag_s) - min(frag_s)) / tol
+
+        if (method == "median") {
+            ## calculate median of values in bins
+            bins <- tapply(frag_s, cut(frag_s, steps), median)
+        }
+    
+        if (method == "mean") {
+            ## calculate mean of values in bins
+            bins <- tapply(frag_s, cut(frag_s, steps), mean)
+        }
+        ## remove bins which no not show up
+        bins <- bins[!is.na(bins)]
+        ## vectorise bins (do not use named vector)
+        bins <- as.vector(bins)
     }
-    ## remove bins which no not show up
-    bins <- bins[!is.na(bins)]
-    ## vectorise bins (do not use named vector)
-    bins <- as.vector(bins)
     
     mm <- matrix(data = 0, nrow = length(precmz), ncol = length(bins))
     ## convoluted MZ is column names

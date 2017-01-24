@@ -39,6 +39,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
     ## create plots and assign to objects by recordPlot
     ## rt
     simMatRT <- createOrderedSimMat(similarityMatrix, order = "retentionTime")
+    link0MatRT <- createLink0Matrix(simMatRT)
     groupnameRT <- rownames(simMatRT)
     plotCircos(groupnameRT, NULL, initialize=TRUE, featureNames = TRUE, 
             groupSector = TRUE, groupName = FALSE, links = FALSE, 
@@ -64,6 +65,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
     
     ## mz
     simMatMZ <- createOrderedSimMat(similarityMatrix, order = "mz")
+    link0MatMZ <- createLink0Matrix(simMatMZ)
     groupnameMZ <- rownames(simMatMZ)
     plotCircos(groupnameMZ, NULL, initialize=TRUE, featureNames = TRUE, 
                groupSector = TRUE, groupName = FALSE, links = FALSE, 
@@ -90,6 +92,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
     ## clustering
     simMatClustering <- createOrderedSimMat(similarityMatrix, 
                                             order = "clustering")
+    link0MatClustering <- createLink0Matrix(simMatClustering)
     groupnameClustering <- rownames(simMatClustering)
     plotCircos(groupnameClustering, NULL, initialize=TRUE, 
                featureNames = TRUE, groupSector = TRUE, groupName = FALSE, 
@@ -184,7 +187,12 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
         })
         
         ## calculateLink0Matrix
-        link0Matrix <- reactive(createLink0Matrix(simMat()))
+        link0Matrix <- reactive({
+            if (input$order == "mz") link0Mat <- link0MatMZ
+            if (input$order == "retentionTime") link0Mat <- link0MatRT
+            if (input$order == "clustering") link0Mat <- link0MatClustering
+            link0Mat
+        })
         
         ## create reactive expression for LinkMatrix which is cut according to 
         ## set radioButton (input$choiceLinks)
