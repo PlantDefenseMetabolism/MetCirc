@@ -1,20 +1,22 @@
 #' @import grDevices
 #' @import graphics
 #' @name shinyCircos
-#' @title Interactive visualisation of similar precursors
-#' @description Visualise similar precursors.
+#' @title Interactive visualisation of similarity and navigation of MS/MS features
+#' @description Visualise the similarity of MS/MS features.
 #' @usage shinyCircos(similarityMatrix, msp, size = 400)
 #' @param similarityMatrix matrix, similarityMatrix contains pair-wise 
 #' similarity coefficients which give information about the similarity between
-#' precursors
-#' @param msp MSP, an S4 object of class 'MSP' for information about 
-#' the hovered feature
+#' MS/MS features
+#' @param msp MSP, an S4 object of class 'MSP', the MSP object will be used
+#' to display information about the selected feature
 #' @param size numerical, image width/height in pixels
-#' @details The function is based on the shiny and circlize package. Choose
-#' interactively thresholds, type of links, hover over precursors, select 
-#' precursors.
-#' @return shinyCircos returns a character vector with the selected 
-#' precursors
+#' @details The function is based on the shiny and circlize package. The user 
+#' can choose interactively thresholds, type of links (between or within groups), 
+#' display information about MS/MS features, permanently select MS/MS features
+#' and export selected precursors. When running shinyCircos with the object
+#' of class MSP, annotation data of selected MS/MS features will be displayed.
+#' @return shinyCircos returns a character vector with the (permanently)
+#' selected precursors
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' data("idMSMStoMSP", package = "MetCirc")
@@ -136,10 +138,10 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                 fluidRow(    
                     column(8,
                         plotOutput("circos",
+                            dblclick = "circosDblClick",
                             click = "circosClick",
-                            #dblclick = "circosDblClick",
-                            hover = hoverOpts(id = "circosHover", delay = 100, 
-                                clip = TRUE, nullOutside = FALSE),
+                            ##hover = hoverOpts(id = "circosHover", delay = 100, 
+                            ##    clip = TRUE, nullOutside = FALSE),
                             width = size, height = size)
                             ##brush = brushOpts(id = "circosBrush",
                             ##                  resetOnNew = TRUE)),
@@ -147,8 +149,8 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                     column(4,  
                         plotOutput("circosLegend"))
                 ), 
-                        htmlOutput("hoverConnectedFeature"),
-                        verbatimTextOutput("clickFeature")
+                        htmlOutput("clickConnectedFeature"),
+                        verbatimTextOutput("dblClickFeature")
             )
         )
     )
@@ -193,45 +195,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
         LinkMatrix_threshold <- reactive(thresholdLinkMatrix(LinkMatrix_cut(), 
                                         input$threshold[1], input$threshold[2]))
         
-        ## reactiveValues for hover Coordinates
-        CoordinatesNewHover <- reactiveValues(X = 0, Y = 0)
-        CoordinatesOldHover <- reactiveValues(X = 0, Y = 0)
-        
-        observe({
-            if (!is.null(input$circosHover$x)) {
-                CoordinatesNewHover$X <- input$circosHover$x
-                CoordinatesNewHover$Y <- input$circosHover$y
-                CoordinatesOldHover$X <- CoordinatesNewHover$X
-                CoordinatesOldHover$Y <- CoordinatesNewHover$Y
-            } else {
-                CoordinatesNewHover$X <- CoordinatesOldHover$X
-                CoordinatesNewHover$Y <- CoordinatesOldHover$Y
-            }
-        })
-
-        ## is mouse over the track 1?
-        onCircle <- reactiveValues(is = NULL)
-        observe({
-            if (!is.null(CoordinatesNewHover$X)) {
-                .dist <- sqrt(CoordinatesOldHover$X^2 + CoordinatesOldHover$Y^2)
-                if (.dist >= 0.8 & .dist <= 1) {
-                    onCircle$is <- TRUE 
-                } else {
-                    onCircle$is <- FALSE
-                }
-            } else onCircle$is <- FALSE
-        })
-        
-        ## Hover: which is the current sector?
-        indHover <- reactiveValues(ind = NULL)
-        observe({
-            if (!is.null(input$circosHover$x))
-                indHover$ind <- minFragCart2Polar(input$circosHover$x, 
-                                                  input$circosHover$y, 
-                                                  degreeFeatures()) 
-        })
-        
-        ## click: which is the current sector?
+        ## reactiveValues for click Coordinates
         CoordinatesNewClick <- reactiveValues(X = 0, Y = 0)
         CoordinatesOldClick <- reactiveValues(X = 0, Y = 0)
         
@@ -246,15 +210,53 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                 CoordinatesNewClick$Y <- CoordinatesOldClick$Y
             }
         })
-        
-        ## reactive value which stores clicked indices (inds = storage, 
-        ## new = new indices)
-        indClick <- reactiveValues(ind = NULL, new = NULL)
+
+        ## is mouse over the track 1?
+        onCircle <- reactiveValues(is = NULL)
         observe({
-            if (!is.null(input$circosClick$x)) {
+            if (!is.null(CoordinatesNewClick$X)) {
+                .dist <- sqrt(CoordinatesOldClick$X^2 + CoordinatesOldClick$Y^2)
+                if (.dist >= 0.8 & .dist <= 1) {
+                    onCircle$is <- TRUE 
+                } else {
+                    onCircle$is <- FALSE
+                }
+            } else onCircle$is <- FALSE
+        })
+        
+        ## Click: which is the current sector?
+        indClick <- reactiveValues(ind = NULL)
+        observe({
+            if (!is.null(input$circosClick$x))
+                indClick$ind <- minFragCart2Polar(input$circosClick$x, 
+                                                  input$circosClick$y, 
+                                                  degreeFeaturesMZ()) 
+        })
+        
+        ## double click: which is the current sector?
+        CoordinatesNewDblClick <- reactiveValues(X = 0, Y = 0)
+        CoordinatesOldDblClick <- reactiveValues(X = 0, Y = 0)
+        
+        observe({
+            if (!is.null(input$circosDblClick$x)) {
+                CoordinatesNewDblClick$X <- input$circosDblClick$x
+                CoordinatesNewDblClick$Y <- input$circosDblClick$y
+                CoordinatesOldDblClick$X <- CoordinatesNewDblClick$X
+                CoordinatesOldDblClick$Y <- CoordinatesNewDblClick$Y
+            } else {
+                CoordinatesNewDblClick$X <- CoordinatesOldDblClick$X
+                CoordinatesNewDblClick$Y <- CoordinatesOldDblClick$Y
+            }
+        })
+        
+        ## reactive value which stores double clicked indices (inds = storage, 
+        ## new = new indices)
+        indDblClick <- reactiveValues(ind = NULL, new = NULL)
+        observe({
+            if (!is.null(input$circosDblClick$x)) {
                 
-                minInd <- minFragCart2Polar(input$circosClick$x, 
-                                            input$circosClick$y, 
+                minInd <- minFragCart2Polar(input$circosDblClick$x, 
+                                            input$circosDblClick$y, 
                                             degreeFeatures()) 
                 if (!is.na(minInd)) {
                     GNselect <- GN()[minInd]
@@ -263,66 +265,70 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                     nameSelected <- selected[3] 
                     
                     newNG <- paste(groupSelected, nameSelected, sep = "_")
-                    indClick$new <- newNG ## write truncated name to indClick$new
-                } else  indClick$new <- NULL
-            } #else indClick$new <- NULL
+                    indDblClick$new <- newNG ## write truncated name to indDblClick$new
+                } else  indDblClick$new <- NULL
+            } #else indDblClick$new <- NULL
         })
         
         observe({
             input$resetClickIndices
-            isolate(indClickMZ$ind <- NULL)
-            isolate(indClickRT$ind <- NULL)
-            isolate(indClickCluster$ind <- NULL)
-            isolate(indClick$new <- NULL)
+            isolate(indDblClickMZ$ind <- NULL)
+            isolate(indDblClickRT$ind <- NULL)
+            isolate(indDblClickCluster$ind <- NULL)
+            isolate(indDblClick$new <- NULL)
+            ##isolate(indClick$ind <- NULL)
+            ##isolate(indClickRT$ind <- NULL)
+            ##isolate(indClickCluster$ind <- NULL)
+            ##isolate(indClick$new <- NULL)
         })
         
-        ## write clicked (truncated) names to indClickMZ, indClickRT, 
-        ## indClickCluster
-        indClickMZ <- reactiveValues(ind = NULL)
+        ## write double-clicked (truncated) names to indDblClickMZ, indDblClickRT, 
+        ## indDblClickCluster
+        indDblClickMZ <- reactiveValues(ind = NULL)
         observe({
-            if (!is.null(input$circosClick$x)) {
-            if (!is.null(indClick$new)) {
+            if (!is.null(input$circosDblClick$x)) {
+            if (!is.null(indDblClick$new)) {
 
                 newMZ <- paste(groupMZ, nameMZ, sep = "_")
-                newIndMZ <- match(indClick$new, newMZ)
+                newIndMZ <- match(indDblClick$new, newMZ)
                 
-                if (onCircle$is) {
-                    if (isolate(newIndMZ %in% indClickMZ$ind)) {
-                        indClickMZ$ind <- isolate(indClickMZ$ind[-which(newIndMZ == indClickMZ$ind)]) 
-                    } else {indClickMZ$ind <- isolate(c(indClickMZ$ind, newIndMZ))}
-                } 
+                ##if (onCircle$is) {
+                    if (isolate(newIndMZ %in% indDblClickMZ$ind)) {
+                        indDblClickMZ$ind <- isolate(indDblClickMZ$ind[-which(newIndMZ == indDblClickMZ$ind)]) 
+                    } else {indDblClickMZ$ind <- isolate(c(indDblClickMZ$ind, newIndMZ))}
+                ##} 
             } 
             }
          })
         
-        indClickRT <- reactiveValues(ind = NULL)
+        indDblClickRT <- reactiveValues(ind = NULL)
         observe({
-             if (!is.null(input$circosClick$x)) {
-                 if (!is.null(indClick$new)) {
+             if (!is.null(input$circosDblClick$x)) {
+                 if (!is.null(indDblClick$new)) {
          
                     newRT <- paste(groupRT, nameRT, sep = "_")
-                    newIndRT <- match(indClick$new, newRT)
+                    newIndRT <- match(indDblClick$new, newRT)
                  
-                    if (onCircle$is) 
-                    if (isolate(newIndRT %in% indClickRT$ind)) {
-                        indClickRT$ind <- isolate(indClickRT$ind[-which(newIndRT == indClickRT$ind)])
-                    } else {indClickRT$ind <- isolate(c(indClickRT$ind, newIndRT))}
+                    ##if (onCircle$is) 
+                    if (isolate(newIndRT %in% indDblClickRT$ind)) {
+                        indDblClickRT$ind <- isolate(indDblClickRT$ind[-which(newIndRT == indDblClickRT$ind)])
+                    } else {indDblClickRT$ind <- isolate(c(indDblClickRT$ind, newIndRT))}
             }
             }
         })
         # 
-        indClickCluster <- reactiveValues(ind = NULL)
+        indDblClickCluster <- reactiveValues(ind = NULL)
         observe({
-            if (!is.null(input$circosClick$x)) {
-                if(!is.null(indClick$new)) {
+            if (!is.null(input$circosDblClick$x)) {
+                if(!is.null(indDblClick$new)) {
                     newCl <- paste(groupClustering, nameClustering, sep = "_")
-                    newIndCl <- match(indClick$new, newCl)
+                    newIndCl <- match(indDblClick$new, newCl)
                  
-                    if (onCircle$is) {
-                    if (isolate(newIndCl %in% indClickCluster$ind)) {
-                        indClickCluster$ind <- isolate(indClickCluster$ind[-which(newIndCl == indClickCluster$ind)])
-                    } else {indClickCluster$ind <- isolate(c(indClickCluster$ind, newIndCl))}   
-                    } 
+                    ##if (onCircle$is) {
+                    if (isolate(newIndCl %in% indDblClickCluster$ind)) {
+                        indDblClickCluster$ind <- isolate(indDblClickCluster$ind[-which(newIndCl == indDblClickCluster$ind)])
+                    } else {indDblClickCluster$ind <- isolate(c(indDblClickCluster$ind, newIndCl))}   
+                    ##} 
                 }
              }
         })
@@ -341,8 +347,8 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
             if (onCircle$is) {
                 if (input$order == "mz") {
                     replayPlot(PlotHighlightMZ)
-                    ##if (length(indClickMZ$ind) > 0) {
-                        highlight(groupnameMZ, c(indHover$ind, indClickMZ$ind), 
+                    ##if (length(indDblClickMZ$ind) > 0) {
+                        highlight(groupnameMZ, c(indClick$ind, indDblClickMZ$ind), 
                                   LinkMatrix_threshold())  
                     ##} else {
                     ##    plotCircos(groupnameMZ, LinkMatrix_threshold(), 
@@ -355,30 +361,30 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                         
                 if (input$order == "retentionTime") {
                     replayPlot(PlotHighlightRT)
-                    highlight(groupnameRT, c(indHover$ind, indClickRT$ind), 
+                    highlight(groupnameRT, c(indClick$ind, indDblClickRT$ind), 
                               LinkMatrix_threshold())    
                 }
                     
                 if (input$order == "clustering") {
                     replayPlot(PlotHighlightCluster)
-                    highlight(groupnameClustering, c(indHover$ind, indClickCluster$ind), 
+                    highlight(groupnameClustering, c(indClick$ind, indDblClickCluster$ind), 
                               LinkMatrix_threshold())  
                 }
             } else { ## if not onCircle$is
-                if (length(indClickMZ$ind) > 0) {
+                if (length(indDblClickMZ$ind) > 0) {
                     if (input$order == "mz") {
                         replayPlot(PlotHighlightMZ)
-                        highlight(groupnameMZ, c(indClickMZ$ind), LinkMatrix_threshold()) 
+                        highlight(groupnameMZ, c(indDblClickMZ$ind), LinkMatrix_threshold()) 
                     }
                     
                     if (input$order == "retentionTime") {
                         replayPlot(PlotHighlightRT)
-                        highlight(groupnameRT, c(indClickRT$ind), LinkMatrix_threshold()) 
+                        highlight(groupnameRT, c(indDblClickRT$ind), LinkMatrix_threshold()) 
                     }
                     
                     if (input$order == "clustering") {
                         replayPlot(PlotHighlightCluster)
-                        highlight(groupnameClustering, c(indClickCluster$ind), LinkMatrix_threshold())  
+                        highlight(groupnameClustering, c(indDblClickCluster$ind), LinkMatrix_threshold())  
                     }
                     
                 } else {
@@ -414,27 +420,27 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
             circosLegend(groupnameRT, highlight = TRUE)
         })
         
-        ## show when hovering the feature which connects to it
-        linkMatIndsHover <- reactive({
-            getLinkMatrixIndices(GN()[indHover$ind], LinkMatrix_threshold())
+        ## show when Clicking the feature which connects to it
+        linkMatIndsClick <- reactive({
+            getLinkMatrixIndices(GN()[indClick$ind], LinkMatrix_threshold())
         })
         
-        output$hoverConnectedFeature <- renderUI({ 
+        output$clickConnectedFeature <- renderUI({ 
             if (!is.null(onCircle$is)) {
                 if (onCircle$is)
-                    HTML(printInformationHover(GN(), msp = msp, 
-                        ind = indHover$ind, lMatIndHover = linkMatIndsHover(), 
+                    HTML(printInformationSelect(GN(), msp = msp, 
+                        ind = indClick$ind, lMatInd = linkMatIndsClick(), 
                         linkMatrixThreshold = LinkMatrix_threshold(), 
                         similarityMatrix = simMat()))  
             }
         })
         
-        output$clickFeature <- renderText({
-            if (length(indClickMZ$ind) > 0) 
+        output$dblClickFeature <- renderText({
+            if (length(indDblClickMZ$ind) > 0) 
                 c("selected features: ", 
-                    paste(groupMZ[indClickMZ$ind], 
-                          nameMZ[indClickMZ$ind],
-                        ##sapply(strsplit(nameMZ[indClickMZ$ind], split="_"), function(x) x[3]),
+                    paste(groupMZ[indDblClickMZ$ind], 
+                          nameMZ[indDblClickMZ$ind],
+                        ##sapply(strsplit(nameMZ[indDblClickMZ$ind], split="_"), function(x) x[3]),
                         sep="_"))
             else "no features selected"
         })
@@ -446,9 +452,9 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
             else {
                 circos.clear()
                 stopApp(as.character(paste(
-                    groupMZ[indClickMZ$ind], 
-                    nameMZ[indClickMZ$ind],
-                    ##sapply(strsplit(nameMZ[indClickMZ$ind], split="_"), function(x) x[3]),
+                    groupMZ[indDblClickMZ$ind], 
+                    nameMZ[indDblClickMZ$ind],
+                    ##sapply(strsplit(nameMZ[indDblClickMZ$ind], split="_"), function(x) x[3]),
                     sep="_")))
             }
         })
@@ -461,24 +467,24 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
 ## to do
 ## second simmat for neutral losses
 
-#' @name printInformationHover
-#' @title Display information on connected features of hovered features
-#' @description Displays information on connected features of hovered features.
-#' @usage printInformationHover(groupname, msp = NULL, ind, 
-#'  lMatIndHover, linkMatrixThreshold, similarityMatrix)
+#' @name printInformationSelected
+#' @title Display information on connected features of selected features
+#' @description Displays information on connected features of selected features.
+#' @usage printInformationSelect(groupname, msp = NULL, ind, 
+#'  lMatInd, linkMatrixThreshold, similarityMatrix)
 #' @param groupname vector with groupname of selected feature,
 #' vector containing "group" and "name" to display, that is 
 #' a unique identifier of the features, "group" and "name" have to be separated
 #' by "_" where "group" is the first and "name" is the last element
 #' @param msp MSP, an S4 object of class 'MSP' for information about 
-#'  the hovered feature
+#'  the selected feature
 #' @param ind numeric
-#' @param lMatIndHover numeric indices of connected features
+#' @param lMatInd numeric indices of connected features
 #' @param linkMatrixThreshold matrix that contains information of linked 
 #'  features of a threshold or greater
 #' @param similarityMatrix matrix that is used to get information on the degree 
 #'  of similarity, similarityMat is an ordered version of a similarity matrix
-#' @details printInformationHover is for internal use. 
+#' @details printInformationSelect is for internal use. 
 #' @return character that is in HTML format
 #' @examples
 #' data("idMSMStoMSP", package = "MetCirc")
@@ -491,15 +497,14 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
 #' groupname <- rownames(simMat)
 #' linkMat_thr <- createLinkMatrix(simMat, 0.9, 1) 
 #' ind <- 19
-#' linkMatIndsHover <- getLinkMatrixIndices(groupname[ind], linkMat_thr)
-#' MetCirc:::printInformationHover(groupname = groupname, 
-#'  msp = NULL, ind = ind, lMatIndHover = linkMatIndsHover, 
+#' linkMatInds <- getLinkMatrixIndices(groupname[ind], linkMat_thr)
+#' MetCirc:::printInformationSelect(groupname = groupname, 
+#'  msp = NULL, ind = ind, lMatInd = linkMatInds, 
 #'  linkMatrixThreshold = linkMat_thr, 
 #'  similarityMatrix = simMat)
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
-printInformationHover <- function(groupname, msp = NULL, 
-                            ind, lMatIndHover, linkMatrixThreshold, 
-                            similarityMatrix) {
+printInformationSelect <- function(groupname, msp = NULL, 
+                ind, lMatInd, linkMatrixThreshold, similarityMatrix) {
     ## get group and name from groupname argument
     ## groupname is a vector containing information about group and name,
     ## where group is the first element and name the last element separated by _
@@ -510,46 +515,46 @@ printInformationHover <- function(groupname, msp = NULL,
         
     lMatThr <- linkMatrixThreshold 
     if (is.null(msp)) {
-        ## hoveredFeat
-        hoveredFeat <- groupname[ind]
+        ## selected feature
+        selectedFeat <- groupname[ind]
         ## get connected features
-        connFeat <- unique(as.vector(lMatThr[lMatIndHover, c("name1", "name2")]))
-        ## remove hoveredFeat from connFeat
-        if (hoveredFeat %in% connFeat) 
-            connFeat <- connFeat[-which(connFeat == hoveredFeat)]
+        connFeat <- unique(as.vector(lMatThr[lMatInd, c("name1", "name2")]))
+        ## remove selectedFeat from connFeat
+        if (selectedFeat %in% connFeat) 
+            connFeat <- connFeat[-which(connFeat == selectedFeat)]
                 
-        if (length(lMatIndHover) > 0) {
+        if (length(lMatInd) > 0) {
             connFeat <- paste(connFeat, collapse = " <br/>")
-            return(paste(c(hoveredFeat, "connects to", "<br/>", connFeat), 
+            return(paste(c(selectedFeat, "connects to", "<br/>", connFeat), 
                             collapse = " "))
         } else 
-            return(paste(c(hoveredFeat, "does not connect to any feature"), 
+            return(paste(c(selectedFeat, "does not connect to any feature"), 
                             collapse = " "))
             
     
     } else { ## if !is.null(msp)
             
-        ## find hovered feature
+        ## find clicked feature
         mzRTMSP <- paste(getPrecursorMZ(msp), getRT(msp), sep="/")
         matchedHovMZRT <- match(name, mzRTMSP)
-        hoveredFeat <- msp[matchedHovMZRT[ind]]
-        hovFeat <- groupname[ind] 
+        selectedFeat <- msp[matchedHovMZRT[ind]]
+        selectFeat <- groupname[ind] 
         ## connected features
-        connect <- unique(as.vector(lMatThr[lMatIndHover, c("name1", "name2")]))
+        connect <- unique(as.vector(lMatThr[lMatIndSelect, c("name1", "name2")]))
         ## remove duplicated hovFeat in connect
-        if (hovFeat %in% connect) connect <- connect[-which(connect == hovFeat)]
+        if (selectFeat %in% connect) connect <- connect[-which(connect == selectFeat)]
         mzRTcon <- sapply(strsplit(connect, split="_"), function(x) x[3])
         
         if (length(connect) == 0) {
-            return(paste0(hovFeat, " (", getName(hoveredFeat), ", ", 
-                getMetaboliteName(hoveredFeat), ", ", 
-                getMetaboliteClass(hoveredFeat), ") ",
+            return(paste0(selectFeat, " (", getName(clickedFeat), ", ", 
+                getMetaboliteName(selectedFeat), ", ", 
+                getMetaboliteClass(selectedFeat), ") ",
                  "does not connect to any feature"))
         } else {
             matchedConn <- match(mzRTcon, mzRTMSP)
             connFeat <- msp[matchedConn]
             connChar <- character()
-            degreeSimilarity <- similarityMatrix[hovFeat, ]
+            degreeSimilarity <- similarityMatrix[selectFeat, ]
             for (i in 1:length(connect)) {
                 connFeatI <- connFeat[i]
                 connectI <- connect[i]
@@ -562,9 +567,9 @@ printInformationHover <- function(groupname, msp = NULL,
                 connChar <- c(connChar, newFeat)
             }
             connChar <- paste(connChar, collapse=" ")
-            return(paste0(hovFeat, " (", getName(hoveredFeat), ", ", 
-                getMetaboliteName(hoveredFeat), ", ", 
-                getMetaboliteClass(hoveredFeat), ") connects to ", 
+            return(paste0(selectFeat, " (", getName(selectedFeat), ", ", 
+                getMetaboliteName(selectedFeat), ", ", 
+                getMetaboliteClass(selectedFeat), ") connects to ", 
                 " <br/>", connChar))
         }
     }
