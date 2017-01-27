@@ -119,9 +119,9 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
 
     
     ui <- fluidPage(
-       ## fluidRow(3, 
-        fluidRow( 
-            column(4, 
+        fluidRow(
+        ##fillRow(flex = c(1, 3, 1),
+           column(4, 
                 wellPanel(
                     radioButtons("choiceLinks", "choose type of links", 
                         choices = c("all" = "all", "inter-class links" = "inter", 
@@ -134,32 +134,66 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                                     "retention time" = "retentionTime"), 
                         selected = "mz"),
                     actionButton("resetClickIndices", "Reset features"),
-                    actionButton("stop", "Stop and export \n selected features")
+                    actionButton("stop", "Stop and export \n selected features"),
+                    
+                    tags$head(tags$script('size' = '
+                                 var dimension = [0, 0];
+                                 $(document).on("shiny:connected", function(e) {
+                                     dimension[0] = window.innerWidth;
+                                     dimension[1] = window.innerHeight;
+                                     Shiny.onInputChange("dimension", dimension);
+                                 });
+                                 $(window).resize(function(e) {
+                                     dimension[0] = window.innerWidth;
+                                     dimension[1] = window.innerHeight;
+                                     Shiny.onInputChange("dimension", dimension);
+                                 });
+                             '))
+                   
                 )
             ),
             column(8, 
-                fluidRow(    
+                fluidRow(      
                     column(8,
                         plotOutput("circos",
                             dblclick = "circosDblClick",
-                            click = "circosClick",
+                            click = "circosClick")#,
+                            #height = as.character(textOutput("dimension_display")[1]))
                             ##hover = hoverOpts(id = "circosHover", delay = 100, 
                             ##    clip = TRUE, nullOutside = FALSE),
-                            width = size, height = size)
+                            ## height = "100%", width = "auto")
+                            ##width = "auto", height = "600px")
+                            #width = size, height = size)
                             ##brush = brushOpts(id = "circosBrush",
                             ##                  resetOnNew = TRUE)),
                     ),
                     column(4,  
                         plotOutput("circosLegend"))
-                ), 
-                        htmlOutput("clickConnectedFeature"),
-                        verbatimTextOutput("dblClickFeature")
+                ),     
+                    verbatimTextOutput("dimension_display"),
+                    htmlOutput("clickConnectedFeature"),
+                    verbatimTextOutput("dblClickFeature")
             )
         )
     )
  
     
     server <- function(input, output, session) {
+      #print(cat(size))
+       output$dimension_display <- renderText({
+            ifelse(is.null(input$dimension), 0,
+           paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension[1]) )
+       })
+       
+   #    windowSize <- reactiveValues(x = "400", y = "400")
+   #    observe({
+   #      windowSize$x <- isolate(as.character(input$dimension[1]))
+   #      windowSize$y <- isolate(as.character(input$dimension[2]))
+   #      })
+       
+       #plotSize <- reactive({ 
+       #    ifelse(is.null(input$dimension[1]), 0, 0.4 * max(input$dimension[1], input$dimension[2]) )
+      # })
         
         ## use predefined similarityMatrix
         simMat <- reactive({
@@ -431,7 +465,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                     }
                 }
             }
-        })
+        }) #, height = plotSize, width = plotSize) #windowSize$x *0.2)
         
         output$circosLegend <- renderPlot({
             circosLegend(groupnameRT, highlight = TRUE)
@@ -496,7 +530,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
 #' @param msp MSP, an S4 object of class 'MSP' for information about 
 #'  the selected feature
 #' @param ind numeric
-#' @param lMatInd numeric indices of connected features
+#' @param lMatInd numeric indices of selected features
 #' @param linkMatrixThreshold matrix that contains information of linked 
 #'  features of a threshold or greater
 #' @param similarityMatrix matrix that is used to get information on the degree 
@@ -557,7 +591,7 @@ printInformationSelect <- function(groupname, msp = NULL,
         selectedFeat <- msp[matchedHovMZRT[ind]]
         selectFeat <- groupname[ind] 
         ## connected features
-        connect <- unique(as.vector(lMatThr[lMatIndSelect, c("name1", "name2")]))
+        connect <- unique(as.vector(lMatThr[lMatInd, c("name1", "name2")]))
         ## remove duplicated hovFeat in connect
         if (selectFeat %in% connect) connect <- connect[-which(connect == selectFeat)]
         mzRTcon <- sapply(strsplit(connect, split="_"), function(x) x[3])
