@@ -118,7 +118,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
     plot.new()
 
     
-    ui <- fluidPage(
+    ui <- fluidPage(  ## fixedPage
         fluidRow(
         ##fillRow(flex = c(1, 3, 1),
            column(4, 
