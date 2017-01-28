@@ -72,7 +72,7 @@ data("sd01_outputXCMS", package = "MetCirc")
 data("sd02_deconvoluted", package = "MetCirc") 
 data("convertExampleDF", package = "MetCirc")
 allocatePrecursor2mz(sd01 = sd01_outputXCMS, sd02 = sd02_deconvoluted, 
-     kNN = 10, mzCheck = 1, rtCheck = 30, mzVsRTbalance = 10000, splitPattern = "_", splitInd = 2)
+     kNN = 10, mzCheck = 1, rtCheck = 30, mzVsRTbalance = 10000, splitPattern = " _ ", splitInd = 2)
 }
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}

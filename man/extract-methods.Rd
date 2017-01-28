@@ -3,20 +3,15 @@
 \docType{methods}
 \name{[}
 \alias{[}
-\alias{[,MSP,numeric,missing,missing-method}
+\alias{[,MSP,numeric-method}
 \title{Extract parts of a MSP object}
 \usage{
-\S4method{[}{MSP,numeric,missing,missing}(x, i, j = "missing",
-  drop = "missing")
+\S4method{[}{MSP,numeric}(x, i)
 }
 \arguments{
 \item{x}{object of class MSP}
 
 \item{i}{numeric}
-
-\item{j}{missing}
-
-\item{drop}{missing}
 }
 \value{
 MSP object

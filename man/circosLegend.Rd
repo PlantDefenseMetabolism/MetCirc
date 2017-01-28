@@ -4,7 +4,7 @@
 \alias{circosLegend}
 \title{Plot a legend for circos plot}
 \usage{
-circosLegend(groupname, highlight = c(TRUE, FALSE), colour = NULL)
+circosLegend(groupname, highlight = c(TRUE, FALSE), colour = NULL, cex = 1)
 }
 \arguments{
 \item{groupname}{vector containing "group" and "name" to display, that is 
@@ -15,6 +15,8 @@ by "_" where "group" is the first and "name" is the last element}
 
 \item{colour}{NULL or character, colour defines the colours which are used
 for plotting, if NULL default colours are used}
+
+\item{cex}{numeric, parameter that controls size of the legend in the plot}
 }
 \value{
 The function will open a new plot and display colours together 
@@ -35,7 +37,7 @@ Internal use for shiny app or outside of shiny to reproduce
  similarityMat <- createSimilarityMatrix(binnedMSP)  
  groupname <- rownames(similarityMat)
  ## plot legend
- circosLegend(groupname, highlight = TRUE, colour = NULL)
+ circosLegend(groupname, highlight = TRUE, colour = NULL, cex = 1)
 }
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}

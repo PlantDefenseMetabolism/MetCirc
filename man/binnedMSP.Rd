@@ -6,7 +6,17 @@
 \title{Example data for \code{MetCirc}: \code{binnedMSP}}
 \format{matrix}
 \source{
-internal
+data("idMSMStoMSP.RData", package = "MetCirc")
+## create vector with compartments
+compSPL <- rep("SPL", length(convert2MSP(tissueSPL)))
+compLIM <- rep("LIM", length(convert2MSP(tissueLIM)))
+compANT <- rep("ANT", length(convert2MSP(tissueANT)))
+compSTY <- rep("STY", length(convert2MSP(tissueSTY)))
+
+compartment <- c(compSPL, compLIM, compANT, compSTY)
+binnedMSP <- binning(msp = finalMSP, tol = 0.01, 
+                     group = compartment, method = "median")
+save(binnedMSP, file = "binnedMSP.RData")
 }
 \usage{
 binnedMSP

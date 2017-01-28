@@ -2,31 +2,34 @@
 % Please edit documentation in R/shinyApp.R
 \name{shinyCircos}
 \alias{shinyCircos}
-\title{Interactive visualisation of similar precursors}
+\title{Interactive visualisation of similarity and navigation of MS/MS features}
 \usage{
-shinyCircos(similarityMatrix, msp, size = 400)
+shinyCircos(similarityMatrix, msp = NULL, ...)
 }
 \arguments{
 \item{similarityMatrix}{matrix, similarityMatrix contains pair-wise 
 similarity coefficients which give information about the similarity between
-precursors}
+MS/MS features}
 
-\item{msp}{MSP, an S4 object of class 'MSP' for information about 
-the hovered feature}
+\item{msp}{MSP, an S4 object of class 'MSP', the MSP object will be used
+to display information about the selected feature}
 
-\item{size}{numerical, image width/height in pixels}
+\item{...}{further arguments passed to shinyCircos, e.g. cexFeatureNames
+to pass to plotCircos to set font size in plotCircos of feature names}
 }
 \value{
-shinyCircos returns a character vector with the selected 
-precursors
+shinyCircos returns a character vector with the (permanently)
+selected precursors
 }
 \description{
-Visualise similar precursors.
+Visualise the similarity of MS/MS features.
 }
 \details{
-The function is based on the shiny and circlize package. Choose
-interactively thresholds, type of links, hover over precursors, select 
-precursors.
+The function is based on the shiny and circlize package. The user 
+can choose interactively thresholds, type of links (between or within groups), 
+display information about MS/MS features, permanently select MS/MS features
+and export selected precursors. When running shinyCircos with the object
+of class MSP, annotation data of selected MS/MS features will be displayed.
 }
 \examples{
 data("idMSMStoMSP", package = "MetCirc")
@@ -35,7 +38,7 @@ finalMSP <- finalMSP[c(1:20, 29:48, 113:132, 240:259)]
 data("binnedMSP", package = "MetCirc")
 binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
 similarityMat <- createSimilarityMatrix(binnedMSP)
-\dontrun{shinyCircos(similarityMat, finalMSP, size = 400)}
+\dontrun{shinyCircos(similarityMatrix = similarityMat, msp = finalMSP)}
 }
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}

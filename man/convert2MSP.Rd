@@ -5,14 +5,14 @@
 \title{Convert deconvoluted matrix into MSP format}
 \usage{
 convert2MSP(mm, splitPattern = "_", splitIndMZ = 1, splitIndRT = 2, 
- names = FALSE, metNames = FALSE, class = FALSE)
+ names = FALSE, information = FALSE, class = FALSE, adduct = FALSE)
 }
 \arguments{
 \item{mm}{matrix, mm has to have four columns with colnames 
 mz, rt, intensity (order is not important). In the fourth column there has 
 to information about the precursor ion which will be assessed by 
 splitPattern and splitInd. Optionally, mm can have colnames names, 
-metNames, class.}
+information, class and adduct.}
 
 \item{splitPattern}{character, splitPattern is the pattern which separates 
 elements and precursor m/z}
@@ -29,13 +29,18 @@ pcgroup}
 will access the column "names" in mm which contains the names of the 
 metabolites}
 
-\item{metNames}{logical, should names of metabolites be retrieved? 
-If set to TRUE, convert2MSP will access the column "metNames" in mm 
-which contains the names of the metabolites}
+\item{information}{logical, should further information of metabolites be 
+retrieved? 
+If set to TRUE, convert2MSP will access the column "information" in mm 
+which contains information about the metabolites}
 
 \item{class}{logical, should classes of metabolites be retrieved? If set to 
 TRUE, convert2MSP will access the column "class" in mm which contains
 the names of the metabolites}
+
+\item{adduct}{logical, should adduct ion names of metabolites be retrieved? 
+If set to TRUE, convert2MSP will access the column "adduct" in mm which 
+contains the adduct ion names of the metabolites}
 }
 \value{
 convert2MSP returns an object of class MSP
@@ -58,8 +63,9 @@ return object has the following information: NAME, RETENTIONTIME,
 }
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-convert2MSP(mm = sd02_deconvoluted, splitPattern = "_", splitIndMZ = 1, 
- splitIndRT = 2, names = FALSE, metNames = FALSE, class = FALSE)
+convert2MSP(mm = sd02_deconvoluted, splitPattern = " _ ", splitIndMZ = 2, 
+ splitIndRT = NULL, names = FALSE, information = FALSE, class = FALSE, 
+ adduct = FALSE)
 }
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}

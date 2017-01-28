@@ -4,12 +4,14 @@
 \alias{truncateName}
 \title{Truncate names}
 \usage{
-truncateName(groupname, roundDigits = 2)
+truncateName(groupname, roundDigits = 2, group = FALSE)
 }
 \arguments{
 \item{groupname}{vector with group and unique idenfier (name)}
 
 \item{roundDigits}{numeric, how many digits should be displayed?}
+
+\item{group}{logical, should groups be returned?}
 }
 \value{
 \code{truncateName} returns groupname with truncated names 
@@ -28,7 +30,7 @@ A function to truncate names
 }
 \examples{
      groupname <- "a_100.12345/10.12345"
-     truncateName(groupname, roundDigits = 2)
+     truncateName(groupname, roundDigits = 2, group = FALSE)
 }
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}

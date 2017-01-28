@@ -5,7 +5,7 @@
 \title{Circular plot to visualise similarity}
 \usage{
 plotCircos(groupname, linkMat, initialize = c(TRUE, FALSE), 
-     featureNames = c(TRUE, FALSE), cexFeatureNames = 0.2, 
+     featureNames = c(TRUE, FALSE), cexFeatureNames = 0.3, 
      groupSector = c(TRUE, FALSE), groupName = c(TRUE, FALSE), 
      links = c(TRUE, FALSE), highlight = c(TRUE, FALSE), colour = NULL,
      transparency = 0.2)
@@ -68,7 +68,7 @@ circos.par(gap.degree = 0, cell.padding = c(0.0, 0, 0.0, 0),
 groupname <- rownames(simM)
 ## actual plotting
 plotCircos(groupname, linkMat_cut, initialize = TRUE, 
-    featureNames = TRUE, cexFeatureNames = 0.2, groupSector = TRUE, 
+    featureNames = TRUE, cexFeatureNames = 0.3, groupSector = TRUE, 
      groupName = FALSE, links = FALSE, highlight = FALSE, colour = NULL, 
      transparency = 0.2)
 }
