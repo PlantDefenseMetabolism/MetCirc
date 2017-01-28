@@ -27,9 +27,9 @@
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
 #' \dontrun{shinyCircos(similarityMat, finalMSP, size = 400)}
 #' @export
-shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
+shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
     
-    if (!is.numeric(size)) stop("size is not numerical")
+    #if (!is.numeric(size)) stop("size is not numerical")
     if (!is.null(msp)) if (class(msp) != "MSP") stop("msp is not of class MSP")
     
     ## circlize parameters
@@ -42,8 +42,8 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
     link0MatRT <- createLink0Matrix(simMatRT)
     groupnameRT <- rownames(simMatRT)
     plotCircos(groupnameRT, NULL, initialize=TRUE, featureNames = TRUE, 
-            groupSector = TRUE, groupName = FALSE, links = FALSE, 
-            highlight = FALSE)
+         groupSector = TRUE, groupName = FALSE, links = FALSE, 
+         highlight = FALSE, ...)
     PlotFilledRT <- recordPlot()
     ## get group and name from groupnameRT argument
     ## groupnameRT is a vector containing information about group and name,
@@ -54,12 +54,12 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
     nameRT <- unlist(nameRT)
     ## get degree of features
     degreeFeaturesRT <- lapply(groupnameRT, 
-        function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
+         function(x) mean(circlize:::get.sector.data(x)[c("start.degree", "end.degree")]))
     plot.new()
-     
+      
     plotCircos(groupnameRT, NULL, initialize=TRUE, featureNames = TRUE, 
-               groupSector = TRUE, groupName = FALSE, links = FALSE, 
-               highlight = TRUE)
+            groupSector = TRUE, groupName = FALSE, links = FALSE, 
+            highlight = TRUE, ...)
     PlotHighlightRT <- recordPlot()
     plot.new()
     
@@ -69,7 +69,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
     groupnameMZ <- rownames(simMatMZ)
     plotCircos(groupnameMZ, NULL, initialize=TRUE, featureNames = TRUE, 
                groupSector = TRUE, groupName = FALSE, links = FALSE, 
-               highlight = FALSE)
+               highlight = FALSE, ...)
     PlotFilledMZ <- recordPlot()
     ## get group and name from groupnameMZ argument
     ## groupnameMZ is a vector containing information about group and name,
@@ -85,7 +85,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
     plot.new()
     plotCircos(groupnameMZ, NULL, initialize=TRUE, featureNames = TRUE, 
                groupSector = TRUE, groupName = FALSE, links = FALSE, 
-               highlight = TRUE)
+               highlight = TRUE, ...)
     PlotHighlightMZ <- recordPlot()
     plot.new()
     
@@ -96,7 +96,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
     groupnameClustering <- rownames(simMatClustering)
     plotCircos(groupnameClustering, NULL, initialize=TRUE, 
                featureNames = TRUE, groupSector = TRUE, groupName = FALSE, 
-               links = FALSE, highlight = FALSE)
+               links = FALSE, highlight = FALSE, ...)
     PlotFilledCluster <- recordPlot()
     ## get group and name from groupnameMZ argument
     ## groupnameMZ is a vector containing information about group and name,
@@ -113,119 +113,161 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
     
     plotCircos(groupnameClustering, NULL, initialize=TRUE, featureNames = TRUE, 
                groupSector = TRUE, groupName = FALSE, links = FALSE, 
-               highlight = TRUE)
+               highlight = TRUE, ...)
     PlotHighlightCluster <- recordPlot()
     plot.new()
+    
+    
+    ## 
+    # tabs = c(tabPanel("Main", wellPanel(
+    #     radioButtons("choiceLinks", "choose type of links", 
+    #                  choices = c("all" = "all", "inter-class links" = "inter", 
+    #                              "intra-class links" = "intra"),
+    #                  selected = "all"),
+    #     sliderInput("threshold", 
+    #                 "Threshold for similarity to display",
+    #                 min = 0, max = 1, value = c(0.8, 1)),
+    #     radioButtons("order", "order within groups",
+    #                  choices = c("clustering" = "clustering", 
+    #                              "m/z" = "mz", "retention time" = "retentionTime"), 
+    #                  selected = "mz"),
+    #     actionButton("resetClickIndices", "Reset features"),
+    #     actionButton("stop", "Stop and export \n selected features")
+    # )),
+    # tabPanel("Appearance", wellPanel( 
+    #     sliderInput("plotSize", "plot size", 
+    #                 min = 0.5, max = 1.5, value = 1),
+    #     sliderInput("precision", "precision of numbers", value = 2, min = 0, max = 5, step = 1),
+    #     checkboxInput("legend", "legend", value = FALSE)
+    # )), 
+    # if (!is.null(msp)) {
+    #     tabPanel("Annotate",
+    #              wellPanel(checkboxInput("legend2", "legend", value = FALSE)))
+    # })
 
     
-    ui <- fluidPage(  ## fixedPage
-        fluidRow(
-        ##fillRow(flex = c(1, 3, 1),
-           column(4, 
-                wellPanel(
-                    radioButtons("choiceLinks", "choose type of links", 
-                        choices = c("all" = "all", "inter-class links" = "inter", 
-                            "intra-class links" = "intra"),
-                        selected = "all"),
-                    sliderInput("threshold", "Threshold for similarity to display",
-                        min = 0, max = 1, value = c(0.8, 1)),
-                    radioButtons("order", "order within groups",
-                        choices = c("clustering" = "clustering", "m/z" = "mz",
-                                    "retention time" = "retentionTime"), 
-                        selected = "mz"),
-                    actionButton("resetClickIndices", "Reset features"),
-                    actionButton("stop", "Stop and export \n selected features"),
-                    
-                    tags$head(tags$script('size' = '
-                                 var dimension = [0, 0];
-                                 $(document).on("shiny:connected", function(e) {
-                                     dimension[0] = window.innerWidth;
-                                     dimension[1] = window.innerHeight;
-                                     Shiny.onInputChange("dimension", dimension);
-                                 });
-                                 $(window).resize(function(e) {
-                                     dimension[0] = window.innerWidth;
-                                     dimension[1] = window.innerHeight;
-                                     Shiny.onInputChange("dimension", dimension);
-                                 });
-                             '))
-                   
-                )
+    ui <- fluidPage( 
+            tags$head(tags$script('
+                $(document).on("shiny:connected", function(e) {
+                Shiny.onInputChange("innerWidth", window.innerWidth);
+                });
+                $(window).resize(function(e) {
+                Shiny.onInputChange("innerWidth", window.innerWidth);
+                });
+                '
+            )),
+        column(4, 
+            fluidRow(
+                #do.call(tabsetPanel, list(tabs))
+                 tabsetPanel(id = "tabs",
+                      tabPanel("Main", wellPanel(
+                          radioButtons("choiceLinks", "choose type of links",
+                              choices = c("all" = "all", "inter-class links" = "inter",
+                                  "intra-class links" = "intra"),
+                              selected = "all"),
+                          sliderInput("threshold",
+                              "Threshold for similarity to display",
+                              min = 0, max = 1, value = c(0.8, 1)),
+                          radioButtons("order", "order within groups",
+                              choices = c("clustering" = "clustering",
+                                  "m/z" = "mz", "retention time" = "retentionTime"),
+                              selected = "mz"),
+                          actionButton("resetClickIndices", "Reset features"),
+                          actionButton("stop", "Stop and export \n selected features")
+                      )),
+                      tabPanel("Appearance", wellPanel(
+                          sliderInput("plotSize", "plot size",
+                              min = 0.5, max = 1.5, value = 1),
+                          sliderInput("precision", "precision of numbers", value = 2, min = 0, max = 5, step = 1),
+                          checkboxInput("legend", "legend", value = FALSE)
+                      ))
+                     )
             ),
-            column(8, 
-                fluidRow(      
-                    column(8,
-                        plotOutput("circos",
-                            dblclick = "circosDblClick",
-                            click = "circosClick")#,
-                            #height = as.character(textOutput("dimension_display")[1]))
-                            ##hover = hoverOpts(id = "circosHover", delay = 100, 
-                            ##    clip = TRUE, nullOutside = FALSE),
-                            ## height = "100%", width = "auto")
-                            ##width = "auto", height = "600px")
-                            #width = size, height = size)
-                            ##brush = brushOpts(id = "circosBrush",
-                            ##                  resetOnNew = TRUE)),
-                    ),
-                    column(4,  
-                        plotOutput("circosLegend"))
-                ),     
-                    verbatimTextOutput("dimension_display"),
-                    htmlOutput("clickConnectedFeature"),
-                    verbatimTextOutput("dblClickFeature")
+            plotOutput("circosLegend", height = "300")
+        ),
+        column(8,
+            fluidRow(uiOutput("sized_plot")),
+            fluidRow(
+                verbatimTextOutput("dimension_display"),
+                htmlOutput("clickConnectedFeature"),
+                verbatimTextOutput("dblClickFeature")
             )
         )
     )
+
  
     
     server <- function(input, output, session) {
-      #print(cat(size))
-       output$dimension_display <- renderText({
-            ifelse(is.null(input$dimension), 0,
-           paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension[1]) )
-       })
-       
-   #    windowSize <- reactiveValues(x = "400", y = "400")
-   #    observe({
-   #      windowSize$x <- isolate(as.character(input$dimension[1]))
-   #      windowSize$y <- isolate(as.character(input$dimension[2]))
-   #      })
-       
-       #plotSize <- reactive({ 
-       #    ifelse(is.null(input$dimension[1]), 0, 0.4 * max(input$dimension[1], input$dimension[2]) )
-      # })
         
+        # output$tabs <- renderUI({
+        #     tabs = c(tabPanel("Main", wellPanel(
+        #         radioButtons("choiceLinks", "choose type of links", 
+        #                      choices = c("all" = "all", "inter-class links" = "inter", 
+        #                                  "intra-class links" = "intra"),
+        #                      selected = "all"),
+        #         sliderInput("threshold", 
+        #                     "Threshold for similarity to display",
+        #                     min = 0, max = 1, value = c(0.8, 1)),
+        #         radioButtons("order", "order within groups",
+        #                      choices = c("clustering" = "clustering", 
+        #                                  "m/z" = "mz", "retention time" = "retentionTime"), 
+        #                      selected = "mz"),
+        #         actionButton("resetClickIndices", "Reset features"),
+        #         actionButton("stop", "Stop and export \n selected features")
+        #     )),
+        #     tabPanel("Appearance", wellPanel( 
+        #         sliderInput("plotSize", "plot size", 
+        #                     min = 0.5, max = 1.5, value = 1),
+        #         sliderInput("precision", "precision of numbers", value = 2, min = 0, max = 5, step = 1),
+        #         checkboxInput("legend", "legend", value = FALSE)
+        #     )), 
+        #     if (!is.null(msp)) {
+        #         tabPanel("Annotate",
+        #                  wellPanel(checkboxInput("legend2", "legend", value = FALSE)))
+        #     } else NULL)
+        #     tabsetPanel(tabs)
+        # })
+
         ## use predefined similarityMatrix
         simMat <- reactive({
-            if (input$order == "mz") simMat <- simMatMZ
-            if (input$order == "retentionTime") simMat <- simMatRT
-            if (input$order == "clustering") simMat <- simMatClustering
-            simMat
+            if (!is.null(input$order)) {
+                if (input$order == "mz") simMat <- simMatMZ
+                if (input$order == "retentionTime") simMat <- simMatRT
+                if (input$order == "clustering") simMat <- simMatClustering
+                simMat
+            }
         })
             
         
         ## ordering of features, use predefined groupname object
         GN <- reactive({
-            if (input$order == "mz") GN <- groupnameMZ
-            if (input$order == "retentionTime") GN <- groupnameRT
-            if (input$order == "clustering") GN <- groupnameClustering
-            GN
+            if (!is.null(input$order)) {
+                if (input$order == "mz") GN <- groupnameMZ
+                if (input$order == "retentionTime") GN <- groupnameRT
+                if (input$order == "clustering") GN <- groupnameClustering
+                GN
+            }
+            
         })
 
         ## get degree of features
         degreeFeatures <- reactive({
-            if (input$order == "mz") degFeatures <- degreeFeaturesMZ
-            if (input$order == "retentionTime") degFeatures <- degreeFeaturesRT
-            if (input$order == "clustering") degFeatures <- degreeFeaturesClust
-            degFeatures
+            if (!is.null(input$order)) {
+                if (input$order == "mz") degFeatures <- degreeFeaturesMZ
+                if (input$order == "retentionTime") degFeatures <- degreeFeaturesRT
+                if (input$order == "clustering") degFeatures <- degreeFeaturesClust
+                degFeatures   
+            }
         })
         
         ## calculateLink0Matrix
         link0Matrix <- reactive({
-            if (input$order == "mz") link0Mat <- link0MatMZ
-            if (input$order == "retentionTime") link0Mat <- link0MatRT
-            if (input$order == "clustering") link0Mat <- link0MatClustering
-            link0Mat
+            if (!is.null(input$order)) {
+                if (input$order == "mz") link0Mat <- link0MatMZ
+                if (input$order == "retentionTime") link0Mat <- link0MatRT
+                if (input$order == "clustering") link0Mat <- link0MatClustering
+                link0Mat  
+            }
         })
         
         ## create reactive expression for LinkMatrix which is cut according to 
@@ -269,11 +311,12 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
         ## Click: which is the current sector?
         indClick <- reactiveValues(ind = NULL)
         observe({
-            if (!is.null(input$circosClick$x))
+            if (!is.null(input$circosClick$x)) 
                 indClick$ind <- minFragCart2Polar(input$circosClick$x, 
-                                                  input$circosClick$y, 
-                                                  degreeFeatures()) 
+                    input$circosClick$y, degreeFeatures()) 
         })
+        
+        
         
         ## double click: which is the current sector?
         CoordinatesNewDblClick <- reactiveValues(X = 0, Y = 0)
@@ -367,7 +410,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
             }
             }
         })
-        # 
+        
         indDblClickCluster <- reactiveValues(ind = NULL)
         observe({
             if (!is.null(input$circosDblClick$x)) {
@@ -394,7 +437,6 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
         
         output$circos <- renderPlot({
             initializePlot()
-            ##if (!is.null(PlotFilled2)) {
             if (onCircle$is) {
                 if (input$order == "mz") {
                     replayPlot(PlotHighlightMZ)
@@ -449,6 +491,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                         
                         
                     if (input$order == "retentionTime") {
+                        #replayPlot(PlotFilledRT)
                         replayPlot(PlotFilledRT)
                         plotCircos(groupnameRT, LinkMatrix_threshold(), 
                             initialize=FALSE, featureNames = FALSE, 
@@ -465,10 +508,19 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                     }
                 }
             }
-        }) #, height = plotSize, width = plotSize) #windowSize$x *0.2)
+        })
+        
+        output$sized_plot <- renderUI({
+            plotOutput("circos",
+                dblclick = "circosDblClick",
+                click = "circosClick",
+                width = ifelse(is.null(input$innerWidth), 0, input$innerWidth*0.5*input$plotSize), 
+                height = ifelse(is.null(input$innerWidth), 0, input$innerWidth*0.5*input$plotSize))
+        })
         
         output$circosLegend <- renderPlot({
-            circosLegend(groupnameRT, highlight = TRUE)
+            if (!is.null(input$legend)) if(input$legend)
+                circosLegend(groupnameRT, highlight = TRUE)
         })
         
         ## show when Clicking the feature which connects to it
@@ -482,17 +534,18 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
                     HTML(printInformationSelect(GN(), msp = msp, 
                         ind = indClick$ind, lMatInd = linkMatIndsClick(), 
                         linkMatrixThreshold = LinkMatrix_threshold(), 
-                        similarityMatrix = simMat()))  
+                        similarityMatrix = simMat(), roundDigits = input$precision))  
             }
         })
         
         output$dblClickFeature <- renderText({
             if (length(indDblClickMZ$ind) > 0) 
-                c("selected features: ", 
-                    paste(groupMZ[indDblClickMZ$ind], 
-                          nameMZ[indDblClickMZ$ind],
-                        ##sapply(strsplit(nameMZ[indDblClickMZ$ind], split="_"), function(x) x[3]),
-                        sep="_"))
+                c("(permanently) selected features: ", 
+                    #paste(
+                        truncateName(groupnameMZ[indDblClickMZ$ind], roundDigits = input$precision, group = TRUE)
+                        #groupMZ[indDblClickMZ$ind], nameMZ[indDblClickMZ$ind],
+                        #sep="_")
+                  )
             else "no features selected"
         })
         
@@ -555,7 +608,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, size = 400) {
 #'  similarityMatrix = simMat)
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 printInformationSelect <- function(groupname, msp = NULL, 
-                ind, lMatInd, linkMatrixThreshold, similarityMatrix) {
+                ind, lMatInd, linkMatrixThreshold, similarityMatrix, roundDigits = 2) {
     ## get group and name from groupname argument
     ## groupname is a vector containing information about group and name,
     ## where group is the first element and name the last element separated by _
@@ -574,8 +627,12 @@ printInformationSelect <- function(groupname, msp = NULL,
         if (selectedFeat %in% connFeat) 
             connFeat <- connFeat[-which(connFeat == selectedFeat)]
                 
+        selectedFeat <- truncateName(selectedFeat, roundDigits = roundDigits, group = T)
+        connFeat <- truncateName(connFeat, roundDigits = roundDigits, group = T)
+        
         if (length(lMatInd) > 0) {
             connFeat <- paste(connFeat, collapse = " <br/>")
+            
             return(paste(c(selectedFeat, "connects to", "<br/>", connFeat), 
                             collapse = " "))
         } else 
@@ -595,9 +652,11 @@ printInformationSelect <- function(groupname, msp = NULL,
         ## remove duplicated hovFeat in connect
         if (selectFeat %in% connect) connect <- connect[-which(connect == selectFeat)]
         mzRTcon <- sapply(strsplit(connect, split="_"), function(x) x[3])
+    
         
         if (length(connect) == 0) {
-            return(paste0(selectFeat, " (", getName(clickedFeat), ", ", 
+            selectFeat <- truncateName(selectFeat, roundDigits = roundDigits, group = T)
+            return(paste0(selectFeat, " (", getName(selectedFeat), ", ", 
                 getMetaboliteName(selectedFeat), ", ", 
                 getMetaboliteClass(selectedFeat), ") ",
                  "does not connect to any feature"))
@@ -606,18 +665,23 @@ printInformationSelect <- function(groupname, msp = NULL,
             connFeat <- msp[matchedConn]
             connChar <- character()
             degreeSimilarity <- similarityMatrix[selectFeat, ]
+            
             for (i in 1:length(connect)) {
                 connFeatI <- connFeat[i]
                 connectI <- connect[i]
                 degreeSimilarityI <- round(degreeSimilarity[connectI],3)
-                ## degSimI <- degreeSimilarity[connFeatI]
+                connectI <- truncateName(connectI, roundDigits = roundDigits, group = T)
+
                 newFeat <- paste0(connectI, " (", degreeSimilarityI, ", ", 
                     getName(connFeatI), ", ", getMetaboliteName(connFeatI), ", ", 
                     getMetaboliteClass(connFeatI), ")", "<br/>")
                     
                 connChar <- c(connChar, newFeat)
             }
+            
             connChar <- paste(connChar, collapse=" ")
+            selectFeat <- truncateName(selectFeat, roundDigits = roundDigits, group = T)
+            
             return(paste0(selectFeat, " (", getName(selectedFeat), ", ", 
                 getMetaboliteName(selectedFeat), ", ", 
                 getMetaboliteClass(selectedFeat), ") connects to ", 
