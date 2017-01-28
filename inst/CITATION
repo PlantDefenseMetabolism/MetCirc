@@ -1,0 +1,14 @@
+citHeader("To cite the MetCirc package in publications use:")
+
+citEntry(entry="manual",  
+         title  = "MetCirc: a workflow to analyse and visualise metabolomics data",
+         author = personList(
+           person(given="Thomas", family="Naake"),
+           person(given="Emmanuel", family="Gaquerel")),
+         note = "R package version 0.99.5",
+         volume = "28",
+         pages = "288-289",
+         textVersion = paste("Thomas Naake and Emmanuel Gaquerel (2016).",
+           "MetCirc: a workflow to analyse and visualise metabolomics data.",
+           "R package version 0.99.5")
+)

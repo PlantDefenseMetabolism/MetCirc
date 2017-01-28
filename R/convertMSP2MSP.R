@@ -39,7 +39,7 @@ convertMSP2MSP <- function(msp) {
         c("NAME: ", names[x]),
         c("RETENTIONTIME: ", rettime[x]),
         c("PRECURSORMZ: ", max(peakentry_fragment_l_s[[x]])),
-        c("METABOLITENAME: ", names[x]),
+        c("INFORMATION: ", "Unknown"),
         c("METABOLITECLASS: ", "Unknown"),
         c("ADDUCTIONNAME: ", "Unknown"),
         c("Num Peaks: ", strsplit(as.character(MSP[numpeaks[x],]), " ")[[1]][3]),

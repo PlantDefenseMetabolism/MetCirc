@@ -56,7 +56,7 @@
 #' data("sd02_deconvoluted", package = "MetCirc") 
 #' data("convertExampleDF", package = "MetCirc")
 #' allocatePrecursor2mz(sd01 = sd01_outputXCMS, sd02 = sd02_deconvoluted, 
-#'      kNN = 10, mzCheck = 1, rtCheck = 30, mzVsRTbalance = 10000, splitPattern = "_", splitInd = 2)
+#'      kNN = 10, mzCheck = 1, rtCheck = 30, mzVsRTbalance = 10000, splitPattern = " _ ", splitInd = 2)
 #' @export
 allocatePrecursor2mz <- function(sd01, sd02, kNN = 10, mzCheck = 1, 
     rtCheck = 30, mzVsRTbalance = 10000, splitPattern = "_", splitInd = 2) {
@@ -75,8 +75,8 @@ allocatePrecursor2mz <- function(sd01, sd02, kNN = 10, mzCheck = 1,
     precursor <- sd02[, "pcgroup_precursorMZ"]
     ## isolated mz values from e.g. pcgroup_precursorMZ column in 
     ## sd02_deconvoluted
-    uniquePrecursor <- cutUniquePreMZ(precursor, 
-                                      splitPattern = splitPattern, splitInd= splitInd)
+    uniquePrecursor <- cutUniquePrecursor(precursor, 
+                            splitPattern = splitPattern, splitInd= splitInd)
     
     ## create finalCluster, which is the data.frame to store data
     finalCluster <- matrix(nrow = length(uniquePrecursor), ncol = dim(sd01)[2] + 7)

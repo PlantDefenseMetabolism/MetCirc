@@ -3,13 +3,14 @@
 #' @name shinyCircos
 #' @title Interactive visualisation of similarity and navigation of MS/MS features
 #' @description Visualise the similarity of MS/MS features.
-#' @usage shinyCircos(similarityMatrix, msp, size = 400)
+#' @usage shinyCircos(similarityMatrix, msp = NULL, ...)
 #' @param similarityMatrix matrix, similarityMatrix contains pair-wise 
 #' similarity coefficients which give information about the similarity between
 #' MS/MS features
 #' @param msp MSP, an S4 object of class 'MSP', the MSP object will be used
 #' to display information about the selected feature
-#' @param size numerical, image width/height in pixels
+#' @param ... further arguments passed to shinyCircos, e.g. cexFeatureNames
+#' to pass to plotCircos to set font size in plotCircos of feature names
 #' @details The function is based on the shiny and circlize package. The user 
 #' can choose interactively thresholds, type of links (between or within groups), 
 #' display information about MS/MS features, permanently select MS/MS features
@@ -25,11 +26,10 @@
 #' data("binnedMSP", package = "MetCirc")
 #' binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
-#' \dontrun{shinyCircos(similarityMat, finalMSP, size = 400)}
+#' \dontrun{shinyCircos(similarityMatrix = similarityMat, msp = finalMSP)}
 #' @export
 shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
     
-    #if (!is.numeric(size)) stop("size is not numerical")
     if (!is.null(msp)) if (class(msp) != "MSP") stop("msp is not of class MSP")
     
     ## circlize parameters
@@ -171,6 +171,8 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
                               choices = c("clustering" = "clustering",
                                   "m/z" = "mz", "retention time" = "retentionTime"),
                               selected = "mz"),
+                          uiOutput("annotationName"),
+                          uiOutput("annotationClass"),
                           actionButton("resetClickIndices", "Reset features"),
                           actionButton("stop", "Stop and export \n selected features")
                       )),
@@ -197,6 +199,19 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
  
     
     server <- function(input, output, session) {
+        
+        msp
+        
+        
+        output$annotationName <- renderUI({
+            if (!is.null(msp)) {
+                #if (click$ind > 1)
+                textInput("name", label = "metabolite name", placeholder = unique(msp@names))
+                
+            }#}
+        })
+        
+        
         
         # output$tabs <- renderUI({
         #     tabs = c(tabPanel("Main", wellPanel(
@@ -570,11 +585,11 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
 ## to do
 ## second simmat for neutral losses
 
-#' @name printInformationSelected
+#' @name printInformationSelect
 #' @title Display information on connected features of selected features
 #' @description Displays information on connected features of selected features.
 #' @usage printInformationSelect(groupname, msp = NULL, ind, 
-#'  lMatInd, linkMatrixThreshold, similarityMatrix)
+#'  lMatInd, linkMatrixThreshold, similarityMatrix, roundDigits = 2)
 #' @param groupname vector with groupname of selected feature,
 #' vector containing "group" and "name" to display, that is 
 #' a unique identifier of the features, "group" and "name" have to be separated
@@ -587,6 +602,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
 #'  features of a threshold or greater
 #' @param similarityMatrix matrix that is used to get information on the degree 
 #'  of similarity, similarityMat is an ordered version of a similarity matrix
+#' @param roundDigits numeric,  how many digits should be displayed?
 #' @details printInformationSelect is for internal use. 
 #' @return character that is in HTML format
 #' @examples
@@ -604,7 +620,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
 #' MetCirc:::printInformationSelect(groupname = groupname, 
 #'  msp = NULL, ind = ind, lMatInd = linkMatInds, 
 #'  linkMatrixThreshold = linkMat_thr, 
-#'  similarityMatrix = simMat)
+#'  similarityMatrix = simMat, roundDigits = 2)
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 printInformationSelect <- function(groupname, msp = NULL, 
                 ind, lMatInd, linkMatrixThreshold, similarityMatrix, roundDigits = 2) {
@@ -642,7 +658,7 @@ printInformationSelect <- function(groupname, msp = NULL,
     } else { ## if !is.null(msp)
             
         ## find clicked feature
-        mzRTMSP <- paste(getPrecursorMZ(msp), getRT(msp), sep="/")
+        mzRTMSP <- paste(msp@mz, msp@rt, sep="/")
         matchedHovMZRT <- match(name, mzRTMSP)
         selectedFeat <- msp[matchedHovMZRT[ind]]
         selectFeat <- groupname[ind] 
@@ -656,8 +672,8 @@ printInformationSelect <- function(groupname, msp = NULL,
         if (length(connect) == 0) {
             selectFeat <- truncateName(selectFeat, roundDigits = roundDigits, group = T)
             return(paste0(selectFeat, " (", getName(selectedFeat), ", ", 
-                getMetaboliteName(selectedFeat), ", ", 
-                getMetaboliteClass(selectedFeat), ") ",
+                selectedFeat@names, ", ", 
+                selectedFeat@classes, ") ",
                  "does not connect to any feature"))
         } else {
             matchedConn <- match(mzRTcon, mzRTMSP)
@@ -672,8 +688,8 @@ printInformationSelect <- function(groupname, msp = NULL,
                 connectI <- truncateName(connectI, roundDigits = roundDigits, group = T)
 
                 newFeat <- paste0(connectI, " (", degreeSimilarityI, ", ", 
-                    getName(connFeatI), ", ", getMetaboliteName(connFeatI), ", ", 
-                    getMetaboliteClass(connFeatI), ")", "<br/>")
+                    connFeatI@names, ", ", connFeatI@information, ", ", 
+                    connFeatI@classes, ")", "<br/>")
                     
                 connChar <- c(connChar, newFeat)
             }
@@ -681,9 +697,9 @@ printInformationSelect <- function(groupname, msp = NULL,
             connChar <- paste(connChar, collapse=" ")
             selectFeat <- truncateName(selectFeat, roundDigits = roundDigits, group = T)
             
-            return(paste0(selectFeat, " (", getName(selectedFeat), ", ", 
-                getMetaboliteName(selectedFeat), ", ", 
-                getMetaboliteClass(selectedFeat), ") connects to ", 
+            return(paste0(selectFeat, " (", selectedFeat@names, ", ", 
+                selectedFeat@information, ", ", 
+                selectedFeat@classes, ") connects to ", 
                 " <br/>", connChar))
         }
     }

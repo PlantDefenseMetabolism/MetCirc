@@ -5,7 +5,7 @@
 #' @title Circular plot to visualise similarity
 #' @description Circular plot to visualise similarity
 #' @usage plotCircos(groupname, linkMat, initialize = c(TRUE, FALSE), 
-#'      featureNames = c(TRUE, FALSE), cexFeatureNames = 0.2, 
+#'      featureNames = c(TRUE, FALSE), cexFeatureNames = 0.3, 
 #'      groupSector = c(TRUE, FALSE), groupName = c(TRUE, FALSE), 
 #'      links = c(TRUE, FALSE), highlight = c(TRUE, FALSE), colour = NULL,
 #'      transparency = 0.2)
@@ -279,7 +279,7 @@ highlight <- function(groupname, ind, LinkMatrix, colour = NULL, transparency = 
 #' @name truncateName
 #' @title Truncate names
 #' @description A function to truncate names
-#' @usage truncateName(groupname, roundDigits = 2)
+#' @usage truncateName(groupname, roundDigits = 2, group = FALSE)
 #' @param groupname vector with group and unique idenfier (name)
 #' @param roundDigits numeric, how many digits should be displayed?
 #' @param group logical, should groups be returned?
@@ -294,7 +294,7 @@ highlight <- function(groupname, ind, LinkMatrix, colour = NULL, transparency = 
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #'      groupname <- "a_100.12345/10.12345"
-#'      truncateName(groupname, roundDigits = 2)
+#'      truncateName(groupname, roundDigits = 2, group = FALSE)
 #' @export
 truncateName <- function (groupname, roundDigits = 2, group = FALSE) {
     
@@ -319,13 +319,14 @@ truncateName <- function (groupname, roundDigits = 2, group = FALSE) {
 #' @name circosLegend
 #' @title Plot a legend for circos plot
 #' @description circosLegend plots a legend for circos plot using group names .
-#' @usage circosLegend(groupname, highlight = c(TRUE, FALSE), colour = NULL)
+#' @usage circosLegend(groupname, highlight = c(TRUE, FALSE), colour = NULL, cex = 1)
 #' @param groupname vector containing "group" and "name" to display, that is 
 #' a unique identifier of the features, "group" and "name" have to be separated
 #' by "_" where "group" is the first and "name" is the last element
 #' @param highlight logical, should colours be adjusted to highlight settings?
 #' @param colour NULL or character, colour defines the colours which are used
 #'  for plotting, if NULL default colours are used
+#' @param cex numeric, parameter that controls size of the legend in the plot
 #' @details Internal use for shiny app or outside of shiny to reproduce 
 #'      figures.
 #' @return The function will open a new plot and display colours together 
@@ -339,7 +340,7 @@ truncateName <- function (groupname, roundDigits = 2, group = FALSE) {
 #'  similarityMat <- createSimilarityMatrix(binnedMSP)  
 #'  groupname <- rownames(similarityMat)
 #'  ## plot legend
-#'  circosLegend(groupname, highlight = TRUE, colour = NULL, cex = 4)
+#'  circosLegend(groupname, highlight = TRUE, colour = NULL, cex = 1)
 #' @export
 circosLegend <- function(groupname, highlight = c(TRUE, FALSE), colour = NULL, cex = 1) {
     

@@ -13,23 +13,23 @@ simMat <- createOrderedSimMat(similarityMat, order = "mz")
 groupname <- rownames(simMat)
 linkMat_thr <- createLinkMatrix(simMat, 0.75, 1) 
 ind <- 18
-linkMatIndsHover <- getLinkMatrixIndices(groupname[ind], linkMat_thr)
-## MetCirc:::printInformationHover(groupname = groupname, 
-##  msp = NULL, ind = ind, lMatIndHover = linkMatIndsHover, 
+linkMatInds <- getLinkMatrixIndices(groupname[ind], linkMat_thr)
+## MetCirc:::printInformationSelect(groupname = groupname, 
+##  msp = NULL, ind = ind, lMatInd = linkMatInds, 
 ##  linkMatrixThreshold = linkMat_thr, highlight = TRUE, 
 ##  similarityMatrix = simMat)
 
 
-## START unit test printInformationHover 
-test_printInformationHover <- function() {
-    checkEquals(MetCirc:::printInformationHover( 
+## START unit test printInformationSelect 
+test_printInformationSelect <- function() {
+    checkEquals(MetCirc:::printInformationSelect( 
                     groupname = groupname, msp = NULL, ind = ind, 
-                    lMatIndHover = linkMatIndsHover, 
+                    lMatInd = linkMatInds, 
                     linkMatrixThreshold = linkMat_thr, 
                     similarityMatrix = orderedSimMat),
-        "ANT_0018_1052.939378/1020.95636760976 connects to <br/> ANT_0019_1063.440342/1020.17226498551")
+        "ANT_1052.94/1018.15 connects to <br/> ANT_1063.44/1017.07 <br/>ANT_1398.71/1015.75 <br/>LIM_1398.71/1015.75")
 }
-## END unit test printInformationHover
+## END unit test printInformationSelect
 
 ## START unit test createOrderedSimMat
 test_createOrderedSimMat <- function() {

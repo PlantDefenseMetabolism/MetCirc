@@ -1,38 +1,3 @@
-#' @name getBegEndIndMSP
-#' @title Get beginning and end indices of each entry in a data.frame in 
-#' msp format
-#' @description Get beginning and end indices of each entry in a data.frame in 
-#' msp format
-#' @usage getBegEndIndMSP(msp)
-#' @param msp data.frame in msp format, see ?convert2MSP for further information
-#' @details Internal use to retrieve indices when fragments start and end. 
-#' @return getBegEndIndMSP returns a list of length 2 where the first entry
-#' contains the start indices and the second the end indices
-#' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
-#' @examples 
-#' data("sd02_deconvoluted", package = "MetCirc")
-#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
-#'                          splitIndMZ = 2, splitIndRT = 3)
-#' finalMSPdf <- getMSP(finalMSP)
-#' getBegEndIndMSP(finalMSPdf)
-#' @export
-getBegEndIndMSP <- function(msp) {
-    
-    ## beginning 
-    indPeaks <- which(msp[,1] == "Num Peaks: ")
-    indLosses <- which(msp[,1] == "Num Losses: ")
-    
-    if (length(indPeaks) > length(indLosses)) indNumPeaks <- indPeaks
-    ## <=: to get all possibilities
-    if (length(indPeaks) <= length(indLosses)) indNumPeaks <- indLosses 
-    
-    indEnd <- as.numeric(as.character(msp[indNumPeaks, 2]))
-    indBeg <- indNumPeaks + 1 
-    indEnd <- indEnd + indBeg - 1 
-    
-    return(list(indBeg, indEnd))
-}
-
 #' @name binning
 #' @title Bin m/z values
 #' @description Bin m/z values
