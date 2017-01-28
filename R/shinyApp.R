@@ -158,7 +158,6 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
             )),
         column(4, 
             fluidRow(
-                #do.call(tabsetPanel, list(tabs))
                  tabsetPanel(id = "tabs",
                       tabPanel("Main", wellPanel(
                           radioButtons("choiceLinks", "choose type of links",
