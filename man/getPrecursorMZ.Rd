@@ -7,10 +7,10 @@
 \title{getPrecursorMZ returns precursor m/z values of an MSP object}
 \format{An object of class \code{NULL} of length 0.}
 \usage{
-getPrecursorMZ(object)
+getPrecursorMZ(x)
 }
 \arguments{
-\item{object}{object of class MSP}
+\item{x}{object of class MSP}
 }
 \value{
 numeric

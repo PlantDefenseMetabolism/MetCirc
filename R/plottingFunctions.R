@@ -303,9 +303,14 @@ truncateName <- function (groupname, roundDigits = 2, group = FALSE) {
     names <- unlist(names)
     
     truncateL <- strsplit(names, "/")
-    truncateL <- lapply(truncateL, function(x) 
-        c(round(as.numeric(x[1]), roundDigits), 
-          round(as.numeric(x[2]), roundDigits)))
+    
+    ## round only when roundDigits is numeric
+    if (is.numeric(roundDigits)) {
+        truncateL <- lapply(truncateL, function(x) 
+            c(round(as.numeric(x[1]), roundDigits), 
+                round(as.numeric(x[2]), roundDigits)))
+    }
+
     newName <- lapply(truncateL, function(x) paste(x[1], x[2], sep="/"))
     newName <- unlist(newName)
     if (group) {

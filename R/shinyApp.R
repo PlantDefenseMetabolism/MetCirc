@@ -36,6 +36,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
     circos.par(gap.degree = 0, cell.padding = c(0, 0, 0, 0), 
             track.margin = c(0.0, 0))
     
+    groupname <- rownames(similarityMatrix)
     ## create plots and assign to objects by recordPlot
     ## rt
     simMatRT <- createOrderedSimMat(similarityMatrix, order = "retentionTime")
@@ -117,35 +118,6 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
     PlotHighlightCluster <- recordPlot()
     plot.new()
     
-    
-    ## 
-    # tabs = c(tabPanel("Main", wellPanel(
-    #     radioButtons("choiceLinks", "choose type of links", 
-    #                  choices = c("all" = "all", "inter-class links" = "inter", 
-    #                              "intra-class links" = "intra"),
-    #                  selected = "all"),
-    #     sliderInput("threshold", 
-    #                 "Threshold for similarity to display",
-    #                 min = 0, max = 1, value = c(0.8, 1)),
-    #     radioButtons("order", "order within groups",
-    #                  choices = c("clustering" = "clustering", 
-    #                              "m/z" = "mz", "retention time" = "retentionTime"), 
-    #                  selected = "mz"),
-    #     actionButton("resetClickIndices", "Reset features"),
-    #     actionButton("stop", "Stop and export \n selected features")
-    # )),
-    # tabPanel("Appearance", wellPanel( 
-    #     sliderInput("plotSize", "plot size", 
-    #                 min = 0.5, max = 1.5, value = 1),
-    #     sliderInput("precision", "precision of numbers", value = 2, min = 0, max = 5, step = 1),
-    #     checkboxInput("legend", "legend", value = FALSE)
-    # )), 
-    # if (!is.null(msp)) {
-    #     tabPanel("Annotate",
-    #              wellPanel(checkboxInput("legend2", "legend", value = FALSE)))
-    # })
-
-    
     ui <- fluidPage( 
             tags$head(tags$script('
                 $(document).on("shiny:connected", function(e) {
@@ -171,8 +143,9 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
                               choices = c("clustering" = "clustering",
                                   "m/z" = "mz", "retention time" = "retentionTime"),
                               selected = "mz"),
+                          
                           uiOutput("annotationName"),
-                          uiOutput("annotationClass"),
+                          ##uiOutput("annotationClass"),
                           actionButton("resetClickIndices", "Reset features"),
                           actionButton("stop", "Stop and export \n selected features")
                       )),
@@ -191,6 +164,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
             fluidRow(
                 verbatimTextOutput("dimension_display"),
                 htmlOutput("clickConnectedFeature"),
+                textOutput("test"), 
                 verbatimTextOutput("dblClickFeature")
             )
         )
@@ -200,88 +174,84 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
     
     server <- function(input, output, session) {
         
-        msp
-        
-        
         output$annotationName <- renderUI({
             if (!is.null(msp)) {
-                #if (click$ind > 1)
-                textInput("name", label = "metabolite name", placeholder = unique(msp@names))
+                if (length(indClick$ind) > 0) {
                 
-            }#}
+                    textInput("name", label = "metabolite name", placeholder = unique(msp@names)) 
+                    #textInput("class", label = "metabolite class", placeholder = unique(msp@classes))
+                
+                } else NULL  
+            }
         })
         
+        indMSP <- reactive({
+            if (length(indClick$ind) > 0) {
+                nameClick <- GN()[indClick$ind]
+                trNameClick <- truncateName(nameClick, roundDigits = NULL, group = TRUE)
+                which(trNameClick == groupname)
+            }
+                
+            
+        })
         
+        observe({
+            if (!is.null(indMSP())) {
+                if (!is.null(input$name))
+                    msp[indMSP()]@names <- isolate(input$name)
+            }
+        })
         
-        # output$tabs <- renderUI({
-        #     tabs = c(tabPanel("Main", wellPanel(
-        #         radioButtons("choiceLinks", "choose type of links", 
-        #                      choices = c("all" = "all", "inter-class links" = "inter", 
-        #                                  "intra-class links" = "intra"),
-        #                      selected = "all"),
-        #         sliderInput("threshold", 
-        #                     "Threshold for similarity to display",
-        #                     min = 0, max = 1, value = c(0.8, 1)),
-        #         radioButtons("order", "order within groups",
-        #                      choices = c("clustering" = "clustering", 
-        #                                  "m/z" = "mz", "retention time" = "retentionTime"), 
-        #                      selected = "mz"),
-        #         actionButton("resetClickIndices", "Reset features"),
-        #         actionButton("stop", "Stop and export \n selected features")
-        #     )),
-        #     tabPanel("Appearance", wellPanel( 
-        #         sliderInput("plotSize", "plot size", 
-        #                     min = 0.5, max = 1.5, value = 1),
-        #         sliderInput("precision", "precision of numbers", value = 2, min = 0, max = 5, step = 1),
-        #         checkboxInput("legend", "legend", value = FALSE)
-        #     )), 
+        output$test <- renderText({
+            if (length(indMSP) > 0) {
+                input$name
+                #msp[indMSP()]@names
+            }
+        })
+        
+        # output$annotationName <- renderUI({
         #     if (!is.null(msp)) {
-        #         tabPanel("Annotate",
-        #                  wellPanel(checkboxInput("legend2", "legend", value = FALSE)))
-        #     } else NULL)
-        #     tabsetPanel(tabs)
+        #         if (length(indClick$ind) > 0) {
+        #            
+        #         } else NULL
+        #            
+        #         
+        #     }
         # })
 
         ## use predefined similarityMatrix
         simMat <- reactive({
-            if (!is.null(input$order)) {
                 if (input$order == "mz") simMat <- simMatMZ
                 if (input$order == "retentionTime") simMat <- simMatRT
                 if (input$order == "clustering") simMat <- simMatClustering
                 simMat
-            }
         })
             
         
         ## ordering of features, use predefined groupname object
         GN <- reactive({
-            if (!is.null(input$order)) {
                 if (input$order == "mz") GN <- groupnameMZ
                 if (input$order == "retentionTime") GN <- groupnameRT
                 if (input$order == "clustering") GN <- groupnameClustering
                 GN
-            }
-            
         })
 
         ## get degree of features
         degreeFeatures <- reactive({
-            if (!is.null(input$order)) {
                 if (input$order == "mz") degFeatures <- degreeFeaturesMZ
                 if (input$order == "retentionTime") degFeatures <- degreeFeaturesRT
                 if (input$order == "clustering") degFeatures <- degreeFeaturesClust
                 degFeatures   
-            }
         })
         
         ## calculateLink0Matrix
         link0Matrix <- reactive({
-            if (!is.null(input$order)) {
+            #if (!is.null(input$order)) {
                 if (input$order == "mz") link0Mat <- link0MatMZ
                 if (input$order == "retentionTime") link0Mat <- link0MatRT
                 if (input$order == "clustering") link0Mat <- link0MatClustering
                 link0Mat  
-            }
+            #}
         })
         
         ## create reactive expression for LinkMatrix which is cut according to 
@@ -323,7 +293,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
         })
         
         ## Click: which is the current sector?
-        indClick <- reactiveValues(ind = NULL)
+        indClick <- reactiveValues(ind = NULL, name = NULL)
         observe({
             if (!is.null(input$circosClick$x)) 
                 indClick$ind <- minFragCart2Polar(input$circosClick$x, 
@@ -671,7 +641,7 @@ printInformationSelect <- function(groupname, msp = NULL,
         
         if (length(connect) == 0) {
             selectFeat <- truncateName(selectFeat, roundDigits = roundDigits, group = T)
-            return(paste0(selectFeat, " (", getName(selectedFeat), ", ", 
+            return(paste0(selectFeat, " (", names(selectedFeat), ", ", 
                 selectedFeat@names, ", ", 
                 selectedFeat@classes, ") ",
                  "does not connect to any feature"))

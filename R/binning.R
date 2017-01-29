@@ -29,7 +29,7 @@ binning <- function(msp, tol = 0.01, group = NULL, method = c("median", "mean"))
     precmz <- getPrecursorMZ(msp)
     rt <- getRT(msp)
     
-    msp <- getMSP(msp)
+    msp <- peaks(msp)
     
     if (is.null(group)) {
         print("argument group is not specified, will create dummy group")

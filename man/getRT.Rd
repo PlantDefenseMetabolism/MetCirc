@@ -7,10 +7,10 @@
 \title{getRT returns precursor RT values of an MSP object}
 \format{An object of class \code{NULL} of length 0.}
 \usage{
-getRT(object)
+getRT(x)
 }
 \arguments{
-\item{object}{object of class MSP}
+\item{x}{object of class MSP}
 }
 \value{
 numeric

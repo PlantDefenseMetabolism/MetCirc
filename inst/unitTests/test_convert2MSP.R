@@ -1,3 +1,4 @@
+data("sd02_deconvoluted", package = "MetCirc")
 ## START unit test cutUniquePreMZ
 test_cutUniquePreMZ <- function() {
     checkTrue(is.vector(cutUniquePrecursor(sd02_deconvoluted[,4],
@@ -21,13 +22,13 @@ testMSP <- convert2MSP(sd02_deconvoluted,
 test_convert2MSP <- function() {
     checkTrue(class(testMSP) == "MSP")
     checkEquals(length(testMSP), 360)
-    checkTrue(is.data.frame(getMSP(testMSP)))
-    checkEquals(dim(getMSP(testMSP)), c(5463, 2))
+    checkTrue(is.data.frame(peaks(testMSP)))
+    checkEquals(dim(peaks(testMSP)), c(5463, 2))
     checkEquals(length(testMSP@adduct), 360)
     checkEquals(length(testMSP@information), 360)
     checkEquals(length(testMSP@names), 360)
     checkEquals(as.numeric(
-        table(getMSP(testMSP)[,1])["Num Peaks: "]), 360)
+        table(peaks(testMSP)[,1])["Num Peaks: "]), 360)
     checkEquals(length(testMSP@mz), 360)
     checkEquals(length(testMSP@rt), 360)
 }
@@ -45,7 +46,7 @@ test_msp2FunctionalLossesMSP <- function() {
     checkEquals(length(testMSPNL@information), 360)
     checkEquals(length(testMSPNL@names), 360)
     checkEquals(as.numeric(
-        table(getMSP(testMSPNL)[,1])["Num Losses: "]), 360)
+        table(peaks(testMSPNL)[,1])["Num Losses: "]), 360)
     checkEquals(length(testMSPNL@mz), 360)
     checkEquals(length(testMSPNL@rt), 360)
 }
@@ -90,43 +91,42 @@ test_getRT <- function() {
 }
 ## END unit test getRT
 
-## START unit test getMSP-method
-test_getMSP <- function() {
-    checkTrue(is.data.frame(getMSP(testMSP)))
-    checkEquals(dim(getMSP(testMSP)), c(5463, 2))
-    checkEquals(dim(getMSP(testMSP)), dim(getMSP(testMSPNL)))
+## START unit test peaks-method
+test_peaks <- function() {
+    checkTrue(is.data.frame(peaks(testMSP)))
+    checkEquals(dim(peaks(testMSP)), c(5463, 2))
+    checkEquals(dim(peaks(testMSP)), dim(peaks(testMSPNL)))
 }
-## END unit test getMSP-method
+## END unit test peaks-method
 
 ## START unit test combine-method
 test_combine <- function() {
     checkEquals(length(combine(testMSP, testMSP)), 720)
-    checkEquals(dim(getMSP(combine(testMSP, testMSP))), c(10926, 2))
+    checkEquals(dim(peaks(combine(testMSP, testMSP))), c(10926, 2))
 }
 ## END unit test combine-method
 
 ## START unit test getName-method
 test_getName <- function() {
-    checkTrue(all(is.character(getName(testMSP))))
-    checkTrue(length(getName(testMSP)) == length(testMSP))
-    checkException(getName("x"))
+    checkTrue(all(is.character(names(testMSP))))
+    checkTrue(length(names(testMSP)) == length(testMSP))
 }
 ## END unit test getName-method
 
 
 ## START unit test getInformation-method
 test_getMetaboliteName <- function() {
-    checkTrue(all(is.character(getInformation(testMSP))))
-    checkTrue(length(getInformation(testMSP)) == length(testMSP))
-    checkException(getInformation("x"))
+    checkTrue(all(is.character(information(testMSP))))
+    checkTrue(length(information(testMSP)) == length(testMSP))
+    checkException(information("x"))
 }
 ## END unit test getMetaboliteName-method
 
 ## START unit test getMetaboliteClass-method
 test_getMetaboliteClass <- function() {
-    checkTrue(all(is.character(getMetaboliteClass(testMSP))))
-    checkTrue(length(getMetaboliteClass(testMSP)) == length(testMSP))
-    checkException(getMetaboliteClass("x"))
+    checkTrue(all(is.character(classes(testMSP))))
+    checkTrue(length(classes(testMSP)) == length(testMSP))
+    checkException(classes("x"))
 }
 ## END unit test getMetaboliteClass-method
 
@@ -134,8 +134,23 @@ test_getMetaboliteClass <- function() {
 test_extract <- function() {
     checkEquals(length(testMSP[1]), 1)
     checkEquals(length(testMSP[1:10]), 10)
-    checkEquals(testMSP@msp[1:13,], getMSP(testMSP[1:2]))
+    checkEquals(testMSP@msp[1:13,], peaks(testMSP[1:2]))
     checkTrue(is(testMSP[1:10]) == "MSP")
     checkException(testMSP[400])
 }
 ## END unit test ]
+
+## START unit test getBegEndIndMSP
+testMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+                       splitIndMZ = 2, splitIndRT = NULL)
+testMSPmsp <- peaks(testMSP)
+BegEndIndMSP <- getBegEndIndMSP(testMSPmsp)
+test_getBegEndIndMSP <- function() {
+    checkTrue(is.list(getBegEndIndMSP(testMSPmsp)))
+    checkTrue(length(BegEndIndMSP[[1]]) == length(BegEndIndMSP[[2]]))
+    checkTrue(all(BegEndIndMSP[[1]] <=  BegEndIndMSP[[2]]))
+    checkTrue(is.numeric(BegEndIndMSP[[1]]))
+    checkTrue(is.vector(BegEndIndMSP[[1]]))
+    checkTrue(is.numeric(BegEndIndMSP[[2]]))
+    checkTrue(is.vector(BegEndIndMSP[[2]]))
+}

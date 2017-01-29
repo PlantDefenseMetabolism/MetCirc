@@ -322,25 +322,25 @@ setMethod("show", signature = "MSP",
                   length(getPrecursorMZ(object)), "entries.", sep = " ")
 })
 
-#' @name getMSP
-#' @aliases getMSP,MSP-method
-#' @title getMSP method for MSP class
+#' @name peaks
+#' @aliases peaks,MSP-method
+#' @title peaks method for MSP class
 #' @return data.frame
-#' @description Returns the data.frame entry of an MSP object.
+#' @description Returns the data.frame entry with peak information of an MSP 
+#' object.
 #' @param object object of class MSP
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
 #' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
 #'                      splitIndMZ = 2, splitIndRT = NULL)
-#' getMSP(finalMSP)
+#' peaks(finalMSP)
 #' @export
-setGeneric("getMSP", function(object) standardGeneric("getMSP"))
+setGeneric("peaks", function(object) standardGeneric("peaks"))
 
-
+#' @describeIn peaks returns the data.frame of an MSP object
 #' @export
-#' @describeIn getMSP returns the data.frame of an MSP object
-setMethod("getMSP", signature = "MSP", definition = function(object) {object@msp})
+setMethod("peaks", signature = "MSP", definition = function(object) object@msp)
 
 #' @name combine
 #' @aliases combine,MSP-method
@@ -363,115 +363,217 @@ setGeneric("combine", function(object1, object2) standardGeneric("combine"))
 
 #' @export
 #' @describeIn combine combines two MSP objects
-setMethod("combine", signature = c("MSP", "MSP"), definition = function(object1, object2) {
-    MSP(msp=rbind(object1@msp, object2@msp), mz = c(object1@mz, object2@mz), 
-        rt = c(object1@rt, object2@rt), names = c(object1@names, object2@names), 
-        classes = c(object1@classes, object2@classes), 
-        information = c(object1@information, object2@information), 
-        adduct = c(object1@adduct, object2@adduct))})
-    
-    
+setMethod("combine", signature = c("MSP", "MSP"), 
+        definition = function(object1, object2) {
+            new("MSP", msp=rbind(object1@msp, object2@msp), 
+                mz = c(object1@mz, object2@mz), 
+                rt = c(object1@rt, object2@rt), 
+                names = c(object1@names, object2@names), 
+                classes = c(object1@classes, object2@classes), 
+                information = c(object1@information, object2@information), 
+                adduct = c(object1@adduct, object2@adduct))
+            }
+)
     ##new("MSP", msp = rbind(object1@msp, object2@msp))})
 
-#' @name getName
-#' @aliases getName,MSP-method
-#' @title getName returns names in MSP object
+#' @name names
+#' @aliases names,MSP-method
+#' @title names returns names in MSP object
 #' @return character
-#' @description getName returns names in MSP object.
-#' @param object object of class MSP, see ?convert2MSP for further information
+#' @description names returns names in MSP object.
+#' @param x object of class MSP, see ?convert2MSP for further information
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
 #' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
 #'                          splitIndMZ = 2, splitIndRT = NULL)
-#' getName(finalMSP)
+#' names(finalMSP)
 #' @export
-setGeneric("getName", function(object) standardGeneric("getName"))
+setMethod(f = "names", signature = "MSP", definition = function(x) x@names)
 
-#' @describeIn getName returns names in MSP objects
-#' @export
-getName <- function(object) {
-    ## get names in an msp object
-    return(object@names)
-}
-
-#' @name getInformation
-#' @aliases getInformation,MSP-method
-#' @title getInformation returns information of metabolites in MSP object
-#' @return character
-#' @description getInformation returns information in MSP object.
-#' @param object object of class MSP, see ?convert2MSP for further information
+#' @name names<-
+#' @aliases names<-,MSP,character-method
+#' @title names<- sets names in MSP object
+#' @return MSP
+#' @description names<- sets names in MSP object
+#' @param x object of class MSP, see ?convert2MSP for further information
+#' @param value character vector with new names
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
 #' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
 #'                          splitIndMZ = 2, splitIndRT = NULL)
-#' getInformation(finalMSP)
+#' names(finalMSP) <- rep("Unknown")
 #' @export
-setGeneric("getInformation", 
-           function(object) standardGeneric("getInformation"))
+setMethod(f = "names<-", signature = c("MSP", "character"), 
+        definition = function(x, value) {
+              x@names <- value
+              ##validObject(x)
+              x
+        }
+)
 
-#' @describeIn getInformation returns information of metabolites in MSP objects
-#' @export
-getInformation <- function(object) {
-    ## get information of metabolites in an msp object
-    return(object@information)
-}
-
-#' @name getMetaboliteClass
-#' @aliases getMetaboliteClass,MSP-method
-#' @title getMetaboliteClass returns names of compounds in MSP object
+#' @name information
+#' @aliases information,MSP-method
+#' @title information returns information of metabolites in MSP object
 #' @return character
-#' @description getMetaboliteClass returns names of compounds in MSP object.
-#' @param object object of class MSP
+#' @description information returns information in MSP object.
+#' @param x object of class MSP, see ?convert2MSP for further information
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
 #' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
 #'                          splitIndMZ = 2, splitIndRT = NULL)
-#' getMetaboliteClass(finalMSP)
+#' information(finalMSP)
 #' @export
-setGeneric("getMetaboliteClass", 
-           function(object) standardGeneric("getMetaboliteClass"))
+setGeneric("information", function(x) standardGeneric("information"))
 
-#' @describeIn getMetaboliteClass returns class names of compounds in MSP 
-#' objects
+#' @describeIn information returns information of metabolites in MSP object
 #' @export
-getMetaboliteClass <- function(object) {
-    ## get classes of compounds in an msp object
-    return(object@classes)
+information <- function(x) x@information
+
+#' @name information<-
+#' @aliases information<-,MSP,character-method
+#' @title information<- sets information in MSP object
+#' @return MSP
+#' @description information<- sets information in MSP object
+#' @param x object of class MSP, see ?convert2MSP for further information
+#' @param value character vector with new information
+#' @docType methods
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc")
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+#'                          splitIndMZ = 2, splitIndRT = NULL)
+#' information(finalMSP) <- rep("Unknown")
+#' @export
+setGeneric("information<-", function(x, value) standardGeneric("information<-"))
+
+#' @describeIn information<- sets information of metabolites in MSP object
+#' @export
+"information<-" <- function(x, value) {
+    x@information <- value
+    ##validObject(x) 
+    x
 }
+# setMethod(f = "information<-", signature = c("MSP", "character"), 
+#           definition = function(x, value) {
+#               x@information <- value
+#               validObject(x)
+#               x
+#           }
+# )
 
-#' @name getAdduct
-#' @aliases getAdduct,MSP-method
-#' @title getAdduct returns adduct ion names of compounds in MSP 
+#' @name classes
+#' @aliases classes,MSP-method
+#' @title classes returns class names of compounds in MSP object
+#' @return character
+#' @description classes returns class names of compounds in MSP object.
+#' @param x object of class MSP
+#' @docType methods
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc")
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+#'                          splitIndMZ = 2, splitIndRT = NULL)
+#' classes(finalMSP)
+#' @export
+setGeneric("classes", function(x) standardGeneric("classes"))
+
+#' @describeIn classes returns class names of metabolites in MSP object
+#' @export
+classes <- function(x) x@classes
+
+#' @name classes<-
+#' @aliases classes<-,MSP,character-method
+#' @title classes<- sets information in MSP object
+#' @return MSP
+#' @description classes<- sets information in MSP object
+#' @param x object of class MSP, see ?convert2MSP for further information
+#' @param value character vector with new classes
+#' @docType methods
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc")
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+#'                          splitIndMZ = 2, splitIndRT = NULL)
+#' classes(finalMSP) <- rep("Unknown")
+#' @export
+setGeneric("classes<-", function(x, value) standardGeneric("classes<-"))
+
+#' @describeIn classes<- sets information of metabolites in MSP object
+#' @export
+"classes<-" <- function(x, value) {
+    x@classes <- value
+    ##validObject(x)
+    x
+}
+# setMethod(f = "classes<-", signature = c("MSP", "character"), 
+#           definition = function(x, value) {
+#               x@classes <- value
+#               validObject(x)
+#               x
+#           }
+# )
+
+
+#' @name adduct
+#' @aliases adduct,MSP-method
+#' @title adduct returns adduct ion names of compounds in MSP 
 #' object
 #' @return character
-#' @description getAdduct returns about adduct ion names of compounds in 
+#' @description adduct returns about adduct ion names of compounds in 
 #' MSP object.
-#' @param object object of class MSP
+#' @param x object of class MSP
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
 #' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
 #'                          splitIndMZ = 2, splitIndRT = NULL)
-#' getAdduct(finalMSP)
+#' adduct(finalMSP)
 #' @export
-setGeneric("getAdduct", function(object) standardGeneric("getAdduct"))
+setGeneric("adduct", function(x) standardGeneric("adduct"))
 
-#' @describeIn getAdduct returns adduct inon names of compounds in MSP objects
+#' @describeIn adduct returns adduct inon names of compounds in MSP objects
 #' @export
-getAdduct <- function(object) {
-    ## get information about adduct ions of compounds in an msp object
-    return(object@adduct)
+adduct <- function(x) return(x@adduct)
+
+
+#' @name adduct<-
+#' @aliases adduct<-,MSP,character-method
+#' @title adduct<- sets adduct ion names in MSP object
+#' @return MSP
+#' @description adduct<- sets adduct ion names in MSP object
+#' @param x object of class MSP, see ?convert2MSP for further information
+#' @param value character vector with new adduct ion names
+#' @docType methods
+#' @examples 
+#' data("sd02_deconvoluted", package = "MetCirc")
+#' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+#'                          splitIndMZ = 2, splitIndRT = NULL)
+#' adduct(finalMSP) <- rep("Unknown")
+#' @export
+setGeneric("adduct<-", function(x, value) standardGeneric("adduct<-"))
+
+#' @describeIn adduct<- sets adduct ion names of metabolites in MSP object
+#' @export
+"adduct<-" <- function(x, value) {
+    x@adduct <- value
+    ##validObject(x) 
+    x
 }
+# setMethod(f = "adduct<-", signature = c("MSP", "character"), 
+#           definition = function(x, value) {
+#               x@adduct <- value
+#               validObject(x)
+#               x
+#           }
+# )
+
 
 #' @name getRT
 #' @aliases getRT,MSP-method
 #' @title getRT returns precursor RT values of an MSP object
 #' @return numeric
 #' @description getRT returns a numeric vector with all retention time values
-#' @param object object of class MSP
+#' @param x object of class MSP
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
@@ -479,14 +581,11 @@ getAdduct <- function(object) {
 #'                      splitIndMZ = 2, splitIndRT = NULL)
 #' getRT(finalMSP)
 #' @export
-setGeneric("getRT", function(object) standardGeneric("getRT"))
+setGeneric("getRT", function(x) standardGeneric("getRT"))
 
 #' @describeIn getRT returns precursor RT values of an MSP object
 #' @export
-getRT <- function(object) {
-    ## get rt in msp object
-    return(object@rt)
-}
+getRT <- function(x) x@rt
 
 #' @name getPrecursorMZ
 #' @aliases getPrecursorMZ,MSP-method
@@ -494,7 +593,7 @@ getRT <- function(object) {
 #' @return numeric
 #' @description getPrecursorMZ returns a numeric vector with 
 #'  precursor m/z values
-#' @param object object of class MSP
+#' @param x object of class MSP
 #' @docType methods
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
@@ -502,14 +601,11 @@ getRT <- function(object) {
 #'                          splitIndMZ = 2, splitIndRT = NULL)
 #' getPrecursorMZ(finalMSP)
 #' @export
-setGeneric("getPrecursorMZ", function(object) standardGeneric("getPrecursorMZ"))
+setGeneric("getPrecursorMZ", function(x) standardGeneric("getPrecursorMZ"))
 
 #' @describeIn getPrecursorMZ returns precursor m/z values of an MSP object
 #' @export
-getPrecursorMZ <- function(object) {
-    ## get precursor mz of compounds in an msp object
-    return(object@mz)
-}
+getPrecursorMZ <- function(x) x@mz
 
 #' @name [
 #' @aliases [,MSP,numeric-method
@@ -560,7 +656,7 @@ setMethod("[",
 #' data("sd02_deconvoluted", package = "MetCirc")
 #' finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
 #'                          splitIndMZ = 2, splitIndRT = 3)
-#' finalMSPdf <- getMSP(finalMSP)
+#' finalMSPdf <- peaks(finalMSP)
 #' getBegEndIndMSP(finalMSPdf)
 #' @export
 getBegEndIndMSP <- function(msp) {
