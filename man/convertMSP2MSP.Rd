@@ -11,7 +11,8 @@ convertMSP2MSP(msp)
 "Num Peaks:" and information on fragments and peak areas}
 }
 \value{
-convertMSP2MSP returns an object of class MSP
+convertMSP2MSP returns an object of class MSP. It will not retrieve
+information on CLASS, INFORMATION and ADDUCT.
 }
 \description{
 Convert msp data frame into MSP format
@@ -20,7 +21,8 @@ Convert msp data frame into MSP format
 msp data frame from other sources.
 }
 \examples{
-\dontrun{convertMSP2MSP(msp = msp)}
+data("convertMSP2MSP", package = "MetCirc")
+convertMSP2MSP(msp = msp2msp)
 }
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}

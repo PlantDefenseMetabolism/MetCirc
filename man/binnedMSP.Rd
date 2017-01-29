@@ -6,7 +6,25 @@
 \title{Example data for \code{MetCirc}: \code{binnedMSP}}
 \format{matrix}
 \source{
-data("idMSMStoMSP.RData", package = "MetCirc")
+data("idMSMStissueproject", package = "MetCirc")
+data("idMSMStoMSP", package = "MetCirc")
+tissueSPL <- compartmentTissue[compartmentTissue[,"SPL"] == TRUE, 1]
+tissueLIM <- compartmentTissue[compartmentTissue[,"LIM"] == TRUE, 1]
+tissueANT <- compartmentTissue[compartmentTissue[,"ANT"] == TRUE, 1]
+tissueSTY <- compartmentTissue[compartmentTissue[,"STY"] == TRUE, 1]
+
+## truncate tissue
+tissueSPL <- tissue[tissue[,4] %in% tissueSPL,] 
+tissueLIM <- tissue[tissue[,4] %in% tissueLIM,]
+tissueANT <- tissue[tissue[,4] %in% tissueANT,]
+tissueSTY <- tissue[tissue[,4] %in% tissueSTY,]
+
+## create msp and combine msp objects of different tissues
+finalMSP <- convert2MSP(tissueSPL, splitIndMZ = 1, splitIndRT = 2)
+finalMSP <- combine(finalMSP, convert2MSP(tissueLIM))
+finalMSP <- combine(finalMSP, convert2MSP(tissueANT))
+finalMSP <- combine(finalMSP, convert2MSP(tissueSTY))
+
 ## create vector with compartments
 compSPL <- rep("SPL", length(convert2MSP(tissueSPL)))
 compLIM <- rep("LIM", length(convert2MSP(tissueLIM)))

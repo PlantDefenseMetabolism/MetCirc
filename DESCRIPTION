@@ -1,8 +1,8 @@
 Package: MetCirc
 Type: Package
 Title: A workflow to analyse and visualise metabolomics data
-Version: 1.1.3
-Date: 2016-11-04
+Version: 1.1.4
+Date: 2017-01-28
 Authors@R: c(person(given = "Thomas", family = "Naake",
     email = "thomasnaake@googlemail.com",
     role = c("aut","cre")),
@@ -15,7 +15,7 @@ VignetteBuilder: knitr
 Depends:
     R (>= 3.3),
     amap (>= 0.8),
-    circlize (>= 0.3.5),
+    circlize (>= 0.3.8),
     graphics (>= 3.3),
     grDevices (>= 3.3),
     methods (>= 3.3),

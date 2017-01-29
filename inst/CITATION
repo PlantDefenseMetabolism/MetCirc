@@ -5,10 +5,10 @@ citEntry(entry="manual",
          author = personList(
            person(given="Thomas", family="Naake"),
            person(given="Emmanuel", family="Gaquerel")),
-         note = "R package version 0.99.5",
-         volume = "28",
-         pages = "288-289",
+         note = "R package version 1.1.4",
+         ##volume = "",
+         ##pages = "",
          textVersion = paste("Thomas Naake and Emmanuel Gaquerel (2016).",
            "MetCirc: a workflow to analyse and visualise metabolomics data.",
-           "R package version 0.99.5")
+           "R package version 1.1.4")
 )
