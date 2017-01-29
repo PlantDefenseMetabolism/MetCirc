@@ -145,7 +145,10 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
                               selected = "mz"),
                           
                           uiOutput("annotationName"),
-                          ##uiOutput("annotationClass"),
+                          uiOutput("annotationClass"),
+                          uiOutput("annotationInformation"),
+                          uiOutput("annotationAdduct"),
+                          uiOutput("annotationButton"),
                           actionButton("resetClickIndices", "Reset features"),
                           actionButton("stop", "Stop and export \n selected features")
                       )),
@@ -164,60 +167,120 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
             fluidRow(
                 verbatimTextOutput("dimension_display"),
                 htmlOutput("clickConnectedFeature"),
-                textOutput("test"), 
                 verbatimTextOutput("dblClickFeature")
             )
         )
     )
-
- 
     
     server <- function(input, output, session) {
         
+        
+        ## annotation
+        if(!is.null(msp)) {mspannotation <- reactiveValues(
+            names = msp@names, information = msp@information, 
+            classes = msp@classes, adduct = msp@adduct)}
+        
         output$annotationName <- renderUI({
             if (!is.null(msp)) {
-                if (length(indClick$ind) > 0) {
-                
-                    textInput("name", label = "metabolite name", placeholder = unique(msp@names)) 
-                    #textInput("class", label = "metabolite class", placeholder = unique(msp@classes))
-                
+                if (length(indClick$ind) > 0 && onCircle$is) {
+                    
+                    textInput("names", label = "name", 
+                              value = names(MSP())[indMSP()])
                 } else NULL  
             }
         })
         
+        output$annotationClass <- renderUI({
+            if (!is.null(msp)) {
+                if (length(indClick$ind) > 0 && onCircle$is) {
+                    textInput("classes", label = "class", 
+                              value = isolate(classes(MSP())[indMSP()])) 
+                } else NULL  
+            }
+        })
+        
+        output$annotationInformation <- renderUI({
+            if (!is.null(msp)) {
+                if (length(indClick$ind) > 0 && onCircle$is) {
+                #if (onCircle$is) {
+                    textInput("information", label = "information", 
+                              value = isolate(information(MSP())[indMSP()])) 
+                } else NULL  
+            }
+        })
+        output$annotationAdduct <- renderUI({
+            if (!is.null(msp)) {
+                if (length(indClick$ind) > 0 && onCircle$is) {
+                    textInput("adduct", label = "adduct", 
+                              value = isolate(adduct(MSP())[indMSP()])) 
+                } else NULL  
+            }
+        })
+        
+        
+        output$annotationButton <- renderUI({
+            if (!is.null(msp)) {
+                if (length(indClick$ind) > 0 && onCircle$is) 
+                actionButton(inputId = "annotate", label = "update annotation")
+                } 
+        })
+        
         indMSP <- reactive({
             if (length(indClick$ind) > 0) {
-                nameClick <- GN()[indClick$ind]
-                trNameClick <- truncateName(nameClick, roundDigits = NULL, group = TRUE)
-                which(trNameClick == groupname)
+            nameClick <- GN()[indClick$ind]
+            trNameClick <- truncateName(nameClick, roundDigits = NULL, group = TRUE)
+            which(trNameClick == groupname)
             }
-                
-            
         })
         
+        indMSPAnn <- eventReactive(input$annotate, {
+            indMSP()
+        })
+        
+        ## eventReactive for input$name
+        annotateNames <- eventReactive(input$annotate, {
+                    as.character(input$names)
+        })
+        ## eventReactive for input$classes
+        annotateClasses <- eventReactive(input$annotate, {
+                    as.character(input$classes)
+        })
+        ## eventReactive for input$information
+        annotateInformation <- eventReactive(input$annotate, {
+                    as.character(input$information)
+        })
+        ## eventReactive for input$adduct
+        annotateAdduct <- eventReactive(input$annotate, {
+            as.character(input$adduct)
+        })
+        
+        if (!is.null(msp)) {
         observe({
-            if (!is.null(indMSP())) {
-                if (!is.null(input$name))
-                    msp[indMSP()]@names <- isolate(input$name)
-            }
+            mspannotation$names[indMSPAnn()] <- annotateNames()
         })
-        
-        output$test <- renderText({
-            if (length(indMSP) > 0) {
-                input$name
-                #msp[indMSP()]@names
-            }
+        observe({
+            mspannotation$classes[indMSPAnn()] <- annotateClasses()
         })
-        
-        # output$annotationName <- renderUI({
-        #     if (!is.null(msp)) {
-        #         if (length(indClick$ind) > 0) {
-        #            
-        #         } else NULL
-        #            
-        #         
-        #     }
-        # })
+        observe({
+            mspannotation$information[indMSPAnn()] <- annotateInformation()
+        })
+        observe({
+                mspannotation$adduct[indMSPAnn()] <- annotateAdduct()
+        })
+        }
+ 
+        ## reactive expression for msp
+        MSP <- reactive({
+            if (!is.null(msp)) {
+                    msp <- new("MSP", msp = msp@msp, 
+                    names = mspannotation$names, 
+                    classes = mspannotation$classes,
+                    information = mspannotation$information,
+                    adduct = mspannotation$adduct, mz = msp@mz, rt = msp@rt)
+            } else {msp <- NULL}
+            msp
+        })
+        ## end annotation
 
         ## use predefined similarityMatrix
         simMat <- reactive({
@@ -515,7 +578,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
         output$clickConnectedFeature <- renderUI({ 
             if (!is.null(onCircle$is)) {
                 if (onCircle$is)
-                    HTML(printInformationSelect(GN(), msp = msp, 
+                    HTML(printInformationSelect(GN(), msp = MSP(), 
                         ind = indClick$ind, lMatInd = linkMatIndsClick(), 
                         linkMatrixThreshold = LinkMatrix_threshold(), 
                         similarityMatrix = simMat(), roundDigits = input$precision))  
@@ -539,11 +602,14 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
                 return()
             else {
                 circos.clear()
-                stopApp(as.character(paste(
-                    groupMZ[indDblClickMZ$ind], 
-                    nameMZ[indDblClickMZ$ind],
-                    ##sapply(strsplit(nameMZ[indDblClickMZ$ind], split="_"), function(x) x[3]),
-                    sep="_")))
+                selectedFeatures <- as.character(paste(
+                    groupMZ[indDblClickMZ$ind], nameMZ[indDblClickMZ$ind], 
+                    sep="_"))
+                stopApp(
+                    if (!is.null(msp)) {
+                        list(msp = MSP(), selectedFeatures = selectedFeatures)
+                    } else {selectedFeatures}
+                    )
             }
         })
         
@@ -643,7 +709,7 @@ printInformationSelect <- function(groupname, msp = NULL,
             selectFeat <- truncateName(selectFeat, roundDigits = roundDigits, group = T)
             return(paste0(selectFeat, " (", names(selectedFeat), ", ", 
                 selectedFeat@names, ", ", 
-                selectedFeat@classes, ") ",
+                selectedFeat@classes, ",", selectedFeat@adduct,  ") ",
                  "does not connect to any feature"))
         } else {
             matchedConn <- match(mzRTcon, mzRTMSP)
@@ -659,7 +725,7 @@ printInformationSelect <- function(groupname, msp = NULL,
 
                 newFeat <- paste0(connectI, " (", degreeSimilarityI, ", ", 
                     connFeatI@names, ", ", connFeatI@information, ", ", 
-                    connFeatI@classes, ")", "<br/>")
+                    connFeatI@classes, ", ", connFeatI@adduct, ")", "<br/>")
                     
                 connChar <- c(connChar, newFeat)
             }
@@ -669,7 +735,7 @@ printInformationSelect <- function(groupname, msp = NULL,
             
             return(paste0(selectFeat, " (", selectedFeat@names, ", ", 
                 selectedFeat@information, ", ", 
-                selectedFeat@classes, ") connects to ", 
+                selectedFeat@classes, ", ", selectedFeat@adduct, ") connects to ", 
                 " <br/>", connChar))
         }
     }
