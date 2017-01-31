@@ -56,5 +56,7 @@ MetCirc:::printInformationSelect(groupname = groupname,
 }
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
+45, 47, 48   ind 34
+0.8-1
 }
 

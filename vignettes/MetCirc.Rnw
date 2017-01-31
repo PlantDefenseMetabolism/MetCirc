@@ -121,7 +121,7 @@ library("knitr")
 
 \section{Prepare the environment}
 To install \Rpackage{MetCirc} enter the following to the \R~console
-<<eval=TRUE>>=
+<<eval=FALSE>>=
 source("https://bioconductor.org/biocLite.R")
 biocLite("MetCirc")
 @
@@ -137,7 +137,7 @@ Load example data sets from \citet{Li2015}. sd01\_outputXCMS is the
 output of the \Rpackage{XCMS} and \Rpackage{CAMERA} processing and statistical
 analysis and \Rpackage{XCMS} and \Rpackage{CAMERA} scripts (see \citet{Li2015}
 for further information). sd02\_deconvoluted comprises 360 idMS/MS 
-deconvoluted spectra with fragment ions (m/z, retention time, relative
+deconvoluted spectra with fragment ions (m/z, chromatographic retention time, relative
 intensity in \%) and the corresponding principal component group with the 
 precursor ion. 
 <<eval=TRUE,echo=c(1:3)>>=
@@ -478,10 +478,10 @@ class, adduct ion name and further information) will be printed to the
 interface when (single-) clicking on MS/MS features. Note, that on the 
 sidebar on the right side text fields will appear, that allow for changing 
 the annotation of the selected feature. Click "update annotation" to save the 
-changes to the \Robject{MSP-object}. On exiting \Robbject{shinyCircos} via
+changes to the \Robject{MSP-object}. On exiting \Robject{shinyCircos} via
 the exit button, selected precursors and the (updated) \Robject{MSP-object} will
 be returned to the console. In the example above, enter 
-\Robject{selectedFeatures$x} to retrieve the \Robject{MSP-object}. \newline
+\Robject{selectedFeatures\$msp} to retrieve the \Robject{MSP-object}. \newline
 
 \Rpackage{MetCirc} allows also to create such figures outside of an
 interactive context, which might be helpful to create figures and export them 

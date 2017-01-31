@@ -185,7 +185,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
                 if (length(indClick$ind) > 0 && onCircle$is) {
                     
                     textInput("names", label = "name", 
-                              value = names(MSP())[indMSP()])
+                              value = isolate(names(MSP())[indMSP()]))
                 } else NULL  
             }
         })
@@ -194,7 +194,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
             if (!is.null(msp)) {
                 if (length(indClick$ind) > 0 && onCircle$is) {
                     textInput("classes", label = "class", 
-                              value = isolate(classes(MSP())[indMSP()])) 
+                              value = isolate(classes(MSP())[indMSP()]))
                 } else NULL  
             }
         })
@@ -232,6 +232,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
             which(trNameClick == groupname)
             }
         })
+    
         
         indMSPAnn <- eventReactive(input$annotate, {
             indMSP()
@@ -356,7 +357,7 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
         })
         
         ## Click: which is the current sector?
-        indClick <- reactiveValues(ind = NULL, name = NULL)
+        indClick <- reactiveValues(ind = NULL)
         observe({
             if (!is.null(input$circosClick$x)) 
                 indClick$ind <- minFragCart2Polar(input$circosClick$x, 
@@ -410,9 +411,6 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
             isolate(indDblClick$new <- NULL)
             isolate(onCircle$is <- FALSE)
             isolate(indClick$ind <- NULL)
-            ##isolate(indClickRT$ind <- NULL)
-            ##isolate(indClickCluster$ind <- NULL)
-            ##isolate(indClick$new <- NULL)
         })
         
         ## reset indClick when changing radio button order
@@ -433,11 +431,9 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
                 newMZ <- paste(groupMZ, nameMZ, sep = "_")
                 newIndMZ <- match(indDblClick$new, newMZ)
                 
-                ##if (onCircle$is) {
-                    if (isolate(newIndMZ %in% indDblClickMZ$ind)) {
-                        indDblClickMZ$ind <- isolate(indDblClickMZ$ind[-which(newIndMZ == indDblClickMZ$ind)]) 
-                    } else {indDblClickMZ$ind <- isolate(c(indDblClickMZ$ind, newIndMZ))}
-                ##} 
+                if (isolate(newIndMZ %in% indDblClickMZ$ind)) {
+                    indDblClickMZ$ind <- isolate(indDblClickMZ$ind[-which(newIndMZ == indDblClickMZ$ind)]) 
+                } else {indDblClickMZ$ind <- isolate(c(indDblClickMZ$ind, newIndMZ))}
             } 
             }
          })
@@ -450,7 +446,6 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
                     newRT <- paste(groupRT, nameRT, sep = "_")
                     newIndRT <- match(indDblClick$new, newRT)
                  
-                    ##if (onCircle$is) 
                     if (isolate(newIndRT %in% indDblClickRT$ind)) {
                         indDblClickRT$ind <- isolate(indDblClickRT$ind[-which(newIndRT == indDblClickRT$ind)])
                     } else {indDblClickRT$ind <- isolate(c(indDblClickRT$ind, newIndRT))}
@@ -464,12 +459,10 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
                 if(!is.null(indDblClick$new)) {
                     newCl <- paste(groupClustering, nameClustering, sep = "_")
                     newIndCl <- match(indDblClick$new, newCl)
-                 
-                    ##if (onCircle$is) {
+                
                     if (isolate(newIndCl %in% indDblClickCluster$ind)) {
                         indDblClickCluster$ind <- isolate(indDblClickCluster$ind[-which(newIndCl == indDblClickCluster$ind)])
-                    } else {indDblClickCluster$ind <- isolate(c(indDblClickCluster$ind, newIndCl))}   
-                    ##} 
+                    } else {indDblClickCluster$ind <- isolate(c(indDblClickCluster$ind, newIndCl))}  
                 }
              }
         })
@@ -487,16 +480,8 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
             if (onCircle$is) {
                 if (input$order == "mz") {
                     replayPlot(PlotHighlightMZ)
-                    ##if (length(indDblClickMZ$ind) > 0) {
-                        highlight(groupnameMZ, c(indClick$ind, indDblClickMZ$ind), 
-                                  LinkMatrix_threshold())  
-                    ##} else {
-                    ##    plotCircos(groupnameMZ, LinkMatrix_threshold(), 
-                    ##               initialize=FALSE, featureNames = FALSE, 
-                    ##               groupSector = FALSE, groupName = FALSE, 
-                    ##               links = TRUE, highlight = TRUE)
-                    ##}
-                    
+                    highlight(groupnameMZ, c(indClick$ind, indDblClickMZ$ind), 
+                            LinkMatrix_threshold())  
                 }
                         
                 if (input$order == "retentionTime") {
@@ -578,22 +563,20 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
         output$clickConnectedFeature <- renderUI({ 
             if (!is.null(onCircle$is)) {
                 if (onCircle$is)
-                    HTML(printInformationSelect(GN(), msp = MSP(), 
-                        ind = indClick$ind, lMatInd = linkMatIndsClick(), 
+                    HTML(printInformationSelect(groupname = groupname, 
+                        msp = MSP(), ind = indMSP(), lMatInd = linkMatIndsClick(), 
                         linkMatrixThreshold = LinkMatrix_threshold(), 
-                        similarityMatrix = simMat(), roundDigits = input$precision))  
+                        similarityMatrix = similarityMatrix, roundDigits = input$precision))  
             }
         })
         
         output$dblClickFeature <- renderText({
             if (length(indDblClickMZ$ind) > 0) 
                 c("(permanently) selected features: ", 
-                    #paste(
-                        truncateName(groupnameMZ[indDblClickMZ$ind], roundDigits = input$precision, group = TRUE)
-                        #groupMZ[indDblClickMZ$ind], nameMZ[indDblClickMZ$ind],
-                        #sep="_")
+                        truncateName(groupnameMZ[indDblClickMZ$ind], 
+                                    roundDigits = input$precision, group = TRUE)
                   )
-            else "no features selected"
+            else "no features (permanently) selected"
         })
         
         ## on exit
@@ -647,44 +630,42 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
 #' ## use only a selection
 #' binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
+#' groupname <- rownames(similarityMat)
 #' ## order similarityMat according to mz
-#' simMat <- createOrderedSimMat(similarityMat, order = "mz")
-#' groupname <- rownames(simMat)
-#' linkMat_thr <- createLinkMatrix(simMat, 0.9, 1) 
-#' ind <- 19
-#' linkMatInds <- getLinkMatrixIndices(groupname[ind], linkMat_thr)
+#' simMat <- createOrderedSimMat(similarityMat, order = "mz") 
+#' groupnameMZ <- rownames(simMat)
+#' linkMat_thr <- createLinkMatrix(simMat, 0.8, 1) 
+#' ind <- 2
+#' indMZ <- which(groupname[ind] == truncateName(groupnameMZ, NULL, group = TRUE))
+#' linkMatInds <- getLinkMatrixIndices(groupnameMZ[indMZ], linkMat_thr)
 #' MetCirc:::printInformationSelect(groupname = groupname, 
 #'  msp = NULL, ind = ind, lMatInd = linkMatInds, 
 #'  linkMatrixThreshold = linkMat_thr, 
-#'  similarityMatrix = simMat, roundDigits = 2)
+#'  similarityMatrix = similarityMat, roundDigits = 2)
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 printInformationSelect <- function(groupname, msp = NULL, 
                 ind, lMatInd, linkMatrixThreshold, similarityMatrix, roundDigits = 2) {
-    ## get group and name from groupname argument
-    ## groupname is a vector containing information about group and name,
-    ## where group is the first element and name the last element separated by _
-    group <- lapply(strsplit(groupname, split = "_"), "[", 1)
-    group <- unlist(group)
-    name <- lapply(strsplit(groupname, split = "_"), function (x) x[length(x)])
-    name <- unlist(name)
-        
+    
+    ## truncate name of linkMatrixThreshold
     lMatThr <- linkMatrixThreshold 
     if (is.null(msp)) {
         ## selected feature
         selectedFeat <- groupname[ind]
-        ## get connected features
-        connFeat <- unique(as.vector(lMatThr[lMatInd, c("name1", "name2")]))
-        ## remove selectedFeat from connFeat
-        if (selectedFeat %in% connFeat) 
-            connFeat <- connFeat[-which(connFeat == selectedFeat)]
-                
-        selectedFeat <- truncateName(selectedFeat, roundDigits = roundDigits, group = T)
-        connFeat <- truncateName(connFeat, roundDigits = roundDigits, group = T)
         
-        if (length(lMatInd) > 0) {
-            connFeat <- paste(connFeat, collapse = " <br/>")
+        
+
+        
+        if (length(lMatInd) >= 1) {
+            ## get connected features
+            connect <- unique(as.vector(lMatThr[lMatInd, c("name1", "name2")]))
+            selectedFeat <- truncateName(selectedFeat, roundDigits, TRUE)
+            connect <- truncateName(connect, roundDigits, TRUE)
+            ## remove selectedFeat from connect
+            if (selectedFeat %in% connect) 
+                connect <- connect[-which(connect == selectedFeat)]
+            connect <- paste(connect, collapse = " <br/>")
             
-            return(paste(c(selectedFeat, "connects to", "<br/>", connFeat), 
+            return(paste(c(selectedFeat, "connects to", "<br/>", connect), 
                             collapse = " "))
         } else 
             return(paste(c(selectedFeat, "does not connect to any feature"), 
@@ -693,49 +674,51 @@ printInformationSelect <- function(groupname, msp = NULL,
     
     } else { ## if !is.null(msp)
             
-        ## find clicked feature
-        mzRTMSP <- paste(msp@mz, msp@rt, sep="/")
-        matchedHovMZRT <- match(name, mzRTMSP)
-        selectedFeat <- msp[matchedHovMZRT[ind]]
+        ## clicked feature: create msp and get identifier
+        selectFeatMSP <- msp[ind]
         selectFeat <- groupname[ind] 
-        ## connected features
-        connect <- unique(as.vector(lMatThr[lMatInd, c("name1", "name2")]))
-        ## remove duplicated hovFeat in connect
-        if (selectFeat %in% connect) connect <- connect[-which(connect == selectFeat)]
-        mzRTcon <- sapply(strsplit(connect, split="_"), function(x) x[3])
-    
-        
-        if (length(connect) == 0) {
-            selectFeat <- truncateName(selectFeat, roundDigits = roundDigits, group = T)
-            return(paste0(selectFeat, " (", names(selectedFeat), ", ", 
-                selectedFeat@names, ", ", 
-                selectedFeat@classes, ",", selectedFeat@adduct,  ") ",
+
+        if (length(lMatInd) == 0) {
+            selectFeat <- truncateName(selectFeat, roundDigits = roundDigits, 
+                                       group = TRUE)
+            return(paste0(selectFeat, " (", selectFeatMSP@names, ", ", 
+                selectFeatMSP@information, ", ", 
+                selectFeatMSP@classes, ",", selectFeatMSP@adduct,  ") ",
                  "does not connect to any feature"))
         } else {
-            matchedConn <- match(mzRTcon, mzRTMSP)
-            connFeat <- msp[matchedConn]
+            ## connected features: find
+            connect <- unique(as.vector(lMatThr[lMatInd, c("name1", "name2")]))
+            connect <- truncateName(connect, NULL, TRUE)
+            ## remove duplicated hovFeat in connect
+            if (selectFeat %in% connect) connect <- connect[-which(connect == selectFeat)]
+            
+            matchedInd <- match(connect, groupname)
+            connectMSP <- msp[matchedInd]
             connChar <- character()
             degreeSimilarity <- similarityMatrix[selectFeat, ]
             
             for (i in 1:length(connect)) {
-                connFeatI <- connFeat[i]
+                connectMSPI <- connectMSP[i]
                 connectI <- connect[i]
                 degreeSimilarityI <- round(degreeSimilarity[connectI],3)
-                connectI <- truncateName(connectI, roundDigits = roundDigits, group = T)
+                degreeSimilarityI <- as.numeric(degreeSimilarityI)
+                connectI <- truncateName(connectI, roundDigits = roundDigits, 
+                                         group = TRUE)
 
                 newFeat <- paste0(connectI, " (", degreeSimilarityI, ", ", 
-                    connFeatI@names, ", ", connFeatI@information, ", ", 
-                    connFeatI@classes, ", ", connFeatI@adduct, ")", "<br/>")
+                    connectMSPI@names, ", ", connectMSPI@information, ", ", 
+                    connectMSPI@classes, ", ", connectMSPI@adduct, ")", "<br/>")
                     
                 connChar <- c(connChar, newFeat)
             }
             
             connChar <- paste(connChar, collapse=" ")
-            selectFeat <- truncateName(selectFeat, roundDigits = roundDigits, group = T)
+            selectFeat <- truncateName(selectFeat, roundDigits = roundDigits, 
+                                       group = TRUE)
             
-            return(paste0(selectFeat, " (", selectedFeat@names, ", ", 
-                selectedFeat@information, ", ", 
-                selectedFeat@classes, ", ", selectedFeat@adduct, ") connects to ", 
+            return(paste0(selectFeat, " (", selectFeatMSP@names, ", ", 
+                selectFeatMSP@information, ", ", 
+                selectFeatMSP@classes, ", ", selectFeatMSP@adduct, ") connects to ", 
                 " <br/>", connChar))
         }
     }
