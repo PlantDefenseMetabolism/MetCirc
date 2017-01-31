@@ -319,7 +319,8 @@ according to:
     NDP = \frac{\sum(W_{S1, i} \cdot W_{S2, i}) ^ 2}{ \sum(W_{S1, i} ^ 2) * \sum(W_{S2, i} ^ 2) },
 \end{equation*}
 
-with S1 and S2 the spectra 1 and 2, respectively, and j the number of columns. 
+with S1 and S2 the spectra 1 and 2, respectively, of the i$th$ of j common peaks
+differing by the tolerance parameter specified in \texttt{binning}. 
 Weights are calculated according to $W = [ peak~intensity] ^{m} \cdot [m/z]^n$,
 with m = 0.5 and n = 2 as default values as suggested by MassBank.
 with $W = [ peak~intensity] ^{m} \cdot [m/z]^n$.
