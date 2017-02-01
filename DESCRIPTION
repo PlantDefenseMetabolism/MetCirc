@@ -1,6 +1,7 @@
 Package: MetCirc
 Type: Package
-Title: A workflow to analyse and visualise metabolomics data
+Title: Navigating mass spectral similarity in high-resolution MS/MS 
+    metabolomics data
 Version: 1.1.4
 Date: 2017-01-28
 Authors@R: c(person(given = "Thomas", family = "Naake",
@@ -27,7 +28,11 @@ Suggests:
     knitr (>= 1.11)    
 biocViews: Metabolomics, MassSpectrometry, Visualization
 Description: MetCirc comprises a workflow to interactively explore 
-  metabolomics data: create MSP, bin m/z values, calculate similarity between
-  precursors and visualise similarities.
+  high-resolution MS/MS metabolomics data: create an MSP object, a 
+  format for MS/MS library data, bin m/z values of precursors, calculate 
+  similarity between precursors based on the normalised dot product and 
+  visualise similarities in a circular layout. Within the interactive framework
+  the user can annotate MS/MS features based on their similarity to 
+  (known) related MS/MS features. 
 License: GPL-2
 RoxygenNote: 5.0.1
