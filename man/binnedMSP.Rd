@@ -34,7 +34,7 @@ compSTY <- rep("STY", length(convert2MSP(tissueSTY)))
 compartment <- c(compSPL, compLIM, compANT, compSTY)
 binnedMSP <- binning(msp = finalMSP, tol = 0.01, 
                      group = compartment, method = "median")
-save(binnedMSP, file = "binnedMSP.RData")
+save(binnedMSP, file = "binnedMSP.RData", compress = "bzip2")
 }
 \usage{
 binnedMSP

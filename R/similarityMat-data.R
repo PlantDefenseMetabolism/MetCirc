@@ -8,8 +8,8 @@
 #' @return matrix
 #' @format matrix
 #' @source 
-#' data("binnedMSP.RData", package = "MetCirc")
+#' data("binnedMSP", package = "MetCirc")
 #' similarityMat <- createSimilarityMatrix(binnedMSP)
-#' save(similarityMat, file = "similarityMat.RData")
+#' save(similarityMat, file = "similarityMat.RData", compress = "xz")
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com} 
 NULL  

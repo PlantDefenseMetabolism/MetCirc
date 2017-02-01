@@ -43,20 +43,20 @@ data("binnedMSP", package = "MetCirc")
 ## use only a selection
 binnedMSP <- binnedMSP[c(1:20, 29:48, 113:132, 240:259),]
 similarityMat <- createSimilarityMatrix(binnedMSP)
+groupname <- rownames(similarityMat)
 ## order similarityMat according to mz
-simMat <- createOrderedSimMat(similarityMat, order = "mz")
-groupname <- rownames(simMat)
-linkMat_thr <- createLinkMatrix(simMat, 0.9, 1) 
-ind <- 19
-linkMatInds <- getLinkMatrixIndices(groupname[ind], linkMat_thr)
+simMat <- createOrderedSimMat(similarityMat, order = "mz") 
+groupnameMZ <- rownames(simMat)
+linkMat_thr <- createLinkMatrix(simMat, 0.8, 1) 
+ind <- 2
+indMZ <- which(groupname[ind] == truncateName(groupnameMZ, NULL, group = TRUE))
+linkMatInds <- getLinkMatrixIndices(groupnameMZ[indMZ], linkMat_thr)
 MetCirc:::printInformationSelect(groupname = groupname, 
  msp = NULL, ind = ind, lMatInd = linkMatInds, 
  linkMatrixThreshold = linkMat_thr, 
- similarityMatrix = simMat, roundDigits = 2)
+ similarityMatrix = similarityMat, roundDigits = 2)
 }
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
-45, 47, 48   ind 34
-0.8-1
 }
 

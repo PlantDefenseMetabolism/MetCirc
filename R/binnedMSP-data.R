@@ -39,6 +39,6 @@
 #' compartment <- c(compSPL, compLIM, compANT, compSTY)
 #' binnedMSP <- binning(msp = finalMSP, tol = 0.01, 
 #'                      group = compartment, method = "median")
-#' save(binnedMSP, file = "binnedMSP.RData")
+#' save(binnedMSP, file = "binnedMSP.RData", compress = "bzip2")
 #' @author Thomas Naake, \email{thomasnaake@googlemail.com}
 NULL  

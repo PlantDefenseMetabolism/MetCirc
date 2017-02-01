@@ -28,9 +28,8 @@
 #' finalMSP <- combine(finalMSP, convert2MSP(tissueANT))
 #' finalMSP <- combine(finalMSP, convert2MSP(tissueSTY))
 #' 
-#' ## optional:
 #' ## write finalMSP to idMSMStoMSP.RData
-#' save(finalMSP, file = "idMSMStoMSP.RData")
+#' save(finalMSP, file = "idMSMStoMSP.RData", compress = "xz")
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 NULL  
 ##

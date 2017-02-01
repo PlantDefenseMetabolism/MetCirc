@@ -6,9 +6,9 @@
 \title{Example data for \code{MetCirc}: \code{similarityMat}}
 \format{matrix}
 \source{
-data("binnedMSP.RData", package = "MetCirc")
+data("binnedMSP", package = "MetCirc")
 similarityMat <- createSimilarityMatrix(binnedMSP)
-save(similarityMat, file = "similarityMat.RData")
+save(similarityMat, file = "similarityMat.RData", compress = "xz")
 }
 \usage{
 similarityMat

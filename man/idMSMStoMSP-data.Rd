@@ -26,9 +26,8 @@ finalMSP <- combine(finalMSP, convert2MSP(tissueLIM))
 finalMSP <- combine(finalMSP, convert2MSP(tissueANT))
 finalMSP <- combine(finalMSP, convert2MSP(tissueSTY))
 
-## optional:
 ## write finalMSP to idMSMStoMSP.RData
-save(finalMSP, file = "idMSMStoMSP.RData")
+save(finalMSP, file = "idMSMStoMSP.RData", compress = "xz")
 }
 \usage{
 finalMSP
