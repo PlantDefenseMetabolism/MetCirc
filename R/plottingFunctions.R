@@ -324,7 +324,7 @@ truncateName <- function (groupname, roundDigits = 2, group = FALSE) {
 #' @name circosLegend
 #' @title Plot a legend for circos plot
 #' @description circosLegend plots a legend for circos plot using group names .
-#' @usage circosLegend(groupname, highlight = c(TRUE, FALSE), colour = NULL, cex = 1)
+#' @usage circosLegend(groupname, highlight = TRUE, colour = NULL, cex = 1)
 #' @param groupname vector containing "group" and "name" to display, that is 
 #' a unique identifier of the features, "group" and "name" have to be separated
 #' by "_" where "group" is the first and "name" is the last element
@@ -347,7 +347,7 @@ truncateName <- function (groupname, roundDigits = 2, group = FALSE) {
 #'  ## plot legend
 #'  circosLegend(groupname, highlight = TRUE, colour = NULL, cex = 1)
 #' @export
-circosLegend <- function(groupname, highlight = c(TRUE, FALSE), colour = NULL, cex = 1) {
+circosLegend <- function(groupname, highlight = TRUE, colour = NULL, cex = 1) {
     
     ## get group and name from groupname argument
     ## groupname is a vector containing information about group and name,

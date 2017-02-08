@@ -4,7 +4,7 @@
 \alias{circosLegend}
 \title{Plot a legend for circos plot}
 \usage{
-circosLegend(groupname, highlight = c(TRUE, FALSE), colour = NULL, cex = 1)
+circosLegend(groupname, highlight = TRUE, colour = NULL, cex = 1)
 }
 \arguments{
 \item{groupname}{vector containing "group" and "name" to display, that is 
