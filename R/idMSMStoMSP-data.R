@@ -23,10 +23,10 @@
 #' tissueSTY <- tissue[tissue[,4] %in% tissueSTY,]
 #' 
 #' ## create msp and combine msp objects of different tissues
-#' finalMSP <- convert2MSP(tissueSPL)
-#' finalMSP <- combine(finalMSP, convert2MSP(tissueLIM))
-#' finalMSP <- combine(finalMSP, convert2MSP(tissueANT))
-#' finalMSP <- combine(finalMSP, convert2MSP(tissueSTY))
+#' finalMSP <- convert2MSP(tissueSPL, rt = TRUE)
+#' finalMSP <- combine(finalMSP, convert2MSP(tissueLIM), rt = TRUE)
+#' finalMSP <- combine(finalMSP, convert2MSP(tissueANT), rt = TRUE)
+#' finalMSP <- combine(finalMSP, convert2MSP(tissueSTY), rt = TRUE)
 #' 
 #' ## write finalMSP to idMSMStoMSP.RData
 #' save(finalMSP, file = "idMSMStoMSP.RData", compress = "xz")

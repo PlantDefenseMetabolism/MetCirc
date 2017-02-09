@@ -25,10 +25,10 @@
 #' tissueSTY <- tissue[tissue[,4] %in% tissueSTY,]
 #' 
 #' ## create msp and combine msp objects of different tissues
-#' finalMSP <- convert2MSP(tissueSPL, splitIndMZ = 1, splitIndRT = 2)
-#' finalMSP <- combine(finalMSP, convert2MSP(tissueLIM))
-#' finalMSP <- combine(finalMSP, convert2MSP(tissueANT))
-#' finalMSP <- combine(finalMSP, convert2MSP(tissueSTY))
+#' finalMSP <- convert2MSP(tissueSPL, splitIndMZ = 1, splitIndRT = 2, rt = TRUE)
+#' finalMSP <- combine(finalMSP, convert2MSP(tissueLIM, splitIndRT = 2, rt = TRUE))
+#' finalMSP <- combine(finalMSP, convert2MSP(tissueANT, splitIndRT = 2, rt = TRUE))
+#' finalMSP <- combine(finalMSP, convert2MSP(tissueSTY, splitIndRT = 2, rt = TRUE))
 #' 
 #' ## create vector with compartments
 #' compSPL <- rep("SPL", length(convert2MSP(tissueSPL)))

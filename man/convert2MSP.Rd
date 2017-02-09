@@ -4,8 +4,8 @@
 \alias{convert2MSP}
 \title{Convert deconvoluted matrix into MSP format}
 \usage{
-convert2MSP(mm, splitPattern = "_", splitIndMZ = 1, splitIndRT = 2, 
- names = FALSE, information = FALSE, class = FALSE, adduct = FALSE)
+convert2MSP(mm, splitPattern = "_", splitIndMZ = 1, splitIndRT = NULL, 
+ rt = FALSE, names = FALSE, information = FALSE, class = FALSE, adduct = FALSE)
 }
 \arguments{
 \item{mm}{matrix, mm has to have four columns with colnames 
@@ -24,6 +24,13 @@ character string concerning separation by splitPattern}
 character string concerning separation by splitPattern, if NULL
 the retention time will be the mean of all retention time in the 
 pcgroup}
+
+\item{rt}{logical, should retention times be retrieved? If set to TRUE,
+convert2MSP will access the column "rt" in mm which contains the 
+retention time values for each fragment when splitIndRT is NULL,
+if rt is set to TRUE and splitIndRT is numeric, convert2MSP will access
+the column "id" to get the retention time at position splitIndRT 
+when splitting with splitPattern}
 
 \item{names}{logical, should names be retrieved? If set to TRUE, convert2MSP
 will access the column "names" in mm which contains the names of the 
@@ -50,22 +57,32 @@ Convert deconvoluted matrix into MSP format
 }
 \details{
 Creates a data entry for each precursor ion. Each entry in the 
-return object has the following information: NAME, RETENTIONTIME, 
-     PRECURSORMZ, METABOLITENAME, ADDUCTIONNAME, Num Peaks and a list of 
-     fragments together with their intensities. convert2MSP will access
-     the column name 'name', 'metNames' and 'class', respectively, 
-     if arguments are set to TRUE. In the fourth column there has 
-     to information about the precursor ion which will be assessed by 
-     splitPattern and splitInd. E.g. items in the fourth column can be in 
-     the form of '1_163.23', which has to be accessed by setting 
+return object has the following information: Num Peaks and a list of 
+     fragments together with their intensities; it will further contain
+     information on m/z values of the precursor ion, the retention time, 
+     metabolite name, class, adduct ion name and further information. 
+     convert2MSP will access
+     the column name  "rt", "names", "information", "class" and 
+     "adduct", respectively, 
+     if arguments are set to TRUE. The column "id" has to contain a unique
+     identifier for each MS/MS feature. It is obligatory that each element
+     in the column "id" contains the precursor m/z value, but may contain
+     furhter elements (e.g. peak correlation value or retention time of the
+     precursor ion). Information about the m/z value will be assessed by 
+     splitPattern and splitInd. E.g. items in the column "id" can be in 
+     the form of "1_163.23", which has to be accessed by setting 
      \code{splitPattern = "_"} and \code{splitInd = 2} to access the m/z 
-     value of the precursor ion (here: 162.23).
+     value of the precursor ion (here: 162.23). If rt is set to TRUE
+     and splitIndRT is NULL, convert2MSP will access the column "rt" 
+     to get the retention time values corresponding to each fragment and 
+     calculate the mean value, if rt is set to TRUE and splitIndRT numeric,
+     convert2MSP will retrieve the retention time value from column "id".
 }
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
 convert2MSP(mm = sd02_deconvoluted, splitPattern = " _ ", splitIndMZ = 2, 
- splitIndRT = NULL, names = FALSE, information = FALSE, class = FALSE, 
- adduct = FALSE)
+ splitIndRT = NULL, rt = FALSE, names = FALSE, information = FALSE, 
+ class = FALSE, adduct = FALSE)
 }
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}

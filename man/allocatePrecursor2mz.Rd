@@ -15,9 +15,7 @@ scripts (see Li et al. 2015 and vignette for further information)}
 \item{sd02}{is a data.frame with idMS/MS deconvoluted spectra with fragment 
 ions (m/z, retention time, relative intensity in \%) and the corresponding 
 principal component group with the precursor ion. sd02 
-has four columns, the first column contains the m/z 
-value, the second column the rt, the third column the intensity, the fourth
-column the pcgroup_precursorMZ}
+has to have at least four columns: a column 'mz', 'rt', 'intensity' and 'id'}
 
 \item{kNN}{numerical, number of k-nearest neighbours based on deviation
 from m/z (i.e. the k entries with the smallest deviation)}
@@ -51,7 +49,7 @@ This function combines different data sources.
 on a specific metabolite per 
 row stating the average retention time, average m/z, the name of the 
 metabolite, the adduct ion name, the spectrum 
-reference file name and additional information (TRIO/LVS). 
+reference file name and additional information (here: TRIO/LVS). 
 \code{allocatePrecursor2mz} uses \code{data.frame}s of the kind of 
 \code{sd01\_outputXCMS} and \code{sd02\_deconvoluted} to create a 
 \code{data.frame} of the kind of \code{convertExampleDF}. Allocation of 

@@ -64,21 +64,21 @@ cutUniquePrecursor <- function(precursor, splitPattern = splitPattern,
     splitPrecursor <- strsplit(precursor, split = splitPattern)
     ## extract precursor mz at position splitInd
     splitPrecursor <- lapply(splitPrecursor,"[", splitInd)
-    PrecursorMZ <- unlist(splitPrecursor)
-    lenPreMZ <- length(PrecursorMZ)
+    Precursor <- unlist(splitPrecursor)
+    lenPre <- length(Precursor)
     
     ## change character to numeric
     if (!returnCharacter)
-        PrecursorMZ <- as.numeric(PrecursorMZ)
+        Precursor <- as.numeric(Precursor)
     
-    return(PrecursorMZ) 
+    return(Precursor) 
 }
 
 #' @name convert2MSP
 #' @title Convert deconvoluted matrix into MSP format
 #' @description Convert deconvoluted matrix into MSP format
-#' @usage convert2MSP(mm, splitPattern = "_", splitIndMZ = 1, splitIndRT = 2, 
-#'  names = FALSE, information = FALSE, class = FALSE, adduct = FALSE)
+#' @usage convert2MSP(mm, splitPattern = "_", splitIndMZ = 1, splitIndRT = NULL, 
+#'  rt = FALSE, names = FALSE, information = FALSE, class = FALSE, adduct = FALSE)
 #' @param mm matrix, mm has to have four columns with colnames 
 #'  mz, rt, intensity (order is not important). In the fourth column there has 
 #'  to information about the precursor ion which will be assessed by 
@@ -92,6 +92,12 @@ cutUniquePrecursor <- function(precursor, splitPattern = splitPattern,
 #'      character string concerning separation by splitPattern, if NULL
 #'      the retention time will be the mean of all retention time in the 
 #'      pcgroup
+#' @param rt logical, should retention times be retrieved? If set to TRUE,
+#'      convert2MSP will access the column "rt" in mm which contains the 
+#'      retention time values for each fragment when splitIndRT is NULL,
+#'      if rt is set to TRUE and splitIndRT is numeric, convert2MSP will access
+#'      the column "id" to get the retention time at position splitIndRT 
+#'      when splitting with splitPattern
 #' @param names logical, should names be retrieved? If set to TRUE, convert2MSP
 #'      will access the column "names" in mm which contains the names of the 
 #'      metabolites
@@ -106,30 +112,42 @@ cutUniquePrecursor <- function(precursor, splitPattern = splitPattern,
 #'      If set to TRUE, convert2MSP will access the column "adduct" in mm which 
 #'      contains the adduct ion names of the metabolites
 #' @details Creates a data entry for each precursor ion. Each entry in the 
-#' return object has the following information: NAME, RETENTIONTIME, 
-#'      PRECURSORMZ, METABOLITENAME, ADDUCTIONNAME, Num Peaks and a list of 
-#'      fragments together with their intensities. convert2MSP will access
-#'      the column name 'name', 'metNames' and 'class', respectively, 
-#'      if arguments are set to TRUE. In the fourth column there has 
-#'      to information about the precursor ion which will be assessed by 
-#'      splitPattern and splitInd. E.g. items in the fourth column can be in 
-#'      the form of '1_163.23', which has to be accessed by setting 
+#' return object has the following information: Num Peaks and a list of 
+#'      fragments together with their intensities; it will further contain
+#'      information on m/z values of the precursor ion, the retention time, 
+#'      metabolite name, class, adduct ion name and further information. 
+#'      convert2MSP will access
+#'      the column name  "rt", "names", "information", "class" and 
+#'      "adduct", respectively, 
+#'      if arguments are set to TRUE. The column "id" has to contain a unique
+#'      identifier for each MS/MS feature. It is obligatory that each element
+#'      in the column "id" contains the precursor m/z value, but may contain
+#'      furhter elements (e.g. peak correlation value or retention time of the
+#'      precursor ion). Information about the m/z value will be assessed by 
+#'      splitPattern and splitInd. E.g. items in the column "id" can be in 
+#'      the form of "1_163.23", which has to be accessed by setting 
 #'      \code{splitPattern = "_"} and \code{splitInd = 2} to access the m/z 
-#'      value of the precursor ion (here: 162.23). 
+#'      value of the precursor ion (here: 162.23). If rt is set to TRUE
+#'      and splitIndRT is NULL, convert2MSP will access the column "rt" 
+#'      to get the retention time values corresponding to each fragment and 
+#'      calculate the mean value, if rt is set to TRUE and splitIndRT numeric,
+#'      convert2MSP will retrieve the retention time value from column "id". 
 #' @return convert2MSP returns an object of class MSP
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' data("sd02_deconvoluted", package = "MetCirc")
 #' convert2MSP(mm = sd02_deconvoluted, splitPattern = " _ ", splitIndMZ = 2, 
-#'  splitIndRT = NULL, names = FALSE, information = FALSE, class = FALSE, 
-#'  adduct = FALSE)
+#'  splitIndRT = NULL, rt = FALSE, names = FALSE, information = FALSE, 
+#'  class = FALSE, adduct = FALSE)
 #' @export
-convert2MSP <- function (mm, splitPattern = "_", splitIndMZ = 1, splitIndRT = 2,
-        names = FALSE, information = FALSE, class = FALSE, adduct = FALSE) {
+convert2MSP <- function (mm, splitPattern = "_", splitIndMZ = 1, 
+    splitIndRT = NULL, rt = FALSE, names = FALSE, information = FALSE, 
+    class = FALSE, adduct = FALSE) {
     
     colNames <- colnames(mm)
     if (!("mz" %in% colNames)) stop("no column 'mz' found")
-    if (!("rt" %in% colNames)) stop("no column 'rt' found")
+    if (rt & !is.numeric(splitIndRT) & !("rt" %in% colNames)) 
+        stop("no column 'rt' found")
     if (!("intensity" %in% colNames)) stop("no column 'intensity' found")
     if (names & !("names" %in% colNames)) stop("no column 'names' found")
     if (information & !("information" %in% colNames)) 
@@ -137,19 +155,21 @@ convert2MSP <- function (mm, splitPattern = "_", splitIndMZ = 1, splitIndRT = 2,
     if (adduct & !("adduct" %in% colNames)) stop("no column 'adduct' found")
     if (class & !("class" %in% colNames)) stop ("no column 'class' found")
     
+    if (rt & (!is.numeric(splitIndRT) & !is.null(splitIndRT))) 
+                                stop("splitIndRT is not numeric and not NULL")
     ## if (colNames[4] != "pcgroup_precursorMZ") break
      
-    precursor <- mm[,4]
+    precursor <- mm[,"id"]
     precursor <- as.character(precursor)
     
     uniquePre <- unique(precursor)
     uniquePreMZ_cut <- cutUniquePrecursor(precursor = precursor, 
         splitPattern = splitPattern, splitInd = splitIndMZ)
     ## get Retention time, mz_rt_pcgroup
-    if (!is.null(splitIndRT)) {
-        uniquePreRT_cut <- cutUniquePrecursor(precursor = precursor, 
-                        splitPattern = splitPattern, splitInd = splitIndRT)        
-    }
+    #if (!is.null(splitIndRT)) {
+    #    uniquePreRT_cut <- cutUniquePrecursor(precursor = precursor, 
+    #                    splitPattern = splitPattern, splitInd = splitIndRT)        
+    #}
 
     
     ## check if pcgroup_grecursorMZ is in fourth column and unique precursor
@@ -166,6 +186,7 @@ convert2MSP <- function (mm, splitPattern = "_", splitIndMZ = 1, splitIndRT = 2,
     if (class) classesMM <- mm[, "class"]
     if (information) informationMM <- mm[, "information"]
     if (adduct) adductMM <- mm[, "adduct"]
+    if (rt) rtMM <- mm[, "rt"]
 
     ## create data frame for MSP file
     lenUniquePre <- length(uniquePre)
@@ -182,9 +203,11 @@ convert2MSP <- function (mm, splitPattern = "_", splitIndMZ = 1, splitIndRT = 2,
         ind <- which(uniquePre[i] == precursor)   
         NAMES[i] <-  if (names) {
             unique(as.character(namesMM[ind])[1])} else "Unknown"
-        RETTIME[i] <- if (!is.null(splitIndRT)) {as.numeric(
-            cutUniquePrecursor(precursor[ind], splitPattern, splitIndRT))[1]
-                } else mean(mm[ind,"rt"])
+        RETTIME[i] <- if (rt) {
+            if (!is.null(splitIndRT)) {as.numeric(
+                cutUniquePrecursor(precursor[ind], splitPattern, splitIndRT))[1]
+            } else mean(rtMM[ind])
+        } else NaN
         PRECMZ[i] <- as.numeric(
             cutUniquePrecursor(precursor[ind], splitPattern, splitInd = splitIndMZ))
         INFORMATION[i] <- if (information) {

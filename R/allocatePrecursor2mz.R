@@ -10,9 +10,7 @@
 #' @param sd02 is a data.frame with idMS/MS deconvoluted spectra with fragment 
 #' ions (m/z, retention time, relative intensity in \%) and the corresponding 
 #' principal component group with the precursor ion. sd02 
-#' has four columns, the first column contains the m/z 
-#' value, the second column the rt, the third column the intensity, the fourth
-#' column the pcgroup_precursorMZ
+#' has to have at least four columns: a column 'mz', 'rt', 'intensity' and 'id'
 #' @param kNN numerical, number of k-nearest neighbours based on deviation
 #' from m/z (i.e. the k entries with the smallest deviation)
 #' @param mzCheck numerical, maximum tolerated distance for m/z (strong 
@@ -29,7 +27,7 @@
 #' on a specific metabolite per 
 #' row stating the average retention time, average m/z, the name of the 
 #' metabolite, the adduct ion name, the spectrum 
-#' reference file name and additional information (TRIO/LVS). 
+#' reference file name and additional information (here: TRIO/LVS). 
 #' \code{allocatePrecursor2mz} uses \code{data.frame}s of the kind of 
 #' \code{sd01\_outputXCMS} and \code{sd02\_deconvoluted} to create a 
 #' \code{data.frame} of the kind of \code{convertExampleDF}. Allocation of 
@@ -67,12 +65,15 @@ allocatePrecursor2mz <- function(sd01, sd02, kNN = 10, mzCheck = 1,
     if (mzCheck <= 0) stop("mzCheck has to be > 0")
     if (rtCheck <= 0) stop("rtCheck has to be > 0")
     if (mzVsRTbalance <= 0) stop("mzVsRTbalance has to be > 0")
-    if (!all(sort(colnames(sd02)) == c("intensity", "mz", "pcgroup_precursorMZ", "rt"))) 
-        stop("colnames(sd02) have to be 'mz', 'rt', 'intensity', 'pcgroup_precursorMZ' ")
+    if (!("mz" %in% colnames(sd02))) stop("sd02 has not column 'mz'")
+    if (!("rt" %in% colnames(sd02))) stop("sd02 has not column 'rt'")
+    if (!("intensity" %in% colnames(sd02))) stop("sd02 has not column 'intensity'")
+    if (!("id" %in% colnames(sd02))) stop("sd02 has not column 'id'")
+    
     colNamesSd01 <- colnames(sd01)
     if (!all(c("mz", "rt", "npeaks", "isotopes", "adduct", "pcgroup") %in% colNamesSd01)) 
         stop("colnames(sd01) have to have 'mz', 'rt', 'npeaks', 'isotopes', 'adduct', 'pcgroup'")
-    precursor <- sd02[, "pcgroup_precursorMZ"]
+    precursor <- sd02[, "id"]
     ## isolated mz values from e.g. pcgroup_precursorMZ column in 
     ## sd02_deconvoluted
     uniquePrecursor <- cutUniquePrecursor(precursor, 
