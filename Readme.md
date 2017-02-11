@@ -9,7 +9,7 @@ faciliate these steps by offering functionalities to display,
 (interactively) explore similarities and annotate features of MS/MS metabolomics 
 data. The `R` package is especially designed to 
 improve the interactive exploration of metabolomics data obtained from 
-cross-species/cross-tissues comparative experiments. Notably, \Rpackage{MetCirc} 
+cross-species/cross-tissues comparative experiments. Notably, `MetCirc`
 includes functions to calculate the similarity between individual MS/MS 
 spectra based on a normalised dot product calculation taking into account 
 shared fragments or main neutral losses.
