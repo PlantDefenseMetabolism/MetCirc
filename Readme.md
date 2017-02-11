@@ -27,4 +27,5 @@ To install `MetCirc`from this GitHub page enter:
 `MetCirc` from Bioconductor enter: 
 
 `source("https://bioconductor.org/biocLite.R")`
+
 `biocLite("MetCirc")`
