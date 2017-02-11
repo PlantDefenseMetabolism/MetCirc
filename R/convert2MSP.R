@@ -79,10 +79,10 @@ cutUniquePrecursor <- function(precursor, splitPattern = splitPattern,
 #' @description Convert deconvoluted matrix into MSP format
 #' @usage convert2MSP(mm, splitPattern = "_", splitIndMZ = 1, splitIndRT = NULL, 
 #'  rt = FALSE, names = FALSE, information = FALSE, class = FALSE, adduct = FALSE)
-#' @param mm matrix, mm has to have four columns with colnames 
-#'  mz, rt, intensity (order is not important). In the fourth column there has 
-#'  to information about the precursor ion which will be assessed by 
-#'  splitPattern and splitInd. Optionally, mm can have colnames names, 
+#' @param mm matrix, mm has to have three columns with colnames 
+#'  "mz", "intensity" and "id" (order is not important). The column comprises 
+#'  tinformation about the precursor ion which will be assessed by 
+#'  splitPattern and splitInd. Optionally, mm can have colnames rt, names, 
 #'  information, class and adduct. 
 #' @param splitPattern character, splitPattern is the pattern which separates 
 #'      elements and precursor m/z

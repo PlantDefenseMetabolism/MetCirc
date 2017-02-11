@@ -84,26 +84,58 @@
     Centre for Organismal Studies
 }
 
-\title{MetCirc: A~\R~workflow for circular visualisation of mass spectral similarity in metabolomics data}
-% \textit{In silico} evolutionary model allows for the emergence of a quorum 
-% sensing network in \textit{Bacillus subtilis}
+\title{MetCirc: Navigating mass spectral similarity in high-resolution 
+    MS/MS metabolomics data}
+    
 \begin{document}
 
 \maketitle
 
 \section{Introduction}
 The \Rpackage{MetCirc} package comprises functionalities to display, 
-(interactively) explore and annotate metabolomics data. It is especially designed to 
+(interactively) explore similarities and annotate features of MS/MS metabolomics 
+data. It is especially designed to 
 improve the interactive exploration of metabolomics data obtained from 
 cross-species/cross-tissues comparative experiments. Notably, \Rpackage{MetCirc} 
 includes functions to calculate the similarity between individual MS/MS 
 spectra based on a normalised dot product (NDP, see \citet{Li2015} for further 
 details) calculation taking into account shared fragments or main neutral 
-losses. This vignette 
-uses as a case study indiscriminant MS/MS (idMS/MS) data from \citet{Li2015} 
-and unpublished idMS/MS data 
-collected from different organs of tobacco flowers to navigate through the 
-analysis pipeline. The pipeline includes creation of an \Rpackage{MSP-object}, 
+losses. \newline
+
+Visualisation of molecular networks was pioneered by the 
+Dorrestein lab \citep[e.g.][]{Watrous2012} to efficiently organize MS/MS spectra in such a way that 
+clusters of MS/MS spectra sharing multiple common fragments are rapidly inferred. \newline
+In contrary to the analysis there, the \Rpackage{MetCirc} framework offers two ways for the computation of 
+mass spectrum similarity: one way deploys common (shared) fragments and the other
+shared neutral losses that are deduced from the spectra. Especially the latter 
+approach allows to extract clusters of spectra corresponding to compound families 
+facilitating the rapid dereplication of hitherto unknown metabolites. Small 
+molecules, as produced by plants, return during fragmentation few fragments.  
+Sometimes only a few fragments among them are shared and diagnostic across 
+the compound family. Compared to the 
+MS/MS similarity scoring based on shared fragments, the second similarity 
+measure incorporates, in a non-supervised manner, neutral losses, which 
+definitely helps obtaining biochemically-meaningful MS/MS groupings. \newline
+
+The interpretation drawn from network reconstruction highly depends 
+from topological parameters applied during the network construction steps. 
+\Rpackage{MetCirc} circumvents this confinement. Furthermore, it uses instead
+smaller MS/MS datasets obtained from experiments involving 
+\textit{a priori} defined biological groups (organisms, tissues, etc.) to 
+visualise within and between MS/MS feature similarities on a circular 
+layout - inspired by the Circos framework \citep{Krzywinkski2009}. The visualisation
+is adjustable (MS/MS ordering and similarity thresholds) via the 
+\Rpackage{shiny} interface and does not uniquely emphasize on large clusters 
+of MS/MS features (a frequent caveat of network visualisation). Furthermore,
+the implemented functionality for annotation may improve 
+dereplication of known and unknown molecules. \newline
+
+This vignette uses as a case study indiscriminant MS/MS (idMS/MS) data from \citet{Li2015},
+unpublished idMS/MS data 
+collected from different organs of tobacco flowers and data from the 
+Global Natural Product Social Molecular Networking (GNPS) library
+to navigate through the 
+analysis pipeline. The pipeline includes creation of an \Rpackage{MSP}-object, 
 binning of fragment ions, calculation of a similarity measure (NDP), 
 assignment to a similarity matrix and visualisation of similarity based 
 on interactive and non-interactive graphical tools using the 
@@ -133,115 +165,119 @@ load the required packages \Rpackage{circlize}, \Rpackage{amap},
 library(MetCirc)
 @
 
-Load example data sets from \citet{Li2015}. sd01\_outputXCMS is the 
-output of the \Rpackage{XCMS} and \Rpackage{CAMERA} processing and statistical
-analysis and \Rpackage{XCMS} and \Rpackage{CAMERA} scripts (see \citet{Li2015}
-for further information). sd02\_deconvoluted comprises 360 idMS/MS 
+Two options exist to load data for the \Rpackage{MetCirc} workflow: 
+(1) loading a data frame with a minimum requirement of a column "id" (comprising unique identifiers
+for MS/MS features) and of the columns "mz" and "intensity" comprising the
+fragment ions and their intensities, respectively, or 
+(2) loading a data frame resembling a .MSP file object. In the following 
+we will exemplify the usage of \Rfunction{convert2MSP} and 
+\Rfunction{convertMSP2MSP} to load data into the workflow. 
+
+\paragraph{Load example data sets from \citet{Li2015}, tissue idMS/MS data and GNPS data.} 
+%sd01\_outputXCMS is the 
+%output of the \Rpackage{XCMS} and \Rpackage{CAMERA} processing and statistical
+%analysis and \Rpackage{XCMS} and \Rpackage{CAMERA} scripts.
+sd02\_deconvoluted comprises 360 idMS/MS 
 deconvoluted spectra with fragment ions (m/z, chromatographic retention time, relative
-intensity in \%) and the corresponding principal component group with the 
-precursor ion. 
-<<eval=TRUE,echo=c(1:3)>>=
-## load data
-data("sd01_outputXCMS", package = "MetCirc")
+intensity in \%) and a column with unique identifiers for MS/MS features (here, 
+the corresponding principal component group with the 
+precursor ion). The data set is derived from the study of \citet{Li2015}. 
+<<eval=TRUE,echo=c(1:2)>>=
+## load data from Li et al., 2015
 data("sd02_deconvoluted", package = "MetCirc")
 
-
 ## load binnedMSP
+data("sd01_outputXCMS", package = "MetCirc")
 data("binnedMSP", package = "MetCirc")
 ## load similarityMat
 data("similarityMat", package = "MetCirc")
 @
 
-\section{Prepare data for mass spectral similarity calculations}
-Here, we convert examplatory data into \Robject{MSP-objects} that
-are used later as input for mass spectral similarity calculations. 
-The \Rpackage{MetCirc} workflow requires a ata frame
-in the form of sd02\_deconvoluted to run the pipeline. Required columns in such
-data frames are "mz" (containing the m/z values of fragments), 
-"rt" (containing the respective retention time values), "intensity" (intensity
-values in \% for the respective fragments). The fourth column requires no 
-specific column name, but it has to contain information about the precursor ion
-and may additionally contain information about the precursor retention time. 
-Alternatively, \Robject{MSP-objects} can also created from msp objects, 
-typical data formats for storing MS/MS libraries. Such data frames have to 
-contain the row entries "Name:", "Rt=", "Num Peaks:" and information on 
-fragments and peak areas (see \Robject{?convertMSP2MSP} for further information
-and retrieve \Robject{data("convertMSP2MSP", package = "MetCirc")} for a typical
-msp data frame). 
-The \Robject{MSP-class} mimicks the .msp format is ASCII text format used by mass spectral 
-libraries. The function \Rfunction{convert2MSP} creates an entry for each precursor and 
-identifies the m/z and retention time of fragment ions. Each entry of the
-\Robject{MSP-object} has the following accessors: retention time, m/z values, 
-metabolite name and class, adduct ion name and further information. The 
-\Robject{MSP-object} contains information on the number of peaks
-and all fragment ions together with their 
-relative intensity in \%. The retention time calculated by the function 
-\Rfunction{convert2MSP} is the average value of the retention time values 
-of all fragment ions belonging to the specific precursor or the retention 
-time value that is stored in the fourth column. The 
-\Robject{data frame} containing information on the number of peaks, fragments
-and their intensities can be accessed by \Robject{peaks(MSP-object)}.
-
-\subsection{Preparing the sd02\_deconvoluted data set for analysis}
-Here, we convert \Robject{sd02\_deconvoluted} into a \Robject{MSP-object}. 
-<<eval=c(1:2)>>=
-## identify precursor mz
-finalMSPLi2015 <- convert2MSP(sd02_deconvoluted, split = " _ ", 
-                              splitIndMZ = 2, splitIndRT = 3)
-
-## optional:
-## write finalMSPLi2015 to idMSMStoMSPLi2015.RData
-save(finalMSPLi2015, file = "idMSMStoMSPLi2015.RData")
-@
-
-The \Robject{split} argument takes a character string specifying how elements
-in the fourth column are separated, \Robject{splitIndMZ} and 
-\Robject{splitIndRT} take numerical values specifying the position of the 
-m/z and retention time value of the precursor ion in the fourth column. 
-Furthermore, convert2MSP can take further arguments to retrieve annotation 
-data (metabolite name and classes, adduct ion names, further information; 
-see \Robject{?convert2MSP} for further information). \newline
-
-For the \Rfunction{binning} function used later, we need to pass a vector
-containing the groups (compartments, times, species, etc.) of the metabolites.
-Here, we will create a vector, \Robject{compartment}, with randomised 
-assignment of compartments to show functionality on how to pass group 
-specification. The vector created here can be replaced with 
-a vector comprising actual compartments or with any 
-other affilitation to a group relevant to the comparitive experiment conducted.
-<<eval=TRUE>>=
-compartment <- sample(c("yl", "ol", "s","r"), size = length(finalMSPLi2015), 
-    replace=TRUE) 
-@
-
-\subsection{Preparing the tissue data set for analysis}
-\paragraph{Convert \Robject{idMSMStissueproject} into \Rpackage{MSP-object}.} 
-The data set used in this section comes from the data-independent MS/MS 
+The second data set comes from the data-independent MS/MS 
 collection of different floral organs from tobacco plants. Using our pipeline, 
 this data set will be used to visualise shared metabolites between tissues as 
 well as structural relationships among within- and between-organ MS/MS spectra.
 MS/MS data are merged across floral organs in one unique data file 
 \Robject{idMSMStissueproject.Rdata} as \Robject{tissue}. Information on the 
 organ-localisation of each MS/MS spectrum is stored in  
-\Robject{compartmentTissue}. \newline 
+\Robject{compartmentTissue}. 
 
 <<eval=TRUE>>=
 ## load idMSMStissueproject
 data("idMSMStissueproject", package = "MetCirc")
 @
 
-Often, the data is not in the right format to initiate the analysis - please
-make sure that the fourth column contains information about the precursor ion 
-and that the data contains the column names \code{mz}, \code{intensity} and
-\code{rt}. The order of these latter columns is not 
-important. \Rfunction{convert2MSP} will check internally if the data complies 
-these requirements. \newline
+The third data set comes from the GNPS data base (downloaded at February 11, 2017 from: \\
+\href{http://prime.psc.riken.jp/Metabolomics\_Software/MS-DIAL/MSMS-GNPS-Curated-Neg.msp}{http://prime.psc.riken.jp/Metabolomics\_Software/MS-DIAL/MSMS-GNPS-Curated-Neg.msp}). 
+It contains 22 MS/MS features (a truncated file of the original one) and
+is formatted in the .MSP file format, a typical format for 
+MS/MS libraries. The MS/MS spectra are (normally) separated by blank lines
+and give information on the metabolite (its name, precursor m/z value, 
+retention time, class, adduct ion) and contain additional information. 
+<<eval=TRUE,echo=c(1:2)>>=
+## load data from GNPS
+data("convertMSP2MSP", package = "MetCirc")
+@
+
+\section{Prepare data for mass spectral similarity calculations}
+
+The \Robject{MSP}-class in \Rpackage{MetCirc} mimicks the typical MS spectral library file in 
+.MSP format in ASCII text format used by mass spectral 
+libraries (\href{http://www.nist.gov/srd/upload/NIST1a11Ver2-0Man.pdf}{http://www.nist.gov/srd/upload/NIST1a11Ver2-0Man.pdf}). 
+The functions \Rfunction{convert2MSP} and \Rfunction{convertMSP2MSP} create an entry for each MS/MS feature and 
+their corresponding spectra including fragment ions and their intensities. Each entry of the
+\Robject{MSP}-object has the following accessors: retention time, m/z values, 
+metabolite name and class, adduct ion name and further information. The 
+\Robject{MSP}-object contains information on the number of peaks
+and all fragment ions together with their 
+relative intensity in \%. The retention time calculated by the function 
+\Rfunction{convert2MSP} is the average value of the retention time values 
+of all fragment ions belonging to the specific precursor or the retention 
+time value that is stored in the column "id". The 
+data frame containing information on the number of peaks, fragments
+and their intensities can be accessed by \Robject{peaks(MSP-object)}.
+
+\subsection{Preparing the sd02\_deconvoluted data set for analysis}
+Here, we convert the examplatory data from \citet{Li2015} into an \Robject{MSP}-object that
+is later used as the input for mass spectral similarity calculations. 
+The \Rpackage{MetCirc} workflow requires a data frame
+in the form of sd02\_deconvoluted to run the pipeline. Required columns in such
+data frames are "mz" (containing the m/z values of fragments), 
+"intensity" (intensity values in \% for the respective fragments) and 
+"id". The column "id" has to contain information about the precursor ion and 
+should be a unique descriptor for the MS/MS features. For instance, this column
+may be the derived from the output of the \Rpackage{xcms}/\Rpackage{CAMERA} 
+processing creating unique identifiers for each metabolite decoded in the column
+"pcgroup". A pcgroup is defined as a peak correlation group obtained by this
+workflow. It corresponds to a MS or MS/MS spectrum deconvoluted by \Rpackage{CAMERA}
+and contains information about the precursor identity and its isotope cluster. 
+The user needs to combine the pcgroup value with the m/z value of the precursor
+ion of each parent molecule. The column "id" may additionally contain information 
+about the precursor retention time. \newline
+
+Create \Robject{MSP}-object from the data of \citep{Li2015}:
+<<eval=c(1:2)>>=
+## identify precursor mz
+finalMSPLi2015 <- convert2MSP(sd02_deconvoluted, splitPattern = " _ ", 
+                                                rt = TRUE, splitIndMZ = 2)
+@
+The \Robject{splitPattern} argument takes a character string specifying how elements
+in the column "id" are separated, \Robject{splitIndMZ} and 
+\Robject{splitIndRT} (here not used) take numerical values specifying the position of the 
+m/z and retention time value of the precursor ion in the column "mz". Please
+note that specification of splitIndRT is optional and the retention time 
+values will only be retrieved when rt is set to \Robject{TRUE}. 
+Furthermore, \Rfunction{convert2MSP} can take further arguments to retrieve annotation 
+data (metabolite name and classes, adduct ion names, further information; 
+see \Robject{?convert2MSP} for further information). \newline
+
+\subsection{Preparing the floral organ data set for analysis}
 
 We would like to restrict the proof-of-function analysis to four tissues 
 (sepal, SPL; limb, LIM; anther, ANT; 
 style, STY). We will truncate \Robject{tissue} in order that it contains only these 
 instances belonging to these types of tissue. In a next step, we will 
-create a \Rpackage{MSP-object}, \Robject{finalMSP}, comprising the features found 
+create a \Rpackage{MSP}-object, \Robject{finalMSP}, comprising the features found 
 in the tissues SPL, LIM, ANT and STY. 
 <<eval=c(1:18)>>=
 ## create vectors with precursor names present in tissue
@@ -257,19 +293,22 @@ tissueANT <- tissue[tissue[,4] %in% tissueANT,]
 tissueSTY <- tissue[tissue[,4] %in% tissueSTY,]
 
 ## create msp and combine msp objects of different tissues
-finalMSP <- convert2MSP(tissueSPL)
-finalMSP <- combine(finalMSP, convert2MSP(tissueLIM))
-finalMSP <- combine(finalMSP, convert2MSP(tissueANT))
-finalMSP <- combine(finalMSP, convert2MSP(tissueSTY))
-
-## optional:
-## write finalMSP to idMSMStoMSP.RData
-save(finalMSP, file = "idMSMStoMSP.RData")
+## here we set splitIndRT = 2 since column "id" is formatted in the 
+## following way: m/z value_retention time_pcgroup
+finalMSPtissue <- convert2MSP(tissueSPL, rt = TRUE, splitIndRT = 2)
+finalMSPtissue <- combine(finalMSPtissue, convert2MSP(tissueLIM, 
+                                                rt = TRUE, splitIndRT = 2))
+finalMSPtissue <- combine(finalMSPtissue, convert2MSP(tissueANT, 
+                                                rt = TRUE, splitIndRT = 2))
+finalMSPtissue <- combine(finalMSPtissue, convert2MSP(tissueSTY, 
+                                                rt = TRUE, splitIndRT = 2))
 @
 
-For the \Rfunction{binning} function, we will derive a vector, 
+For the \Rfunction{binning} function used later, we need to pass a vector
+containing the groups (compartments, times, species, etc.) of the metabolites.
+Here, we will derive a vector, 
 \Robject{compartment}, which gives the compartment for each entry of 
-\Robject{finalMSP}. \Robject{compartment} refers here to floral organs, but 
+\Robject{finalMSPtissue}. \Robject{compartment} refers here to floral organs, but 
 could be species names, experimental conditions, etc., too; i.e. the object can
 be any biological identifier relevant to the comparative experiment conducted. 
 <<eval=TRUE>>=
@@ -281,6 +320,24 @@ compSTY <- rep("STY", length(convert2MSP(tissueSTY)))
 
 compartment <- c(compSPL, compLIM, compANT, compSTY)
 @
+
+
+\subsection{Preparing the GNPS data set for analysis}
+Alternatively as mentioned above, an \Robject{MSP}-object can also created from .MSP objects, 
+that are typical data formats for storing MS/MS libraries. 
+Required properties of such a data frame are the name of the metabolite
+(row entry "NAME:"), the m/z value of the precursor ion ("PRECURSORMZ" or 
+"EXACTMASS:"), the number of peaks of the feature 
+("Num Peaks:") and information on 
+fragments and peak areas (see \Robject{?convertMSP2MSP} for further information
+and retrieve \Robject{data("convertMSP2MSP", package = "MetCirc")} for a typical
+msp data frame). \newline
+
+Create \Robject{MSP}-object from the GNPS .MSP file:
+<<eval=TRUE>>=
+finalMSPGNSP <- convertMSP2MSP(msp2msp)
+@
+
 
 \section{Binning and calculation of similarity matrix}
 
@@ -305,16 +362,16 @@ set.
 
 <<eval=FALSE>>=
 ## create data frame with binned fragments
-binnedMSP <- binning(msp = finalMSP, tol = 0.01, 
+binnedMSP <- binning(msp = finalMSPtissue, tol = 0.01, 
                      group = compartment, method = "median")
 @
 
 \paragraph{Calculation of the similarity matrix.} The normalised dot product 
-(NDP) is the similarity coefficient to calculate 
-the similarity between two precursor ions and their fragments, respectively. 
-The NDP uses the m/z value of fragment/precursor ions and their 
-peak intensityof two metabolites, respectively. The NDP is calculated 
-according to:
+(NDP) calculates the similarity coefficient between two MS/MS features. 
+For a considered MS/MS pair, peak intensities of shared m/z values for 
+precursor/fragment ions and neutral losses are employed as weights
+$W_{S1, i}$ and $W_{S1, i}$ within the following formula: 
+
 \begin{equation*}
     NDP = \frac{\sum(W_{S1, i} \cdot W_{S2, i}) ^ 2}{ \sum(W_{S1, i} ^ 2) * \sum(W_{S2, i} ^ 2) },
 \end{equation*}
@@ -323,11 +380,10 @@ with S1 and S2 the spectra 1 and 2, respectively, of the i$th$ of j common peaks
 differing by the tolerance parameter specified in \texttt{binning}. 
 Weights are calculated according to $W = [ peak~intensity] ^{m} \cdot [m/z]^n$,
 with m = 0.5 and n = 2 as default values as suggested by MassBank.
-with $W = [ peak~intensity] ^{m} \cdot [m/z]^n$.
-For further information see \parencite{Li2015}. \newline
+For further information see \citet{Li2015}. \newline
 
-\Rfunction{createSimilarityMatrix} calculates the NDP between all 
-precursor ions and their respective fragment ions. 
+\Rfunction{createSimilarityMatrix} calculates all pair-wise NDP coefficients 
+between MS/MS features. 
 \Rfunction{createSimilarityMatrix} needs a matrix as an argument which 
 has the fragment ions as rows (m/z / retention time) and all fragment ions 
 as column names. Entries of such a matrix are intensities for a specific 
@@ -335,24 +391,23 @@ fragment ion (intensity will be zero if fragment ion does not occur for the
 respective precursor) for a given MS/MS feature. The function 
 \Rfunction{binning} will return a matrix with such properties.
 
-<<eval=FALSE>>=
+<<eval=TRUE>>=
 ## similarity Matrix 
 similarityMat <- createSimilarityMatrix(binnedMSP)
 @
 
 \Rfunction{createSimilarityMatrix} returns a square matrix with 
 precursor m/z / retention time as column and row names. The entries of 
-the returned matrix are NDP scores ranging between 0 and 1 which indicate 
-the similarity between the features. 
+the returned matrix are NDP scores ranging between 0 and 1 that are  
+the pair-wise similarities between the MS/MS features. 
 
-\paragraph{Clustering/Visualisation.} At this stage, we would like to visualise 
-the similarity after clustering them.
+\paragraph{Clustering/visualisation.} At this stage, we would like to visualise 
+the pair-wise similarities of MS/MS features after clustering them.
 Many functions are available to cluster features such as \Rfunction{hclust}
 from \Rpackage{stats}, \Rfunction{Mclust} from \Rpackage{mclust} or 
 \Rfunction{hcluster} from \Rpackage{amap}. We would like to use the latter 
-(a combination of \Rfunction{hclust} and \Rfunction{dist} from \Rpackage{stats})
-to cluster similar features. To cluster features and visualise the clustering 
-we enter:
+to cluster similar features. To cluster features and visualise the result (see 
+figure \ref{fig:cluster}) we enter:
 <<cluster,eval=TRUE,fig.show='hide'>>=
 ## load package amap
 hClustMSP <- hcluster(similarityMat, method = "spearman")
@@ -360,15 +415,34 @@ hClustMSP <- hcluster(similarityMat, method = "spearman")
 plot(hClustMSP, labels = FALSE, xlab="", sub="")
 @
 
-\begin{figure}[t!]
+\begin{figure}[h!]
     \center
     \includegraphics[scale=0.6]{./figure/cluster-1}
     \caption{Cluster dendrogramm for similarity matrix based on fragment 
-    ion NDP calculation}
+    ion NDP calculation} \label{fig:cluster}
 \end{figure}
 
 To promote readibility we will not show labels. These can be printed to the 
 \R~console by \code{colnames(similarityMat)[hClustMSP\$order]}. \newline
+
+\paragraph{Extraction of highly-related features using clustering.}
+Within the \R~session the similarity matrix can be truncated by using the 
+above-mentioned functions to retrieve a similarity matrix that contains 
+highly-related MS/MS features. For instance, this might be needed when 
+we want to analyse modules of high similarity, representing e.g. a certain 
+metabolite class. By way of example, we extract in the following all features
+from module 1 when defining three modules in total and define a new 
+similarity matrix of highly-related features. This kind of matrix can be 
+used in later analysis steps, e.g. in the analysis with \Rfunction{shinyCircos}.
+
+<<truncateGroup1,eval=TRUE,echo=TRUE>>=
+## define three clusters
+cutTreeMSP <- cutree(hClustMSP, k = 3)
+## extract feature identifiers that belong to module 1
+module1 <- names(cutTreeMSP)[as.vector(cutTreeMSP) == "1"] 
+## create a new similarity matrix that contains only highly related features
+similarityMat_module1 <- similarityMat[module1, module1]
+@
 
 \subsection{Workflow for \Robject{tissue} data set using neutral losses}
 Another way to compare the similarity of metabolites is based on neutral losses
@@ -376,16 +450,16 @@ Another way to compare the similarity of metabolites is based on neutral losses
 common neutral losses are shared among structurally-related metabolites. 
 \Rpackage{MetCirc} contains functionality to 
 calculate neutral losses from \Robject{MSP}-objects. 
-To convert a \Robject{MSP-object} with fragments into a \Robject{MSP-object}  
+To convert a \Robject{MSP}-object with fragments into a \Robject{MSP}-object  
 with neutral losses enter:
 
 <<eval=TRUE>>=
-nlMSP <- msp2FunctionalLossesMSP(finalMSP)
+nlMSP <- msp2FunctionalLossesMSP(finalMSPtissue)
 @
 
 \paragraph{Binning and calculation of the similarity matrix.} Analogously to 
-the \Rpackage{MSP-object} with fragments we can bin the \Robject{nlMSP} 
-\Robject{MSP-object} with neutral losses and create a similarity matrix:
+the \Rpackage{MSP}-object with fragments we can bin the \Robject{nlMSP} 
+\Robject{MSP}-object with neutral losses and create a similarity matrix:
 <<eval=FALSE>>=
 ## bin msp file with functional losses, create table with same fragments 
 ## (binning)
@@ -397,7 +471,7 @@ The NDP calculation uses here neutral losses corresponding to mass differences
 between the precursor and fragment ions within a spectrum. The intensities 
 are the respective intensities of the fragments. 
 
-\paragraph{Clustering/Visualisation.} Analogously to the \Robject{MSP-object} 
+\paragraph{Clustering/Visualisation.} Analogously to the \Robject{MSP}-object 
 with fragment ions, we are able to 
 cluster the similarity matrix based on neutral losses. 
 <<eval=FALSE>>=
@@ -427,7 +501,7 @@ any biological identifier relevant to the comparitive experiment conducted,
 e.g. it can be a specific tissue, different
 times, different species, etc. The visualisation tools implemented in 
 \Rpackage{MetCirc} allow then to display similarity between 
-precursor ions between and/or inside of groups. \newline
+precursor ions between and/or within groups. \newline
 
 \Rfunction{shinyCircos} uses the function \Rfunction{createLinkMatrix} which 
 selects these precursor ions that have a normalised dot 
@@ -469,20 +543,20 @@ To start the shiny app, run
 selectedFeatures <- shinyCircos(similarityMat)
 @
 
-To show and modify annotation enter
+To show and modify annotations enter
 <<eval=FALSE>>=
-selectedFeatures <- shinyCircos(similarityMat, msp = finalMSP)
+selectedFeatures <- shinyCircos(similarityMat, msp = finalMSPtissue)
 @
-to the console. This will load information stored in the \Robject{MSP-object}
-in the \Robject{shinyCircos} interface. Information (metabolite names and
+to the console. This will load information stored in the \Robject{MSP}-object
+to the \Robject{shinyCircos} interface. Information (metabolite names and
 class, adduct ion name and further information) will be printed to the 
-interface when (single-) clicking on MS/MS features. Note, that on the 
+interface when (single-)clicking on MS/MS features. Note, that on the 
 sidebar on the right side text fields will appear, that allow for changing 
 the annotation of the selected feature. Click "update annotation" to save the 
-changes to the \Robject{MSP-object}. On exiting \Robject{shinyCircos} via
-the exit button, selected precursors and the (updated) \Robject{MSP-object} will
+changes to the \Robject{MSP}-object. On exiting \Robject{shinyCircos} via
+the exit button, selected precursors and the (updated) \Robject{MSP}-object will
 be returned to the console. In the example above, enter 
-\Robject{selectedFeatures\$msp} to retrieve the \Robject{MSP-object}. \newline
+\Robject{selectedFeatures\$msp} to retrieve the \Robject{MSP}-object. \newline
 
 \Rpackage{MetCirc} allows also to create such figures outside of an
 interactive context, which might be helpful to create figures and export them 
@@ -527,7 +601,7 @@ plotCircos(groupname, linkMat_cut, initialize = TRUE, featureNames = TRUE,
 \begin{figure}[h!]
     \center
     \includegraphics{./figure/circos-1}
-    \caption{Examplary plot where arbitrary features are highlighted. Upon
+    \caption{Examplary plot where an arbitrary feature is highlighted. Upon
         highlighting all links will be plotted in grey (expect links to and 
         from highlighted features). The intensity
         of the background colour of features will be reduced as well. Features
@@ -538,6 +612,7 @@ plotCircos(groupname, linkMat_cut, initialize = TRUE, featureNames = TRUE,
 \newpage
 \printbibliography
 
+\newpage 
 \section*{Appendix}
 
 \subsection*{Session information}
