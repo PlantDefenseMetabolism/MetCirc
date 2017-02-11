@@ -1,6 +1,5 @@
 
-MetCirc: Navigating mass spectral similarity in high-resolution MS/MS 
-metabolomics data
+MetCirc: Navigating mass spectral similarity in high-resolution MS/MS metabolomics data
 ===========
 
 One of the main problems in MS/MS metabolomics is the rapid dereplication of 
