@@ -7,18 +7,23 @@
 convertMSP2MSP(msp)
 }
 \arguments{
-\item{msp}{data frame, in msp format, has the row entries "Name:", "Rt=",
-"Num Peaks:" and information on fragments and peak areas}
+\item{msp}{data.frame, see \code{Details} for further information.}
 }
 \value{
-convertMSP2MSP returns an object of class MSP. It will not retrieve
-information on CLASS, INFORMATION and ADDUCT.
+convertMSP2MSP returns an object of class MSP.
 }
 \description{
 Convert msp data frame into MSP format
 }
 \details{
-msp data frame from other sources.
+msp is a data frame of a .MSP file, a typical data file for 
+MS/MS libraries. The data frame has two columns and contains in the first
+column the entries "NAME:", 
+"PRECURSORMZ:" (or "EXACTMASS:"), "Num Peaks:"  and information on fragments and 
+peak areas/intensities. It may additionally contain row entries:
+\code{convertMSP2MSP} will try to find the row entries "RETENTIONTIME:",
+"ADDUCTIONNAME:" (or "PRECURSORTYPE:"), "CLASS:" and "INFORMATION:" and 
+extract the respective information in the second column.
 }
 \examples{
 data("convertMSP2MSP", package = "MetCirc")

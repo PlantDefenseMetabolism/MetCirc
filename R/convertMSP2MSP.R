@@ -2,11 +2,16 @@
 #' @title Convert msp data frame into MSP format
 #' @description Convert msp data frame into MSP format
 #' @usage convertMSP2MSP(msp)
-#' @param msp data frame, in msp format, has the row entries "Name:", "Rt=",
-#'  "Num Peaks:" and information on fragments and peak areas 
-#' @details msp data frame from other sources. 
-#' @return convertMSP2MSP returns an object of class MSP. It will not retrieve
-#' information on CLASS, INFORMATION and ADDUCT. 
+#' @param msp data.frame, see \code{Details} for further information. 
+#' @details msp is a data frame of a .MSP file, a typical data file for 
+#' MS/MS libraries. The data frame has two columns and contains in the first
+#' column the entries "NAME:", 
+#' "PRECURSORMZ:" (or "EXACTMASS:"), "Num Peaks:"  and information on fragments and 
+#' peak areas/intensities. It may additionally contain row entries:
+#' \code{convertMSP2MSP} will try to find the row entries "RETENTIONTIME:",
+#' "ADDUCTIONNAME:" (or "PRECURSORTYPE:"), "CLASS:" and "INFORMATION:" and 
+#' extract the respective information in the second column.
+#' @return convertMSP2MSP returns an object of class MSP. 
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' data("convertMSP2MSP", package = "MetCirc")
@@ -14,54 +19,113 @@
 #' @export
 convertMSP2MSP <- function(msp) {
     
-    MSP <- as.matrix(as.character(msp[,1]))
-    nameInd <- grep("Name:", MSP[,1]) ## indices of Name
-    NAMES <- unlist(lapply(strsplit(as.character(MSP[nameInd, 1]), " "), "[", 2))
-    rettimeInd <- grep("Rt=", MSP[,1]) ## indices of Rt=
-    ## truncate the row with Rt= such, that retention time is retrieve
-    RETTIME <- unlist(lapply(strsplit(
-        unlist(lapply(strsplit(as.character(MSP[rettimeInd,]), " "), "[", 2)), split = "="), "[", 2))
-    RETTIME <- as.numeric(RETTIME)
+    nameInd <- grep("NAME:", msp[,1]) ## indices of Name
+    
+    ## get indices of precursor mz or exactmass
+    mzInd_1 <- grep("PRECURSORMZ:", msp[,1])
+    mzInd_2 <- grep("EXACTMASS:", msp[,1])
+    
+    mzInd <- if (length(mzInd_1) >= length(mzInd_2)) {
+        mzInd_1 
+    } else {
+        mzInd_2
+    }
+    
+    ## get indices of "Num Peaks:"  
+    numpeaksInd <- grep("Num Peaks:", msp[,1])
+    
+    ## get indices of "RETENTIONTIME:"
+    rtInd <- grep("RETENTIONTIME:", msp[,1])
+    
+    ## get indices of "ADDUCTIONNAME:" or "PRECURSORTYPE:"
+    adductInd_1 <- grep("ADDUCTIONNAME:", msp[,1])
+    adductInd_2 <- grep("PRECURSORTYPE:", msp[,1])
+    
+    adductInd <- if (length(adductInd_1) >= length(adductInd_2)) {
+        adductInd_1
+    } else {
+        adductInd_2
+    }
+    
+    ## get indices of "CLASS:"
+    classInd <- grep("CLASS:", msp[,1])
+    
+    ## get indices of "INFORMATION:"
+    informationInd <- grep("INFORMATION:", msp[,1])
+    
+    
+    NAMES <- as.character(msp[nameInd, 2])
+    MZ <- as.numeric(as.character(msp[mzInd, 2]))
+    NUMPEAKS <- as.numeric(as.character(msp[numpeaksInd, 2]))
     
     ## how many entries are in msp
     numEntries <- length(NAMES)
     
-    numpeaks <- grep("Num Peaks:", MSP[,1]) ## indices of Num of peaks
-    peaks <- numpeaks + 1 ## indices of fragments and intensities
-    peakentry <- as.character(MSP[peaks,])
-    peakentry <- strsplit(peakentry, " ")
+    if (numEntries != length(MZ)) 
+        stop("length of precursor mz != length of names")
     
-    ## retrieve fragment and intensity
-    peakentry_fragment_l <- lapply(peakentry, function(x) as.numeric(x[seq(1, length(x) - 1, 2)]))
-    peakentry_intensity_l <- lapply(peakentry, function(x) as.numeric(x[seq(2, length(x), 2)]))
+    if (numEntries != length(NUMPEAKS)) 
+        stop("length of precursor mz != length of MS/MS fragments entries")
     
-    ## sort peakentries according to increasing fragment values
-    peakentry_fragment_l_s <- lapply(peakentry_fragment_l, sort)
-    peakentry_intensity_l_s <- lapply(1:length(peakentry_intensity_l), function(x) peakentry_intensity_l[[x]][order(peakentry_fragment_l[[x]])])
-    peakentry_intensity_l_s <- lapply(peakentry_intensity_l_s, function(x) x / max(x) * 100)
-
-    PRECMZ <- unlist(lapply(peakentry_fragment_l_s, max)) 
-    PRECMZ <- as.numeric(PRECMZ)
-    INFORMATION <- rep("Unknown", numEntries)
-    CLASS <- rep("Unknown", numEntries)
-    ADDUCT <- rep("Unknown", numEntries)
     
-    ## create MSP entry
-    msp_l <- lapply(1:numEntries, function(x) {
-        rbind(
-            #c("NAME: ", names[x]),
-        #c("RETENTIONTIME: ", rettime[x]),
-        #c("PRECURSORMZ: ", max(peakentry_fragment_l_s[[x]])),
-        #c("INFORMATION: ", "Unknown"),
-        #c("METABOLITECLASS: ", "Unknown"),
-        #c("ADDUCTIONNAME: ", "Unknown"),
-        c("Num Peaks: ", strsplit(as.character(MSP[numpeaks[x],]), " ")[[1]][3]),
-        cbind(peakentry_fragment_l_s[[x]], peakentry_intensity_l_s[[x]]),
-        c("", ""))})
+    ## create annotation vectors
+    RT <- if(length(rtInd) == numEntries) {
+        as.numeric(as.character(msp[rtInd, 2]))
+    } else {
+        rep(NaN, numEntries)   
+    }
+       
+    ADDUCT <- if(length(adductInd) == numEntries) {
+        as.character(msp[adductInd, 2])
+    } else {
+        rep("Unknown", numEntries)   
+    }
+       
+    CLASS <- if(length(classInd) == numEntries) {
+        as.character(msp[classInd, 2])
+    } else {
+        rep("Unknown", numEntries)
+    }
+    
+    INFORMATION <- if(length(informationInd) == numEntries) {
+        as.character(msp[informationInd, 2])
+    } else {
+        rep("Unknown", numEntries)
+    }
+   
+    
+    
+    MSP <- NULL
+    for (i in 1:numEntries) {
+        beg <- numpeaksInd[i] + 1
+        end <- numpeaksInd[i] + NUMPEAKS[i]
+        fragment <- as.numeric(as.character(msp[beg:end, 1]))
+        intensity <- as.numeric(as.character(msp[beg:end, 2]))
+        
+        ## sort fragments according to increasing fragment values
+        fragment <- sort(fragment)
+        intensity <- intensity[order(fragment)]
+        
+        ## delete double entries
+        intensity <- intensity[!duplicated(fragment)]
+        fragment <- fragment[!duplicated(fragment)]
+        
+        ## calculate percentages
+        intensity <- intensity / max(intensity) * 100
+        
+        mspI <- rbind(
+                    c("Num Peaks: ", length(intensity)),
+                    cbind(fragment, intensity), 
+                    c("", "")
+        )
+        
+        MSP <- rbind(MSP, mspI)
+        
+    }
+    
+    MSP <- as.data.frame(MSP)
 
-    finalMSP <- do.call(rbind.data.frame, msp_l)
-
-    msp <- new("MSP", msp=finalMSP, mz = PRECMZ, rt = RETTIME, names = NAMES, 
+    msp <- new("MSP", msp = MSP, mz = MZ, rt = RT, names = NAMES, 
                classes = CLASS, information = INFORMATION, adduct = ADDUCT)
     return(msp)
 }

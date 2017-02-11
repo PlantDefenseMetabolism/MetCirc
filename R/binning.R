@@ -109,5 +109,9 @@ binning <- function(msp, tol = 0.01, group = NULL, method = c("median", "mean"))
     }
     
     class(mm) <- "numeric"
+    
+    ## scale back to percent
+    mm <- apply(mm, 1, function(x) {x / max(x) * 100})
+    mm <- t(mm)
     return(mm)
 }
