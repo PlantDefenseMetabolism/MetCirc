@@ -7,11 +7,11 @@
 createLink0Matrix(similarityMatrix)
 }
 \arguments{
-\item{similarityMatrix}{matrix, a similarity matrix that contains the 
+\item{similarityMatrix}{\code{matrix}, a similarity matrix that contains the 
 NDP similarity measure between all precursors in the data set}
 }
 \value{
-createLink0Matrix returns a matrix that gives per each row 
+createLink0Matrix returns a \code{matrix} that gives per each row 
 information on linked features
 }
 \description{
@@ -19,8 +19,9 @@ Create a link matrix which links every feature in similarity
 matrix with another.
 }
 \details{
-createLink0Matrix creates a matrix from a similarityMatrix which 
-includes all connections between features in the similarityMatrix, but 
+createLink0Matrix creates a \code{matrix} from a similarity 
+matrix which includes all connections between features in the 
+similarity matrix, but 
 exclude links which have a similarity of exactly 0.
 }
 \examples{

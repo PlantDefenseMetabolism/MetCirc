@@ -2,22 +2,29 @@
 #' @import graphics
 #' @name shinyCircos
 #' @title Interactive visualisation of similarity and navigation of MS/MS features
-#' @description Visualise the similarity of MS/MS features.
+#' @description Visualise the similarity of MS/MS features in a reactive 
+#'  context. See \code{Details} the vignette for further descriptions on how to use 
+#'  \code{shinyCircos}.
 #' @usage shinyCircos(similarityMatrix, msp = NULL, ...)
-#' @param similarityMatrix matrix, similarityMatrix contains pair-wise 
-#' similarity coefficients which give information about the similarity between
-#' MS/MS features
-#' @param msp MSP, an S4 object of class 'MSP', the MSP object will be used
-#' to display information about the selected feature
-#' @param ... further arguments passed to shinyCircos, e.g. cexFeatureNames
-#' to pass to plotCircos to set font size in plotCircos of feature names
-#' @details The function is based on the shiny and circlize package. The user 
-#' can choose interactively thresholds, type of links (between or within groups), 
-#' display information about MS/MS features, permanently select MS/MS features
-#' and export selected precursors. When running shinyCircos with the object
-#' of class MSP, annotation data of selected MS/MS features will be displayed.
-#' @return shinyCircos returns a character vector with the (permanently)
-#' selected precursors
+#' @param similarityMatrix \code{matrix}, \code{similarityMatrix} contains 
+#' pair-wise similarity coefficients which give information about the similarity 
+#' between MS/MS features
+#' @param msp \code{MSP}, an S4 object of class \code{MSP}, the 
+#'  \code{MSP}-object will be used to display information about the selected 
+#'  feature
+#' @param ... further arguments passed to \code{shinyCircos}, e.g. 
+#' \code{cexFeatureNames} to pass to \code{plotCircos} to set font size in 
+#' \code{plotCircos} of feature names
+#' @details The function is based on the \code{shiny} and \code{circlize} package. 
+#' The user can choose interactively thresholds, type of links (between or 
+#' within groups), display information about MS/MS features, permanently select 
+#' MS/MS features and export selected precursors. When running 
+#' \code{shinyCircos} with the object of class \code{MSP}, annotation data of 
+#' selected MS/MS features will be displayed.
+#' @return \code{shinyCircos} returns a \code{character} vector with the 
+#' (permanently) selected precursors or an object with the entries \code{msp}
+#' and \code{selectedFeatures} if a \code{MSP}-object was passed to 
+#' \code{shinyCircos}
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' data("idMSMStoMSP", package = "MetCirc")
@@ -609,21 +616,22 @@ shinyCircos <- function(similarityMatrix, msp = NULL, ...) {
 #' @description Displays information on connected features of selected features.
 #' @usage printInformationSelect(groupname, msp = NULL, ind, 
 #'  lMatInd, linkMatrixThreshold, similarityMatrix, roundDigits = 2)
-#' @param groupname vector with groupname of selected feature,
+#' @param groupname \code{character} vector with groupname of selected feature,
 #' vector containing "group" and "name" to display, that is 
 #' a unique identifier of the features, "group" and "name" have to be separated
-#' by "_" where "group" is the first and "name" is the last element
-#' @param msp MSP, an S4 object of class 'MSP' for information about 
+#' by \code{"_"} where "group" is the first and "name" is the last element
+#' @param msp \code{MSP}, an S4 object of class \code{MSP} for information about 
 #'  the selected feature
-#' @param ind numeric
-#' @param lMatInd numeric indices of selected features
-#' @param linkMatrixThreshold matrix that contains information of linked 
-#'  features of a threshold or greater
-#' @param similarityMatrix matrix that is used to get information on the degree 
-#'  of similarity, similarityMat is an ordered version of a similarity matrix
-#' @param roundDigits numeric,  how many digits should be displayed?
-#' @details printInformationSelect is for internal use. 
-#' @return character that is in HTML format
+#' @param ind \code{numeric}
+#' @param lMatInd \code{numeric} indices of selected features
+#' @param linkMatrixThreshold \code{matrix} that contains information of linked 
+#'  features for given thresholds
+#' @param similarityMatrix \code{matrix} that is used to get information on the 
+#' degree of similarity, \code{similarityMat} is an ordered version of a 
+#' similarity matrix, see \code{?createOrderedSimMat}
+#' @param roundDigits \code{numeric},  how many digits should be displayed?
+#' @details \code{printInformationSelect} is for internal use. 
+#' @return \code{character} that is in HTML format
 #' @examples
 #' data("idMSMStoMSP", package = "MetCirc")
 #' data("binnedMSP", package = "MetCirc")

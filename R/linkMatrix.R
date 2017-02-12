@@ -3,12 +3,13 @@
 #' @description Create a link matrix which links every feature in similarity
 #' matrix with another. 
 #' @usage createLink0Matrix(similarityMatrix)
-#' @param similarityMatrix matrix, a similarity matrix that contains the 
+#' @param similarityMatrix \code{matrix}, a similarity matrix that contains the 
 #' NDP similarity measure between all precursors in the data set
-#' @details createLink0Matrix creates a matrix from a similarityMatrix which 
-#' includes all connections between features in the similarityMatrix, but 
+#' @details createLink0Matrix creates a \code{matrix} from a similarity 
+#' matrix which includes all connections between features in the 
+#' similarity matrix, but 
 #' exclude links which have a similarity of exactly 0.
-#' @return createLink0Matrix returns a matrix that gives per each row 
+#' @return createLink0Matrix returns a \code{matrix} that gives per each row 
 #' information on linked features
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
@@ -64,16 +65,16 @@ createLink0Matrix <- function(similarityMatrix) {
 #' @title Threshold a link matrix
 #' @description Threshold a link matrix 
 #' @usage thresholdLinkMatrix(linkMatrix, threshold_low, threshold_high)
-#' @param linkMatrix matrix, a link matrix that gives per each row 
+#' @param linkMatrix \code{matrix}, a link matrix that gives per each row 
 #' information on linked features
-#' @param threshold_low numerical, threshold value for NDP values, below this 
-#' value linked features will not be returned
-#' @param threshold_high numerical, threshold value for NDP values, above this 
-#' value linked features will not be returned
-#' @details threshold_low and threshold_high are numerical values and truncates 
-#' similar/identical precursor ions; 
+#' @param threshold_low \code{numeric}, threshold value for NDP values, below 
+#' this value linked features will not be returned
+#' @param threshold_high \code{numeric}, threshold value for NDP values, above 
+#' this value linked features will not be returned
+#' @details \code{threshold_low} and \code{threshold_high} are numerical values 
+#' and truncates similar/identical precursor ions; 
 #' similarity is momentarily based on the normalised dot product.
-#' @return thresholdLinkMatrix returns a matrix that gives per each row 
+#' @return \code{thresholdLinkMatrix} returns a matrix that gives per each row 
 #' information on linked features which are linked above a certain threshold
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
@@ -117,16 +118,16 @@ thresholdLinkMatrix <- function(linkMatrix,
 #' @title Create a matrix which contains features to link (indices)
 #' @description Create a matrix which contains features to link (indices)
 #' @usage createLinkMatrix(similarityMatrix, threshold_low, threshold_high)
-#' @param similarityMatrix matrix, a similarity matrix that contains the 
+#' @param similarityMatrix \code{matrix}, a similarity matrix that contains the 
 #' NDP similarity measure between all precursors in the data set
-#' @param threshold_low numerical, threshold value for NDP values, below this 
-#' value linked features will not be included
-#' @param threshold_high numerical, threshold value for NDP values, above this 
-#' value linked features will not be included
-#' @details threshold_low and threshold_high are numerical values and truncate 
-#' similar/identical precursor ions; similarity is currently based on the 
-#' normalised dot product.
-#' @return createLinkMatrix returns a matrix that gives per each row 
+#' @param threshold_low \code{numeric}, threshold value for NDP values, below 
+#' this value linked features will not be included
+#' @param threshold_high \code{numeric}, threshold value for NDP values, above 
+#' this value linked features will not be included
+#' @details \code{threshold_low} and \code{threshold_high} are numerical values 
+#' and truncate similar/identical precursor ions; similarity is currently 
+#' based on the normalised dot product.
+#' @return \code{createLinkMatrix} returns a matrix that gives per each row 
 #' information on linked features
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
@@ -147,12 +148,12 @@ createLinkMatrix <- function(similarityMatrix, threshold_low, threshold_high) {
 }
 
 #' @name cutLinkMatrix
-#' @title Create a cut LinkMatrix 
-#' @description Create a cut LinkMatrix 
+#' @title Create a cut link matrix 
+#' @description Create a cut link matrix 
 #' @usage cutLinkMatrix(LinkMatrix, type = c("all", "inter", "intra"))
-#' @param LinkMatrix matrix, that gives per each row 
+#' @param LinkMatrix \code{matrix}, that gives per each row 
 #' information on linked features
-#' @param type character, one of "all", "inter" or "intra"
+#' @param type \code{character}, one of "all", "inter" or "intra"
 #' @details This function is used to cut features from LinkMatrix. If 
 #' type = "all", LinkMatrix will not be changed; if type = "inter" the cut
 #' LinkMatrix will only contain entries of links which are between groups and 

@@ -12,8 +12,8 @@
 #' information.
 #' @docType data
 #' @usage convertExampleDF
-#' @return data.frame
-#' @format data.frame
+#' @return \code{data.frame}
+#' @format \code{data.frame}
 #' @source internal 
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 NULL 

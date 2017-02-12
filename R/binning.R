@@ -2,20 +2,20 @@
 #' @title Bin m/z values
 #' @description Bin m/z values
 #' @usage binning(msp, tol = 0.01, group = NULL, method = c("median", "mean"))
-#' @param msp data.frame in msp format, see ?convert2MSP for further information
-#' @param tol numerical, boundary value until which neighboured peaks will be 
+#' @param msp \code{MSP}-object, see ?convert2MSP for further information
+#' @param tol \code{numerical}, boundary value until which neighboured peaks will be 
 #'      joined together
-#' @param group character vector, to which group does the entry belong to
-#' @param method character vector, method has to be "median" or "mean"
-#' @details The functions bins fragments together by obtaining bins via 
+#' @param group \code{character} vector, to which group does the entry belong to
+#' @param method \code{character} vector, method has to be \code{median} or 
+#'  \code{mean}
+#' @details The functions \code{binning} bins fragments together by obtaining bins via 
 #' calculating either mean or medians of fragments which were put in intervals 
 #' according to the \code{tol} parameter. 
-#' @return binning returns a matrix where rownames are precursor ions
+#' @return \code{binning} returns a \code{matrix} where rownames are precursor ions
 #' (m/z / retention time) and colnames are newly calculated m/z values which 
-#' were binned. 
+#' were binned. Entires are intensity values in %. 
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples data("idMSMStoMSP", package = "MetCirc")
-#' ##group <- sample(c("yl", "ol", "s","r"), size = length(finalMSP), replace=TRUE) 
 #' binning(msp = finalMSP, tol = 0.01, group = NULL, method = "median")
 #' @export
 #' @importFrom stats median

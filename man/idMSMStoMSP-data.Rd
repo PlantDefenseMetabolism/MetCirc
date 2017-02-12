@@ -5,7 +5,7 @@
 \alias{finalMSP}
 \alias{idMSMStoMSP-data}
 \title{Example data for \code{MetCirc}: \code{finalMSP}}
-\format{object of class MSP}
+\format{object of class \code{MSP}}
 \source{
 data("idMSMStissueproject", package = "MetCirc")
 ## create vectors with precursor names present in tissue
@@ -33,10 +33,10 @@ save(finalMSP, file = "idMSMStoMSP.RData", compress = "xz")
 finalMSP
 }
 \value{
-object of class MSP
+object of class \code{MSP}
 }
 \description{
-\code{finalMSP} is of instance 'MSP', a container for 
+\code{finalMSP} is of instance \code{MSP}, a container for 
 MS/MS data. \code{finalMSP} is derived from the object \code{tissue} 
 and \code{compartmentTissue}.
 }

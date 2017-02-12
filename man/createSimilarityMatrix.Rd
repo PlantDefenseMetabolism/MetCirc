@@ -4,16 +4,20 @@
 \alias{createSimilarityMatrix}
 \title{Create similarity matrix}
 \usage{
-createSimilarityMatrix(mm)
+createSimilarityMatrix(mm, m = 0.5, n = 2)
 }
 \arguments{
-\item{mm}{matrix, colnames are all fragments which occur in the dataset, 
-rownames are m/z / rt values, entries of mm are intensity values 
-corresponding to the mass}
+\item{mm}{\code{matrix}, colnames are all fragments which occur in the 
+dataset, rownames are m/z / rt values, entries of \code{mm} are intensity 
+values corresponding to their m/z values}
+
+\item{m}{\code{numeric}, see \code{?NDP} for further details}
+
+\item{n}{\code{numeric}, see \code{?NDP} for further details}
 }
 \value{
-createSimilarityMatrix returns a similarity matrix that contains the 
-NDP similarity measure between all precursors in the data set
+\code{createSimilarityMatrix} returns a similarity matrix that 
+contains the NDP similarity measure between all precursors in the data set
 }
 \description{
 Creates the similarity matrix by calculating the normalised dot 
@@ -22,16 +26,17 @@ product (NDP) between precursors
 \details{
 createSimilarityMatrix calls a function to calculate the 
 NDP between all precursors in the data set. For further
-information on how the NDP is calculated see ?NDP and Li et al. (2015): 
+information on how the NDP is calculated see \code{?NDP} and Li et al. (2015): 
 Navigating natural variation in herbivory-induced secondary metabolism in 
 coyote tobacco populations using MS/MS structural analysis. PNAS, 
-E4147--E4155.
+E4147--E4155. Currently \code{m = 0.5} and \code{n = 2} are set as 
+default.
 }
 \examples{
 data("binnedMSP", package = "MetCirc")
 ## truncate binnedMSP 
 binnedMSP <- binnedMSP[1:28,]
-createSimilarityMatrix(binnedMSP)
+createSimilarityMatrix(binnedMSP, m = 0.5, n = 2)
 }
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}

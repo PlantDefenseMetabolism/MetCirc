@@ -4,7 +4,7 @@
 \name{msp2msp}
 \alias{msp2msp}
 \title{Example data for \code{MetCirc}: \code{msp2msp}}
-\format{matrix}
+\format{\code{data.frame}}
 \source{
 http://prime.psc.riken.jp/Metabolomics_Software/MS-DIAL/, truncated
 .MSP file of GNPS MS/MS Negative (contains 22 entries): 
@@ -14,7 +14,7 @@ http://prime.psc.riken.jp/Metabolomics_Software/MS-DIAL/MSMS-GNPS-Curated-Neg.ms
 msp2msp
 }
 \value{
-data.frame
+\code{data.frame}
 }
 \description{
 \code{convertMSP2MSP} contains the object \code{msp2msp} 
@@ -23,7 +23,7 @@ building. Each entry consists of the metabolite name (NAME), the precursor
 mz (PRECURSORMZ), the retention 
 time (RETENTIONTIME), number of peaks (Num Peaks), together with fragments and their 
 intensity values. In the example used in the function \code{convertMSP2MSP} 
-the matrix \code{msp2msp} is used to construct an object of class \code{MSP}.
+the \code{matrix} \code{msp2msp} is used to construct an object of class \code{MSP}.
 }
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}

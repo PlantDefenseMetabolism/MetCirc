@@ -4,27 +4,30 @@
 \name{information}
 \alias{information}
 \alias{information,MSP-method}
-\title{information returns information of metabolites in MSP object}
+\title{\code{information} returns information of metabolites in
+ \code{MSP}-object}
 \format{An object of class \code{NULL} of length 0.}
 \usage{
 information(x)
 }
 \arguments{
-\item{x}{object of class MSP, see ?convert2MSP for further information}
+\item{x}{object of class \code{MSP}, see \code{?convert2MSP} for further
+information}
 }
 \value{
-character
+\code{character}
 }
 \description{
-information returns information in MSP object.
+\code{information} returns information in \code{MSP}-object.
 }
 \section{Functions}{
 \itemize{
-\item \code{information}: returns information of metabolites in MSP object
+\item \code{information}: returns information of metabolites in
+\code{MSP}-object
 }}
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
                          splitIndMZ = 2, splitIndRT = NULL)
 information(finalMSP)
 }

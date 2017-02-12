@@ -4,7 +4,7 @@
 \name{compartmentTissue}
 \alias{compartmentTissue}
 \title{Example data for \code{MetCirc}: \code{compartmentTissue}}
-\format{data.frame}
+\format{\code{data.frame}}
 \source{
 internal
 }
@@ -12,10 +12,10 @@ internal
 tissue
 }
 \value{
-data.frame
+\code{data.frame}
 }
 \description{
-The data.frame \code{compartmentTissue} is used in the 
+The \code{data.frame} \code{compartmentTissue} is used in the 
 subsection 'Preparing the tissue data set for analysis' in the vignette 
 of \code{MetCirc}. In \code{compartmentTissue}, information on the 
 organ-localisation of each MS/MS spectrum is stored.

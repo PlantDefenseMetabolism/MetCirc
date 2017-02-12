@@ -4,19 +4,20 @@
 \name{getPrecursorMZ}
 \alias{getPrecursorMZ}
 \alias{getPrecursorMZ,MSP-method}
-\title{getPrecursorMZ returns precursor m/z values of an MSP object}
+\title{\code{getPrecursorMZ} returns precursor m/z values of an
+ \code{MSP}-object}
 \format{An object of class \code{NULL} of length 0.}
 \usage{
 getPrecursorMZ(x)
 }
 \arguments{
-\item{x}{object of class MSP}
+\item{x}{object of class \code{MSP}}
 }
 \value{
-numeric
+\code{numeric}
 }
 \description{
-getPrecursorMZ returns a numeric vector with 
+\code{getPrecursorMZ} returns a \code{numeric} vector with
  precursor m/z values
 }
 \section{Functions}{
@@ -25,7 +26,7 @@ getPrecursorMZ returns a numeric vector with
 }}
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
                          splitIndMZ = 2, splitIndRT = NULL)
 getPrecursorMZ(finalMSP)
 }

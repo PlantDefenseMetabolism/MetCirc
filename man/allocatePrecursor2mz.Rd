@@ -12,9 +12,9 @@ allocatePrecursor2mz(sd01, sd02, kNN = 10, mzCheck = 1, rtCheck = 30,
 processing and statistical analysis and \code{XCMS} and \code{CAMERA} 
 scripts (see Li et al. 2015 and vignette for further information)}
 
-\item{sd02}{is a data.frame with idMS/MS deconvoluted spectra with fragment 
+\item{sd02}{\code{data.frame} with idMS/MS deconvoluted spectra with fragment 
 ions (m/z, retention time, relative intensity in \%) and the corresponding 
-principal component group with the precursor ion. sd02 
+peak correlation group of the precursor ion. \code{sd02}
 has to have at least four columns: a column 'mz', 'rt', 'intensity' and 'id'}
 
 \item{kNN}{numerical, number of k-nearest neighbours based on deviation
@@ -35,7 +35,7 @@ a strong weight on the deviation m/z value}
 \item{splitInd}{numeric, extract precursor mz at position splitInd}
 }
 \value{
-allocatePrecursor2mz returns a data.frame containing average 
+allocatePrecursor2mz returns a \code{data.frame} containing average 
      retention time, average mz, metabolite name, adduct ion name, 
      spectrum reference
 }

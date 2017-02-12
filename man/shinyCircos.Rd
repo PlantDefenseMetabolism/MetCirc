@@ -7,29 +7,36 @@
 shinyCircos(similarityMatrix, msp = NULL, ...)
 }
 \arguments{
-\item{similarityMatrix}{matrix, similarityMatrix contains pair-wise 
-similarity coefficients which give information about the similarity between
-MS/MS features}
+\item{similarityMatrix}{\code{matrix}, \code{similarityMatrix} contains 
+pair-wise similarity coefficients which give information about the similarity 
+between MS/MS features}
 
-\item{msp}{MSP, an S4 object of class 'MSP', the MSP object will be used
-to display information about the selected feature}
+\item{msp}{\code{MSP}, an S4 object of class \code{MSP}, the 
+\code{MSP}-object will be used to display information about the selected 
+feature}
 
-\item{...}{further arguments passed to shinyCircos, e.g. cexFeatureNames
-to pass to plotCircos to set font size in plotCircos of feature names}
+\item{...}{further arguments passed to \code{shinyCircos}, e.g. 
+\code{cexFeatureNames} to pass to \code{plotCircos} to set font size in 
+\code{plotCircos} of feature names}
 }
 \value{
-shinyCircos returns a character vector with the (permanently)
-selected precursors
+\code{shinyCircos} returns a \code{character} vector with the 
+(permanently) selected precursors or an object with the entries \code{msp}
+and \code{selectedFeatures} if a \code{MSP}-object was passed to 
+\code{shinyCircos}
 }
 \description{
-Visualise the similarity of MS/MS features.
+Visualise the similarity of MS/MS features in a reactive 
+ context. See \code{Details} the vignette for further descriptions on how to use 
+ \code{shinyCircos}.
 }
 \details{
-The function is based on the shiny and circlize package. The user 
-can choose interactively thresholds, type of links (between or within groups), 
-display information about MS/MS features, permanently select MS/MS features
-and export selected precursors. When running shinyCircos with the object
-of class MSP, annotation data of selected MS/MS features will be displayed.
+The function is based on the \code{shiny} and \code{circlize} package. 
+The user can choose interactively thresholds, type of links (between or 
+within groups), display information about MS/MS features, permanently select 
+MS/MS features and export selected precursors. When running 
+\code{shinyCircos} with the object of class \code{MSP}, annotation data of 
+selected MS/MS features will be displayed.
 }
 \examples{
 data("idMSMStoMSP", package = "MetCirc")

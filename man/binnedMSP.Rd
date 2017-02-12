@@ -4,7 +4,7 @@
 \name{binnedMSP}
 \alias{binnedMSP}
 \title{Example data for \code{MetCirc}: \code{binnedMSP}}
-\format{matrix}
+\format{\code{matrix}}
 \source{
 data("idMSMStissueproject", package = "MetCirc")
 data("idMSMStoMSP", package = "MetCirc")
@@ -40,10 +40,10 @@ save(binnedMSP, file = "binnedMSP.RData", compress = "bzip2")
 binnedMSP
 }
 \value{
-matrix
+\code{matrix}
 }
 \description{
-The object \code{binnedMSP} is a matrix, where rows are 
+The object \code{binnedMSP} is a \code{matrix}, where rows are 
 metabolites detected in the tissues sepal (SPL), limb (LIM), anther (ANT) 
 and style (STY). The columns contain binned m/z values. Entries 
 contain the intensity (in percent) of a certain metabolite at a 

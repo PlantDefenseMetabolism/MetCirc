@@ -8,27 +8,28 @@ order m/z, retention time and clustering}
 createOrderedSimMat(similarityMatrix, order = c("retentionTime", "mz", "clustering"))
 }
 \arguments{
-\item{similarityMatrix}{matrix, similarityMatrix contains pair-wise 
-similarity coefficients which give information about the similarity between
-precursors}
+\item{similarityMatrix}{\code{matrix}, \code{similarityMatrix} contains 
+pair-wise similarity coefficients which give information about the similarity 
+between precursors}
 
-\item{order}{character, one of "retentionTime", "mz" or "clustering"}
+\item{order}{\code{character}, one of "retentionTime", "mz" or "clustering"}
 }
 \value{
-createOrderedSimMat returns a similarity matrix with ordered
-rownames according to the character vector given to order
+\code{createOrderedSimMat} returns a similarity matrix with ordered
+rownames according to the \code{character} vector given to order
 }
 \description{
 Internal function for shiny application. May also be used 
 outside of shiny to reconstruct figures.
 }
 \details{
-createOrderSimMat takes  a similarity matrix and a character vector
+\code{createOrderSimMat} takes  a similarity matrix and a 
+\code{character} vector
 as arguments. It will then reorder rows and columns of 
 the similarityMatrix object such, that it orders rows and columns of 
-similarityMatrix according to m/z, retention timem or clustering in 
-each group. createOrderSimMat is used in the shinyCircos 
-function to create similarityMatrix objects which will allow to switch
+similarityMatrix according to m/z, retention time or clustering in 
+each group. \code{createOrderSimMat} is employed in the shinyCircos 
+function to create \code{similarityMatrix} objects which will allow to switch
 between different types of ordering in between groups (sectors) in the 
 circos plot. It may be used as well externally, to reproduce plots outside
 of the reactive environment (see vignette for a workflow).

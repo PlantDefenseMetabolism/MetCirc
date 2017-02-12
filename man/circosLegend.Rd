@@ -7,27 +7,30 @@
 circosLegend(groupname, highlight = TRUE, colour = NULL, cex = 1)
 }
 \arguments{
-\item{groupname}{vector containing "group" and "name" to display, that is 
-a unique identifier of the features, "group" and "name" have to be separated
-by "_" where "group" is the first and "name" is the last element}
+\item{groupname}{\code{character} vector containing "group" and "name" to 
+display, that is  a unique identifier of the features, "group" and "name" have 
+to be separated by \code{"_"} where "group" is the first and "name" is the 
+last element}
 
-\item{highlight}{logical, should colours be adjusted to highlight settings?}
+\item{highlight}{\code{logical}, should colours be adjusted to highlight settings?}
 
-\item{colour}{NULL or character, colour defines the colours which are used
-for plotting, if NULL default colours are used}
+\item{colour}{\code{NULL} or \code{character}, colour defines the colours which are used
+for plotting, if \code{NULL} default colours are used}
 
-\item{cex}{numeric, parameter that controls size of the legend in the plot}
+\item{cex}{\code{numeric}, parameter that controls size of the legend in 
+the plot}
 }
 \value{
 The function will open a new plot and display colours together 
      with labels.
 }
 \description{
-circosLegend plots a legend for circos plot using group names .
+\code{circosLegend} plots a legend for circos plot using 
+group names.
 }
 \details{
-Internal use for shiny app or outside of shiny to reproduce 
-     figures.
+Internal use in \code{shinyCircos} or outside of \code{shinyCircos} 
+ to reproduce figures.
 }
 \examples{
  ## load binnedMSP

@@ -9,24 +9,26 @@
 #'      groupSector = c(TRUE, FALSE), groupName = c(TRUE, FALSE), 
 #'      links = c(TRUE, FALSE), highlight = c(TRUE, FALSE), colour = NULL,
 #'      transparency = 0.2)
-#' @param groupname vector containing "group" and "name" to display, that is 
-#' a unique identifier of the features, "group" and "name" have to be separated
-#' by "_" where "group" is the first and "name" is the last element
-#' @param linkMat data.frame containing linked features in each row, has 
+#' @param groupname \code{character} vector containing "group" and "name" to 
+#' display, that is a unique identifier of the features, "group" and "name" have 
+#' to be separated 
+#' by \code{"_"} where "group" is the first and "name" is the last element
+#' @param linkMat \code{data.frame} containing linked features in each row, has 
 #'      five columns (group1, name1, group2, name2, NDP)
-#' @param initialize logical, should plot be initialized?
-#' @param featureNames logical, should feature names be displayed?
-#' @param cexFeatureNames numerical, size of feature names
-#' @param groupSector logical, should groups be displayed with background 
+#' @param initialize \code{logical}, should plot be initialized?
+#' @param featureNames \code{logical}, should feature names be displayed?
+#' @param cexFeatureNames \code{numeric}, size of feature names
+#' @param groupSector \code{logical}, should groups be displayed with background 
 #'      colours?
-#' @param groupName logical, should group names (e.g. compartment names or 
+#' @param groupName \code{logical}, should group names (e.g. compartment names or 
 #'      individual names) be displayed?
-#' @param links logical, should links be plotted? 
-#' @param highlight logical, are we in highlighting mode?
-#' @param colour NULL or character, colour defines the colours which are used
-#'  for plotting, if NULL default colours are used
-#' @param transparency numerical, defines the transparency of the colours
-#' @details Internal use for shiny app
+#' @param links \code{logical}, should links be plotted? 
+#' @param highlight \code{logical}, highlight is set to \code{TRUE}
+#' @param colour \code{NULL} or \code{character}, colour defines the colours 
+#' which are used for plotting, if \code{NULL} default colours are used
+#' @param transparency \code{numeric}, defines the transparency of the colours
+#' @details Internal use for \code{shinyCircos} or used outside of 
+#'  \code{shinyCircos} to reproduce figure
 #' @return The function will initialize a circlize plot and/or will plot 
 #'  features of a circlize plot. 
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
@@ -168,17 +170,19 @@ plotCircos <- function(groupname, linkMat, initialize = c(TRUE, FALSE),
 #' @description A function to add links and highlight sectors to an initialised
 #'      and plotted \code{circlize} plot with one track.
 #' @usage highlight(groupname, ind, LinkMatrix, colour = NULL, transparency = 0.4, links = TRUE)
-#' @param groupname vector containing "group" and "name" to display, that is 
-#' a unique identifier of the features, "group" and "name" have to be separated
-#' by "_" where "group" is the first and "name" is the last element
-#' @param ind numerical, indices which will be highlighted
-#' @param LinkMatrix matrix, in each row there is information about features 
-#'      to be connected 
-#' @param colour NULL or character, colour defines the colours which are used
-#'  for plotting, if NULL default colours are used
-#' @param transparency numerical, defines the transparency of the colours
-#' @param links logical, should links of unselected features be plotted
-#' @details Internal use for shiny app.
+#' @param groupname \code{character} vector containing "group" and "name" to 
+#' display, that is a unique identifier of the features, "group" and "name" have 
+#' to be separated by \code{"_"} where "group" is the first and "name" is the 
+#' last element
+#' @param ind \code{numeric}, indices which will be highlighted
+#' @param LinkMatrix \code{matrix}, in each row there is information about 
+#'  features to be connected 
+#' @param colour \code{NULL} or \code{character}, colour defines the colours which 
+#' are used for plotting, if \code{NULL} default colours are used
+#' @param transparency \code{numeric}, defines the transparency of the colours
+#' @param links \code{logical}, should links of unselected features be plotted
+#' @details Internal use for \code{shinyCircos} or outside of \code{shinyCircos}
+#'  to reproduce the figure.
 #' @return The function will update an existing plot by highlighting a 
 #'  specified sector and connected links.
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
@@ -280,9 +284,9 @@ highlight <- function(groupname, ind, LinkMatrix, colour = NULL, transparency = 
 #' @title Truncate names
 #' @description A function to truncate names
 #' @usage truncateName(groupname, roundDigits = 2, group = FALSE)
-#' @param groupname vector with group and unique idenfier (name)
-#' @param roundDigits numeric, how many digits should be displayed?
-#' @param group logical, should groups be returned?
+#' @param groupname \code{character} vector with group and unique idenfier (name)
+#' @param roundDigits \code{numeric}, how many digits should be displayed?
+#' @param group \code{logical}, should groups be returned?
 #' @details \code{groupname} is a vector of \code{character} strings consisting 
 #'      of a group, retention time and m/z value, separated by "_". It is 
 #'      cumbersome to display such long strings. \code{truncateName} 
@@ -323,17 +327,20 @@ truncateName <- function (groupname, roundDigits = 2, group = FALSE) {
 
 #' @name circosLegend
 #' @title Plot a legend for circos plot
-#' @description circosLegend plots a legend for circos plot using group names .
+#' @description \code{circosLegend} plots a legend for circos plot using 
+#' group names.
 #' @usage circosLegend(groupname, highlight = TRUE, colour = NULL, cex = 1)
-#' @param groupname vector containing "group" and "name" to display, that is 
-#' a unique identifier of the features, "group" and "name" have to be separated
-#' by "_" where "group" is the first and "name" is the last element
-#' @param highlight logical, should colours be adjusted to highlight settings?
-#' @param colour NULL or character, colour defines the colours which are used
-#'  for plotting, if NULL default colours are used
-#' @param cex numeric, parameter that controls size of the legend in the plot
-#' @details Internal use for shiny app or outside of shiny to reproduce 
-#'      figures.
+#' @param groupname \code{character} vector containing "group" and "name" to 
+#' display, that is  a unique identifier of the features, "group" and "name" have 
+#' to be separated by \code{"_"} where "group" is the first and "name" is the 
+#' last element
+#' @param highlight \code{logical}, should colours be adjusted to highlight settings?
+#' @param colour \code{NULL} or \code{character}, colour defines the colours which are used
+#'  for plotting, if \code{NULL} default colours are used
+#' @param cex \code{numeric}, parameter that controls size of the legend in 
+#' the plot
+#' @details Internal use in \code{shinyCircos} or outside of \code{shinyCircos} 
+#'  to reproduce figures.
 #' @return The function will open a new plot and display colours together 
 #'      with labels. 
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
@@ -407,15 +414,15 @@ circosLegend <- function(groupname, highlight = TRUE, colour = NULL, cex = 1) {
 #' @title Get indices in LinkMatrix of feature 
 #' @description Gets indices in LinkMatrix of feature 
 #' @usage getLinkMatrixIndices(groupnameselected, linkMatrix)
-#' @param groupnameselected vector with groupname of selected feature,
-#' vector containing "group" and "name" to display, that is 
+#' @param groupnameselected \code{character} vector with groupname of selected 
+#' feature, vector containing "group" and "name" to display, that is 
 #' a unique identifier of the features, "group" and "name" have to be separated
-#' by "_" where "group" is the first and "name" is the last element
-#' @param linkMatrix matrix, in each row there is information about features 
+#' by \code{"_"} where "group" is the first and "name" is the last element
+#' @param linkMatrix \code{matrix}, in each row there is information about features 
 #'      to be connected 
-#' @details Internal use for function highlight.
-#' @return \code{getLinkMatrixIndices} returns indices concerning linkMatrix to 
-#'      which groupnameselected connects
+#' @details Internal use for function \code{highlight}.
+#' @return \code{getLinkMatrixIndices} returns indices concerning 
+#'  \code{linkMatrix} to which \code{groupnameselected} connects
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples \dontrun{getLinkMatrixIndices(groupnameselected, linkMatrix)}
 #' @export

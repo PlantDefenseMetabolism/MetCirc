@@ -4,27 +4,27 @@
 \name{classes}
 \alias{classes}
 \alias{classes,MSP-method}
-\title{classes returns class names of compounds in MSP object}
+\title{\code{classes} returns class names of compounds in \code{MSP}-object}
 \format{An object of class \code{NULL} of length 0.}
 \usage{
 classes(x)
 }
 \arguments{
-\item{x}{object of class MSP}
+\item{x}{object of class \code{MSP}}
 }
 \value{
-character
+\code{character}
 }
 \description{
-classes returns class names of compounds in MSP object.
+\code{classes} returns class names of compounds in \code{MSP}-object.
 }
 \section{Functions}{
 \itemize{
-\item \code{classes}: returns class names of metabolites in MSP object
+\item \code{classes}: returns class names of metabolites in \code{MSP}-object
 }}
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
                          splitIndMZ = 2, splitIndRT = NULL)
 classes(finalMSP)
 }

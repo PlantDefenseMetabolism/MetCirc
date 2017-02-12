@@ -5,12 +5,13 @@
 \alias{MSP}
 \alias{MSP-class}
 \title{MSP-class}
-\arguments{
-\item{msp}{a data.frame in msp format}
-}
 \description{
-MSP class for msp data.frame. Allows easy computation of 
-length of entries by entering length(msp), where msp is of class MSP.
+Definiton of \code{MSP}-class in \code{MetCirc}. Entries are 
+MS/MS features including their spectra. 
+Allows easy computation of number of entries by entering length(msp), 
+where msp is of class MSP. The \code{MSP}-class incorporates accessors 
+for auxiliary information of MS/MS features (names, classes, information, 
+adduct ion name).
 }
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}

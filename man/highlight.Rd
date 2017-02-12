@@ -7,21 +7,22 @@
 highlight(groupname, ind, LinkMatrix, colour = NULL, transparency = 0.4, links = TRUE)
 }
 \arguments{
-\item{groupname}{vector containing "group" and "name" to display, that is 
-a unique identifier of the features, "group" and "name" have to be separated
-by "_" where "group" is the first and "name" is the last element}
+\item{groupname}{\code{character} vector containing "group" and "name" to 
+display, that is a unique identifier of the features, "group" and "name" have 
+to be separated by \code{"_"} where "group" is the first and "name" is the 
+last element}
 
-\item{ind}{numerical, indices which will be highlighted}
+\item{ind}{\code{numeric}, indices which will be highlighted}
 
-\item{LinkMatrix}{matrix, in each row there is information about features 
-to be connected}
+\item{LinkMatrix}{\code{matrix}, in each row there is information about 
+features to be connected}
 
-\item{colour}{NULL or character, colour defines the colours which are used
-for plotting, if NULL default colours are used}
+\item{colour}{\code{NULL} or \code{character}, colour defines the colours which 
+are used for plotting, if \code{NULL} default colours are used}
 
-\item{transparency}{numerical, defines the transparency of the colours}
+\item{transparency}{\code{numeric}, defines the transparency of the colours}
 
-\item{links}{logical, should links of unselected features be plotted}
+\item{links}{\code{logical}, should links of unselected features be plotted}
 }
 \value{
 The function will update an existing plot by highlighting a 
@@ -32,7 +33,8 @@ A function to add links and highlight sectors to an initialised
      and plotted \code{circlize} plot with one track.
 }
 \details{
-Internal use for shiny app.
+Internal use for \code{shinyCircos} or outside of \code{shinyCircos}
+ to reproduce the figure.
 }
 \examples{
  ## load binnedMSP

@@ -2,15 +2,15 @@
 #' @title Calculate the normalised dot product
 #' @description Calculate the normalised dot product (NDP)
 #' @usage NDP(matrow1, matrow2, m = 0.5, n = 2, mass)
-#' @param matrow1 character vector or numerical vector, the entries correspond 
-#' to the mass vector and contain corresponding intensities to the masses, 
-#' it is the first feature to compare
-#' @param matrow2 character vector or numerical vector, the entries correspond 
-#' to the mass vector and contain corresponding intensities to the masses, 
-#' it is the second feature to compare
-#' @param m numeric, exponent to calculate peak intensity-based weights
-#' @param n numeric, exponent to calculate peak intensity-based weights
-#' @param mass character vector or numerical vector, vector with all masses 
+#' @param matrow1 \code{character} or \code{numeric} vector, the entries 
+#' correspond to the mass vector and contain corresponding intensities to the 
+#' masses, it is the first feature to compare
+#' @param matrow2 \code{character} or \code{numeric} vector, the entries 
+#' correspond to the mass vector and contain corresponding intensities to the 
+#' masses, it is the second feature to compare
+#' @param m \code{numeric}, exponent to calculate peak intensity-based weights
+#' @param n \code{numeric}, exponent to calculate peak intensity-based weights
+#' @param mass \code{character} or \code{numeric} vector, vector with all masses 
 #' which occur in the data set
 #' @details The NDP is calculated according to the following formula: 
 #'  \deqn{NDP = \frac{\sum(W_{S1, i} \cdot W_{S2, i}) ^ 2}{ \sum(W_{S1, i} ^ 2) * \sum(W_{S2, i} ^ 2) }}{\sum(W_{S1, i} \cdot W_{S2, i}) ^ 2 \sum(W_{S1, i} ^ 2) * \sum(W_{S2, i} ^ 2)},
@@ -18,8 +18,8 @@
 #'  see Li et al. (2015): Navigating natural variation in herbivory-induced
 #'  secondary metabolism in coyote tobacco populations using MS/MS structural analysis. 
 #'  PNAS, E4147--E4155. NDP returns a numeric value ranging between 0 and 1, where 0 
-#' indicates no similarity between the two precursors, while 1 indicates 
-#' a strong similarity between the two precursors.
+#' indicates no similarity between the two MS/MS features, while 1 indicates 
+#' that the MS/MS features are identical.
 #' @return NDP returns a numeric similarity coefficient between 0 and 1
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
@@ -50,29 +50,35 @@ NDP <- function(matrow1, matrow2, m = 0.5, n = 2, mass) {
 #' @title Create similarity matrix
 #' @description Creates the similarity matrix by calculating the normalised dot 
 #' product (NDP) between precursors
-#' @usage createSimilarityMatrix(mm)
-#' @param mm matrix, colnames are all fragments which occur in the dataset, 
-#'      rownames are m/z / rt values, entries of mm are intensity values 
-#'      corresponding to the mass
+#' @usage createSimilarityMatrix(mm, m = 0.5, n = 2)
+#' @param mm \code{matrix}, colnames are all fragments which occur in the 
+#'  dataset, rownames are m/z / rt values, entries of \code{mm} are intensity 
+#'  values corresponding to their m/z values
+#' @param m \code{numeric}, see \code{?NDP} for further details
+#' @param n \code{numeric}, see \code{?NDP} for further details
 #' @details createSimilarityMatrix calls a function to calculate the 
 #' NDP between all precursors in the data set. For further
-#' information on how the NDP is calculated see ?NDP and Li et al. (2015): 
+#' information on how the NDP is calculated see \code{?NDP} and Li et al. (2015): 
 #' Navigating natural variation in herbivory-induced secondary metabolism in 
 #' coyote tobacco populations using MS/MS structural analysis. PNAS, 
-#' E4147--E4155.
-#' @return createSimilarityMatrix returns a similarity matrix that contains the 
-#' NDP similarity measure between all precursors in the data set
+#' E4147--E4155. Currently \code{m = 0.5} and \code{n = 2} are set as 
+#' default.
+#' @return \code{createSimilarityMatrix} returns a similarity matrix that 
+#' contains the NDP similarity measure between all precursors in the data set
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' data("binnedMSP", package = "MetCirc")
 #' ## truncate binnedMSP 
 #' binnedMSP <- binnedMSP[1:28,]
-#' createSimilarityMatrix(binnedMSP)
+#' createSimilarityMatrix(binnedMSP, m = 0.5, n = 2)
 #' @export
-createSimilarityMatrix <- function(mm) {
-    n <- dim(mm)[1]
+createSimilarityMatrix <- function(mm, m = 0.5, n = 2) {
+    
+    if (!is.numeric(m)) stop("m is not numeric")
+    if (!is.numeric(n)) stop("n is not numeric")
+    dimMM <- dim(mm)[1]
     colNames <- colnames(mm)
-    similarity <- matrix(0, nrow = n, ncol = n)
+    similarity <- matrix(0, nrow = dimMM, ncol = dimMM)
     groupname <- rownames(mm)
     ##orderNew <- order(groupname)
     ##mm <- mm[orderNew,]
@@ -82,11 +88,11 @@ createSimilarityMatrix <- function(mm) {
     colNames <- as.numeric(colNames)
     colNames <- abs(colNames)
     ## write to similarity matrix similarity measure
-    for (i in 1:n) {
-        for (j in 1:n) {
+    for (i in 1:dimMM) {
+        for (j in 1:dimMM) {
             if (i <= j) {
                 similarity[j,i] <- similarity[i,j] <- NDP(matrow1 = mm[i,], 
-                                    matrow2 = mm[j,], m = 0.5, n = 2, 
+                                    matrow2 = mm[j,], m = m, n = n, 
                                     mass = colNames)
             }
         }
@@ -103,21 +109,22 @@ createSimilarityMatrix <- function(mm) {
 #' @description Internal function for shiny application. May also be used 
 #' outside of shiny to reconstruct figures.
 #' @usage createOrderedSimMat(similarityMatrix, order = c("retentionTime", "mz", "clustering"))
-#' @param similarityMatrix matrix, similarityMatrix contains pair-wise 
-#' similarity coefficients which give information about the similarity between
-#' precursors
-#' @param order character, one of "retentionTime", "mz" or "clustering"
-#' @details createOrderSimMat takes  a similarity matrix and a character vector
+#' @param similarityMatrix \code{matrix}, \code{similarityMatrix} contains 
+#' pair-wise similarity coefficients which give information about the similarity 
+#' between precursors
+#' @param order \code{character}, one of "retentionTime", "mz" or "clustering"
+#' @details \code{createOrderSimMat} takes  a similarity matrix and a 
+#' \code{character} vector
 #' as arguments. It will then reorder rows and columns of 
 #' the similarityMatrix object such, that it orders rows and columns of 
-#' similarityMatrix according to m/z, retention timem or clustering in 
-#' each group. createOrderSimMat is used in the shinyCircos 
-#' function to create similarityMatrix objects which will allow to switch
+#' similarityMatrix according to m/z, retention time or clustering in 
+#' each group. \code{createOrderSimMat} is employed in the shinyCircos 
+#' function to create \code{similarityMatrix} objects which will allow to switch
 #' between different types of ordering in between groups (sectors) in the 
 #' circos plot. It may be used as well externally, to reproduce plots outside
 #' of the reactive environment (see vignette for a workflow).
-#' @return createOrderedSimMat returns a similarity matrix with ordered
-#' rownames according to the character vector given to order
+#' @return \code{createOrderedSimMat} returns a similarity matrix with ordered
+#' rownames according to the \code{character} vector given to order
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' data("binnedMSP", package = "MetCirc")

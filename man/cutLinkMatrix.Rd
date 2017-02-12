@@ -2,22 +2,22 @@
 % Please edit documentation in R/linkMatrix.R
 \name{cutLinkMatrix}
 \alias{cutLinkMatrix}
-\title{Create a cut LinkMatrix}
+\title{Create a cut link matrix}
 \usage{
 cutLinkMatrix(LinkMatrix, type = c("all", "inter", "intra"))
 }
 \arguments{
-\item{LinkMatrix}{matrix, that gives per each row 
+\item{LinkMatrix}{\code{matrix}, that gives per each row 
 information on linked features}
 
-\item{type}{character, one of "all", "inter" or "intra"}
+\item{type}{\code{character}, one of "all", "inter" or "intra"}
 }
 \value{
 cutLinkMatrix returns a matrix that gives per each row 
 information on linked features
 }
 \description{
-Create a cut LinkMatrix
+Create a cut link matrix
 }
 \details{
 This function is used to cut features from LinkMatrix. If 

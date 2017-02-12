@@ -4,22 +4,23 @@
 \name{adduct<-}
 \alias{adduct<-}
 \alias{adduct<-,MSP,character-method}
-\title{adduct<- sets adduct ion names in MSP object}
+\title{\code{adduct<-} sets adduct ion names in \code{MSP}-object}
 \format{An object of class \code{NULL} of length 0.}
 \arguments{
-\item{x}{object of class MSP, see ?convert2MSP for further information}
+\item{x}{object of class \code{MSP}, see \code{?convert2MSP} for further
+information}
 
-\item{value}{character vector with new adduct ion names}
+\item{value}{\code{character} vector with new adduct ion names}
 }
 \value{
-MSP
+\code{MSP}-object
 }
 \description{
-adduct<- sets adduct ion names in MSP object
+\code{adduct<-} sets adduct ion names in \code{MSP}-object
 }
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
                          splitIndMZ = 2, splitIndRT = NULL)
 adduct(finalMSP) <- rep("Unknown")
 }

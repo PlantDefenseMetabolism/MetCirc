@@ -7,26 +7,26 @@
 createLinkMatrix(similarityMatrix, threshold_low, threshold_high)
 }
 \arguments{
-\item{similarityMatrix}{matrix, a similarity matrix that contains the 
+\item{similarityMatrix}{\code{matrix}, a similarity matrix that contains the 
 NDP similarity measure between all precursors in the data set}
 
-\item{threshold_low}{numerical, threshold value for NDP values, below this 
-value linked features will not be included}
+\item{threshold_low}{\code{numeric}, threshold value for NDP values, below 
+this value linked features will not be included}
 
-\item{threshold_high}{numerical, threshold value for NDP values, above this 
-value linked features will not be included}
+\item{threshold_high}{\code{numeric}, threshold value for NDP values, above 
+this value linked features will not be included}
 }
 \value{
-createLinkMatrix returns a matrix that gives per each row 
+\code{createLinkMatrix} returns a matrix that gives per each row 
 information on linked features
 }
 \description{
 Create a matrix which contains features to link (indices)
 }
 \details{
-threshold_low and threshold_high are numerical values and truncate 
-similar/identical precursor ions; similarity is currently based on the 
-normalised dot product.
+\code{threshold_low} and \code{threshold_high} are numerical values 
+and truncate similar/identical precursor ions; similarity is currently 
+based on the normalised dot product.
 }
 \examples{
 data("binnedMSP", package = "MetCirc")

@@ -7,25 +7,25 @@
 thresholdLinkMatrix(linkMatrix, threshold_low, threshold_high)
 }
 \arguments{
-\item{linkMatrix}{matrix, a link matrix that gives per each row 
+\item{linkMatrix}{\code{matrix}, a link matrix that gives per each row 
 information on linked features}
 
-\item{threshold_low}{numerical, threshold value for NDP values, below this 
-value linked features will not be returned}
+\item{threshold_low}{\code{numeric}, threshold value for NDP values, below 
+this value linked features will not be returned}
 
-\item{threshold_high}{numerical, threshold value for NDP values, above this 
-value linked features will not be returned}
+\item{threshold_high}{\code{numeric}, threshold value for NDP values, above 
+this value linked features will not be returned}
 }
 \value{
-thresholdLinkMatrix returns a matrix that gives per each row 
+\code{thresholdLinkMatrix} returns a matrix that gives per each row 
 information on linked features which are linked above a certain threshold
 }
 \description{
 Threshold a link matrix
 }
 \details{
-threshold_low and threshold_high are numerical values and truncates 
-similar/identical precursor ions; 
+\code{threshold_low} and \code{threshold_high} are numerical values 
+and truncates similar/identical precursor ions; 
 similarity is momentarily based on the normalised dot product.
 }
 \examples{

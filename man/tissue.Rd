@@ -4,7 +4,7 @@
 \name{tissue}
 \alias{tissue}
 \title{Example data for \code{MetCirc}: \code{tissue}}
-\format{data.frame}
+\format{\code{data.frame}}
 \source{
 internal
 }
@@ -12,13 +12,13 @@ internal
 tissue
 }
 \value{
-data.frame
+\code{data.frame}
 }
 \description{
-The data.frame \code{tissue} is used in the subsection
+The \code{data.frame} \code{tissue} is used in the subsection
 'Preparing the tissue data set for analysis' in the vignette of 
 \code{MetCirc}. MS/MS data are merged across floral organs 
-in this data.frame.
+in this \code{data.frame}.
 }
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}

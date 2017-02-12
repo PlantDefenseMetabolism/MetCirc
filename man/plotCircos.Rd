@@ -11,33 +11,34 @@ plotCircos(groupname, linkMat, initialize = c(TRUE, FALSE),
      transparency = 0.2)
 }
 \arguments{
-\item{groupname}{vector containing "group" and "name" to display, that is 
-a unique identifier of the features, "group" and "name" have to be separated
-by "_" where "group" is the first and "name" is the last element}
+\item{groupname}{\code{character} vector containing "group" and "name" to 
+display, that is a unique identifier of the features, "group" and "name" have 
+to be separated 
+by \code{"_"} where "group" is the first and "name" is the last element}
 
-\item{linkMat}{data.frame containing linked features in each row, has 
+\item{linkMat}{\code{data.frame} containing linked features in each row, has 
 five columns (group1, name1, group2, name2, NDP)}
 
-\item{initialize}{logical, should plot be initialized?}
+\item{initialize}{\code{logical}, should plot be initialized?}
 
-\item{featureNames}{logical, should feature names be displayed?}
+\item{featureNames}{\code{logical}, should feature names be displayed?}
 
-\item{cexFeatureNames}{numerical, size of feature names}
+\item{cexFeatureNames}{\code{numeric}, size of feature names}
 
-\item{groupSector}{logical, should groups be displayed with background 
+\item{groupSector}{\code{logical}, should groups be displayed with background 
 colours?}
 
-\item{groupName}{logical, should group names (e.g. compartment names or 
+\item{groupName}{\code{logical}, should group names (e.g. compartment names or 
 individual names) be displayed?}
 
-\item{links}{logical, should links be plotted?}
+\item{links}{\code{logical}, should links be plotted?}
 
-\item{highlight}{logical, are we in highlighting mode?}
+\item{highlight}{\code{logical}, highlight is set to \code{TRUE}}
 
-\item{colour}{NULL or character, colour defines the colours which are used
-for plotting, if NULL default colours are used}
+\item{colour}{\code{NULL} or \code{character}, colour defines the colours 
+which are used for plotting, if \code{NULL} default colours are used}
 
-\item{transparency}{numerical, defines the transparency of the colours}
+\item{transparency}{\code{numeric}, defines the transparency of the colours}
 }
 \value{
 The function will initialize a circlize plot and/or will plot 
@@ -47,7 +48,8 @@ The function will initialize a circlize plot and/or will plot
 Circular plot to visualise similarity
 }
 \details{
-Internal use for shiny app
+Internal use for \code{shinyCircos} or used outside of 
+ \code{shinyCircos} to reproduce figure
 }
 \examples{
 ## load binnedMSP

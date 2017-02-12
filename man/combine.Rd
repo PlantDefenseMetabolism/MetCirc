@@ -5,32 +5,32 @@
 \alias{combine}
 \alias{combine,MSP,MSP-method}
 \alias{combine,MSP-method}
-\title{combine method for MSP class}
+\title{\code{combine} method for \code{MSP}-class}
 \usage{
 combine(object1, object2)
 
 \S4method{combine}{MSP,MSP}(object1, object2)
 }
 \arguments{
-\item{object1}{object of class MSP}
+\item{object1}{object of class \code{MSP}}
 
-\item{object2}{object of class MSP}
+\item{object2}{object of class \code{MSP}}
 }
 \value{
-MSP object
+\code{MSP}-object
 }
 \description{
-Combines two objects of class MSP.
+\code{combine} combines two objects of class \code{MSP}.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{object1 = MSP,object2 = MSP}: combines two MSP objects
+\item \code{object1 = MSP,object2 = MSP}: combines two object of class \code{MSP}
 }}
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-finalMSP1 <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+finalMSP1 <- convert2MSP(sd02_deconvoluted, split = " _ ",
                          splitIndMZ = 2, splitIndRT = NULL)
-finalMSP2 <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+finalMSP2 <- convert2MSP(sd02_deconvoluted, split = " _ ",
                          splitIndMZ = 2, splitIndRT = NULL)
 combine(finalMSP1, finalMSP2)
 }

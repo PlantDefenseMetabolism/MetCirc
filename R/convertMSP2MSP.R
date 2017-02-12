@@ -1,8 +1,8 @@
 #' @name convertMSP2MSP
-#' @title Convert msp data frame into MSP format
-#' @description Convert msp data frame into MSP format
+#' @title Convert MSP data frame into object of \code{MSP}-class
+#' @description Convert msp data frame into object of \code{MSP}-class
 #' @usage convertMSP2MSP(msp)
-#' @param msp data.frame, see \code{Details} for further information. 
+#' @param msp \code{data.frame}, see \code{Details} for further information. 
 #' @details msp is a data frame of a .MSP file, a typical data file for 
 #' MS/MS libraries. The data frame has two columns and contains in the first
 #' column the entries "NAME:", 
@@ -11,7 +11,7 @@
 #' \code{convertMSP2MSP} will try to find the row entries "RETENTIONTIME:",
 #' "ADDUCTIONNAME:" (or "PRECURSORTYPE:"), "CLASS:" and "INFORMATION:" and 
 #' extract the respective information in the second column.
-#' @return convertMSP2MSP returns an object of class MSP. 
+#' @return \code{convertMSP2MSP} returns an object of class \code{MSP}. 
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples 
 #' data("convertMSP2MSP", package = "MetCirc")

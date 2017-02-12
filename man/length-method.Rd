@@ -4,22 +4,22 @@
 \name{length}
 \alias{length}
 \alias{length,MSP-method}
-\title{length method for MSP class}
+\title{\code{length} method for \code{MSP}-class}
 \usage{
 \S4method{length}{MSP}(x)
 }
 \arguments{
-\item{x}{object of class MSP}
+\item{x}{object of class \code{MSP}}
 }
 \value{
-numerical
+\code{numeric}
 }
 \description{
-Gives the number of entries in the MSP object.
+Gives the number of entries in the \code{MSP} object.
 }
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
                          splitIndMZ = 2, splitIndRT = NULL)
 length(finalMSP)
 }

@@ -4,27 +4,28 @@
 \name{getRT}
 \alias{getRT}
 \alias{getRT,MSP-method}
-\title{getRT returns precursor RT values of an MSP object}
+\title{\code{getRT} returns precursor RT values of an \code{MSP}-object}
 \format{An object of class \code{NULL} of length 0.}
 \usage{
 getRT(x)
 }
 \arguments{
-\item{x}{object of class MSP}
+\item{x}{object of class \code{MSP}}
 }
 \value{
-numeric
+\code{numeric}
 }
 \description{
-getRT returns a numeric vector with all retention time values
+\code{getRT} returns a \code{numeric} vector with all retention
+ time values
 }
 \section{Functions}{
 \itemize{
-\item \code{getRT}: returns precursor RT values of an MSP object
+\item \code{getRT}: returns precursor RT values of an \code{MSP}-object
 }}
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
                      splitIndMZ = 2, splitIndRT = NULL)
 getRT(finalMSP)
 }

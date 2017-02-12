@@ -1,12 +1,12 @@
 #' @name similarityMat
 #' @title Example data for \code{MetCirc}: \code{similarityMat}
-#' @description \code{similarityMat} is a matrix containing the pair-wise
+#' @description \code{similarityMat} is a \code{matrix} containing the pair-wise
 #' similarity scores derived from the \code{idMSMStissueproject} data set. 
 #' See the vignette for a workflow to reproduce the object \code{similarityMat}.
 #' @docType data
 #' @usage similarityMat
-#' @return matrix
-#' @format matrix
+#' @return \code{matrix}
+#' @format \code{matrix}
 #' @source 
 #' data("binnedMSP", package = "MetCirc")
 #' similarityMat <- createSimilarityMatrix(binnedMSP)

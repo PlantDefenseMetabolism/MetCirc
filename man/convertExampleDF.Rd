@@ -4,7 +4,7 @@
 \name{convertExampleDF}
 \alias{convertExampleDF}
 \title{Example data for \code{MetCirc}: convertExampleDF}
-\format{data.frame}
+\format{\code{data.frame}}
 \source{
 internal
 }
@@ -12,7 +12,7 @@ internal
 convertExampleDF
 }
 \value{
-data.frame
+\code{data.frame}
 }
 \description{
 \code{convertExampleDF} is a \code{data.frame} which comprises 

@@ -4,22 +4,23 @@
 \name{names}
 \alias{names}
 \alias{names,MSP-method}
-\title{names returns names in MSP object}
+\title{\code{names} returns names in \code{MSP}-object}
 \usage{
 \S4method{names}{MSP}(x)
 }
 \arguments{
-\item{x}{object of class MSP, see ?convert2MSP for further information}
+\item{x}{object of class \code{MSP}, see \code{?convert2MSP} for further
+information}
 }
 \value{
-character
+\code{character}
 }
 \description{
-names returns names in MSP object.
+\code{names} returns names in \code{MSP}-object.
 }
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
                          splitIndMZ = 2, splitIndRT = NULL)
 names(finalMSP)
 }

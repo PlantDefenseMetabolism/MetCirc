@@ -4,29 +4,29 @@
 \name{peaks}
 \alias{peaks}
 \alias{peaks,MSP-method}
-\title{peaks method for MSP class}
+\title{\code{peaks} method for \code{MSP}-class}
 \usage{
 peaks(object)
 
 \S4method{peaks}{MSP}(object)
 }
 \arguments{
-\item{object}{object of class MSP}
+\item{object}{object of class \code{MSP}}
 }
 \value{
-data.frame
+\code{data.frame}
 }
 \description{
-Returns the data.frame entry with peak information of an MSP 
-object.
+\code{peaks} returns the \code{data.frame} entry with peak
+ information of an \code{MSP} object.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{MSP}: returns the data.frame of an MSP object
+\item \code{MSP}: returns the \code{data.frame} of an \code{MSP}-object
 }}
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
                      splitIndMZ = 2, splitIndRT = NULL)
 peaks(finalMSP)
 }

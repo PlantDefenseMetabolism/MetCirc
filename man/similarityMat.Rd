@@ -4,7 +4,7 @@
 \name{similarityMat}
 \alias{similarityMat}
 \title{Example data for \code{MetCirc}: \code{similarityMat}}
-\format{matrix}
+\format{\code{matrix}}
 \source{
 data("binnedMSP", package = "MetCirc")
 similarityMat <- createSimilarityMatrix(binnedMSP)
@@ -14,10 +14,10 @@ save(similarityMat, file = "similarityMat.RData", compress = "xz")
 similarityMat
 }
 \value{
-matrix
+\code{matrix}
 }
 \description{
-\code{similarityMat} is a matrix containing the pair-wise
+\code{similarityMat} is a \code{matrix} containing the pair-wise
 similarity scores derived from the \code{idMSMStissueproject} data set. 
 See the vignette for a workflow to reproduce the object \code{similarityMat}.
 }

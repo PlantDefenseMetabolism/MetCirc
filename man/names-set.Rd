@@ -4,24 +4,25 @@
 \name{names<-}
 \alias{names<-}
 \alias{names<-,MSP,character-method}
-\title{names<- sets names in MSP object}
+\title{\code{names<-} sets names in \code{MSP}-object}
 \usage{
 \S4method{names}{MSP,character}(x) <- value
 }
 \arguments{
-\item{x}{object of class MSP, see ?convert2MSP for further information}
+\item{x}{object of class \code{MSP}, see \code{?convert2MSP} for further
+information}
 
-\item{value}{character vector with new names}
+\item{value}{\code{character} vector with new names}
 }
 \value{
-MSP
+\code{MSP}-object
 }
 \description{
-names<- sets names in MSP object
+\code{names<-} sets names in \code{MSP}-object
 }
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
                          splitIndMZ = 2, splitIndRT = NULL)
 names(finalMSP) <- rep("Unknown")
 }

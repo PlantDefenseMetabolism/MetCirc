@@ -4,7 +4,7 @@
 \name{sd01_outputXCMS}
 \alias{sd01_outputXCMS}
 \title{Example data for \code{MetCirc}: \code{sd01_outputXCMS}}
-\format{data.frame}
+\format{\code{data.frame}}
 \source{
 Li et al. (2015)
 }
@@ -12,7 +12,7 @@ Li et al. (2015)
 sd01_outputXCMS
 }
 \value{
-data.frame
+\code{data.frame}
 }
 \description{
 \code{sd01_outputXCMS} is the output file from the package

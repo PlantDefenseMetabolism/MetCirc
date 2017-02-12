@@ -4,22 +4,22 @@
 \name{show}
 \alias{show}
 \alias{show,MSP-method}
-\title{show method for MSP class}
+\title{\code{show} method for \code{MSP}-class}
 \usage{
 \S4method{show}{MSP}(object)
 }
 \arguments{
-\item{object}{object of class MSP}
+\item{object}{object of class \code{MSP}}
 }
 \value{
-character
+\code{character}
 }
 \description{
-Prints information on the MSP class (number of entries).
+\code{show} prints information on the \code{MSP}-object (number of entries).
 }
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
                      splitIndMZ = 2, splitIndRT = NULL)
 show(finalMSP)
 }

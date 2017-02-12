@@ -7,11 +7,11 @@
 truncateName(groupname, roundDigits = 2, group = FALSE)
 }
 \arguments{
-\item{groupname}{vector with group and unique idenfier (name)}
+\item{groupname}{\code{character} vector with group and unique idenfier (name)}
 
-\item{roundDigits}{numeric, how many digits should be displayed?}
+\item{roundDigits}{\code{numeric}, how many digits should be displayed?}
 
-\item{group}{logical, should groups be returned?}
+\item{group}{\code{logical}, should groups be returned?}
 }
 \value{
 \code{truncateName} returns groupname with truncated names 

@@ -7,9 +7,9 @@
 #' @param sd01 is the output of the \code{XCMS} and \code{CAMERA} 
 #' processing and statistical analysis and \code{XCMS} and \code{CAMERA} 
 #' scripts (see Li et al. 2015 and vignette for further information)
-#' @param sd02 is a data.frame with idMS/MS deconvoluted spectra with fragment 
+#' @param sd02 \code{data.frame} with idMS/MS deconvoluted spectra with fragment 
 #' ions (m/z, retention time, relative intensity in \%) and the corresponding 
-#' principal component group with the precursor ion. sd02 
+#' peak correlation group of the precursor ion. \code{sd02}
 #' has to have at least four columns: a column 'mz', 'rt', 'intensity' and 'id'
 #' @param kNN numerical, number of k-nearest neighbours based on deviation
 #' from m/z (i.e. the k entries with the smallest deviation)
@@ -42,7 +42,7 @@
 #' that it might be problematic to compare \code{sd01\_outputXCMS} and 
 #' \code{sd02\_deconvoluted} and allocate precursor ions therefrom, 
 #' especially when data were acquired under different conditions.
-#' @return allocatePrecursor2mz returns a data.frame containing average 
+#' @return allocatePrecursor2mz returns a \code{data.frame} containing average 
 #'      retention time, average mz, metabolite name, adduct ion name, 
 #'      spectrum reference
 #' @author Thomas Naake, \email{thomasnaake@googlemail.com}

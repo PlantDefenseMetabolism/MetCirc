@@ -5,8 +5,8 @@
 #' for further details.
 #' @docType data
 #' @usage sd01_outputXCMS
-#' @return data.frame
-#' @format data.frame
+#' @return \code{data.frame}
+#' @format \code{data.frame}
 #' @source Li et al. (2015)
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 NULL 

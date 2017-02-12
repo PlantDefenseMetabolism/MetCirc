@@ -8,34 +8,35 @@ printInformationSelect(groupname, msp = NULL, ind,
  lMatInd, linkMatrixThreshold, similarityMatrix, roundDigits = 2)
 }
 \arguments{
-\item{groupname}{vector with groupname of selected feature,
+\item{groupname}{\code{character} vector with groupname of selected feature,
 vector containing "group" and "name" to display, that is 
 a unique identifier of the features, "group" and "name" have to be separated
-by "_" where "group" is the first and "name" is the last element}
+by \code{"_"} where "group" is the first and "name" is the last element}
 
-\item{msp}{MSP, an S4 object of class 'MSP' for information about 
+\item{msp}{\code{MSP}, an S4 object of class \code{MSP} for information about 
 the selected feature}
 
-\item{ind}{numeric}
+\item{ind}{\code{numeric}}
 
-\item{lMatInd}{numeric indices of selected features}
+\item{lMatInd}{\code{numeric} indices of selected features}
 
-\item{linkMatrixThreshold}{matrix that contains information of linked 
-features of a threshold or greater}
+\item{linkMatrixThreshold}{\code{matrix} that contains information of linked 
+features for given thresholds}
 
-\item{similarityMatrix}{matrix that is used to get information on the degree 
-of similarity, similarityMat is an ordered version of a similarity matrix}
+\item{similarityMatrix}{\code{matrix} that is used to get information on the 
+degree of similarity, \code{similarityMat} is an ordered version of a 
+similarity matrix, see \code{?createOrderedSimMat}}
 
-\item{roundDigits}{numeric,  how many digits should be displayed?}
+\item{roundDigits}{\code{numeric},  how many digits should be displayed?}
 }
 \value{
-character that is in HTML format
+\code{character} that is in HTML format
 }
 \description{
 Displays information on connected features of selected features.
 }
 \details{
-printInformationSelect is for internal use.
+\code{printInformationSelect} is for internal use.
 }
 \examples{
 data("idMSMStoMSP", package = "MetCirc")

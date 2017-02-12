@@ -2,18 +2,18 @@
 % Please edit documentation in R/convertMSP2MSP.R
 \name{convertMSP2MSP}
 \alias{convertMSP2MSP}
-\title{Convert msp data frame into MSP format}
+\title{Convert MSP data frame into object of \code{MSP}-class}
 \usage{
 convertMSP2MSP(msp)
 }
 \arguments{
-\item{msp}{data.frame, see \code{Details} for further information.}
+\item{msp}{\code{data.frame}, see \code{Details} for further information.}
 }
 \value{
-convertMSP2MSP returns an object of class MSP.
+\code{convertMSP2MSP} returns an object of class \code{MSP}.
 }
 \description{
-Convert msp data frame into MSP format
+Convert msp data frame into object of \code{MSP}-class
 }
 \details{
 msp is a data frame of a .MSP file, a typical data file for 

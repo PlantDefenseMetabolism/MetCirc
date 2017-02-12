@@ -8,28 +8,34 @@ cutUniquePrecursor(precursor, splitPattern = splitPattern,
      splitInd = splitInd, returnCharacter = TRUE)
 }
 \arguments{
-\item{precursor, }{character with splitPattern}
+\item{precursor}{\code{character} where features are separated by 
+\code{splitPattern}}
 
-\item{splitPattern}{character, character vector to use for splitting, 
-see ?strsplit for further information}
+\item{splitPattern}{\code{character}, character vector to use for splitting, 
+see \code{?strsplit} for further information}
 
-\item{splitInd}{numeric, extract precursor mz at position splitInd}
+\item{splitInd}{\code{numeric}, extract precursor mz at position 
+\code{splitInd}}
 
-\item{returnCharacter}{logical, if TRUE return character, if FALSE 
-return numeric}
+\item{returnCharacter}{\code{logical}, if \code{TRUE} return 
+\code{character}, if \code{FALSE} return \code{numeric}}
 }
 \value{
-cutUniquePrecursor returns character as specified by parameters
+The function \code{cutUniquePrecursor} returns \code{character} or \code{numeric} as 
+ specified by parameters.
 }
 \description{
 Get unique precursor ions
 }
 \details{
-Internal function.
+Function for internal usage.
 }
 \examples{
-\dontrun{cutUniquePrecursor(precursor, splitPattern = splitPattern, 
-     splitInd = splitInd, returnCharacter = TRUE)}
+precursor <- "A_269.0455469_-1"
+splitPattern <- "_"
+splitInd <- 2
+cutUniquePrecursor(precursor, splitPattern = splitPattern, 
+     splitInd = splitInd, returnCharacter = TRUE)
 }
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}

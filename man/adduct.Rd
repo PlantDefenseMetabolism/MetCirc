@@ -4,29 +4,29 @@
 \name{adduct}
 \alias{adduct}
 \alias{adduct,MSP-method}
-\title{adduct returns adduct ion names of compounds in MSP 
-object}
+\title{\code{adduct} returns adduct ion names of compounds in \code{MSP}-object}
 \format{An object of class \code{NULL} of length 0.}
 \usage{
 adduct(x)
 }
 \arguments{
-\item{x}{object of class MSP}
+\item{x}{object of class \code{MSP}}
 }
 \value{
-character
+\code{character}
 }
 \description{
-adduct returns about adduct ion names of compounds in 
-MSP object.
+\code{adduct} returns adduct ion names of compounds in
+\code{MSP}-object.
 }
 \section{Functions}{
 \itemize{
-\item \code{adduct}: returns adduct inon names of compounds in MSP objects
+\item \code{adduct}: returns adduct ion names of compounds in
+\code{MSP}-objects
 }}
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
                          splitIndMZ = 2, splitIndRT = NULL)
 adduct(finalMSP)
 }

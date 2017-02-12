@@ -4,24 +4,24 @@
 \name{[}
 \alias{[}
 \alias{[,MSP,numeric-method}
-\title{Extract parts of a MSP object}
+\title{Extract parts of a \code{MSP}-object}
 \usage{
 \S4method{[}{MSP,numeric}(x, i)
 }
 \arguments{
-\item{x}{object of class MSP}
+\item{x}{object of class \code{MSP}}
 
-\item{i}{numeric}
+\item{i}{\code{numeric}}
 }
 \value{
-MSP object
+\code{MSP}-object
 }
 \description{
-[ operator acting on an MSP object to extract parts.
+[ operator acting on an \code{MSP}-object to extract parts.
 }
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
                          splitIndMZ = 2, splitIndRT = NULL)
 finalMSP[1]
 }

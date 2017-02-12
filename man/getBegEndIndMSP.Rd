@@ -2,28 +2,30 @@
 % Please edit documentation in R/convert2MSP.R
 \name{getBegEndIndMSP}
 \alias{getBegEndIndMSP}
-\title{Get beginning and end indices of each entry in a data.frame in 
-msp format}
+\title{Get beginning and end indices of each entry in a \code{data.frame} in
+\code{peaks(MSP)}-objects}
 \usage{
 getBegEndIndMSP(msp)
 }
 \arguments{
-\item{msp}{data.frame in msp format, see ?convert2MSP for further information}
+\item{msp}{\code{data.frame} in \code{peaks(MSP)}-object, see
+\code{?convert2MSP} for further information}
 }
 \value{
-getBegEndIndMSP returns a list of length 2 where the first entry
-contains the start indices and the second the end indices
+\code{getBegEndIndMSP} returns a list of length 2 where the first
+entry contains the start indices and the second the end indices
 }
 \description{
-Get beginning and end indices of each entry in a data.frame in 
-msp format
+Get beginning and end indices of each entry in a
+\code{data.frame} in a \code{peaks(MSP)}-object
 }
 \details{
-Internal use to retrieve indices when fragments start and end.
+Internal use to retrieve start and end row indices for fragments of
+MS/MS features.
 }
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
-finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
+finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
                          splitIndMZ = 2, splitIndRT = 3)
 finalMSPdf <- peaks(finalMSP)
 getBegEndIndMSP(finalMSPdf)

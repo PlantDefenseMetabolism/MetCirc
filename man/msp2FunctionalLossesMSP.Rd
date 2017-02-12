@@ -7,22 +7,21 @@
 msp2FunctionalLossesMSP(msp)
 }
 \arguments{
-\item{msp}{data.frame, a data.frame in msp format (with fragments)}
+\item{msp}{\code{MSP}-object}
 }
 \value{
-msp2FunctionalLossesMSP returns a data.frame in msp format 
-(with neutral losses).
+\code{msp2FunctionalLossesMSP} returns a \code{MSP-object}  
+(with neutral losses)
 }
 \description{
-msp2FunctionalLossesMSP converts a data.frame in msp format 
-(with fragments) into a data.frame in msp format (with neutral losses)
+\code{msp2FunctionalLossesMSP} converts a \code{MSP}-object 
+(with fragments) into a \code{MSP}-object with neutral losses
 }
 \details{
-msp2FunctionalLosses can be used when you want to calculate 
-the similarity based on neutral losses instead of fragments
+The function \code{msp2FunctionalLosses} can be used when calculating
+the similarity based on neutral losses instead of fragments.
 }
 \examples{
-\dontrun{msp2FunctionalLossesMSP(msp)}
 data("sd02_deconvoluted", package = "MetCirc")
 finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
                      splitIndMZ = 2, splitIndRT = NULL)

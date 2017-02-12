@@ -7,23 +7,23 @@
 getLinkMatrixIndices(groupnameselected, linkMatrix)
 }
 \arguments{
-\item{groupnameselected}{vector with groupname of selected feature,
-vector containing "group" and "name" to display, that is 
+\item{groupnameselected}{\code{character} vector with groupname of selected 
+feature, vector containing "group" and "name" to display, that is 
 a unique identifier of the features, "group" and "name" have to be separated
-by "_" where "group" is the first and "name" is the last element}
+by \code{"_"} where "group" is the first and "name" is the last element}
 
-\item{linkMatrix}{matrix, in each row there is information about features 
+\item{linkMatrix}{\code{matrix}, in each row there is information about features 
 to be connected}
 }
 \value{
-\code{getLinkMatrixIndices} returns indices concerning linkMatrix to 
-     which groupnameselected connects
+\code{getLinkMatrixIndices} returns indices concerning 
+ \code{linkMatrix} to which \code{groupnameselected} connects
 }
 \description{
 Gets indices in LinkMatrix of feature
 }
 \details{
-Internal use for function highlight.
+Internal use for function \code{highlight}.
 }
 \examples{
 \dontrun{getLinkMatrixIndices(groupnameselected, linkMatrix)}
