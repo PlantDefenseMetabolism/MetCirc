@@ -1,6 +1,6 @@
 %\VignetteEngine{knitr::knitr}
 %\VignetteIndexEntry{Workflow for Metabolomics}
-%\VignetteKeywords{Mass Spectrometry, MS, MSMS, Metabolomics, Visualization}
+%\VignetteKeywords{Mass Spectrometry, MS, MSMS, Metabolomics, visualization}
 %\VignettePackage{MetCirc-vignette}
 
 \documentclass[11pt,a4paper,english,arial,twoside]{article}
@@ -102,7 +102,7 @@ spectra based on a normalised dot product (NDP, see \citet{Li2015} for further
 details) calculation taking into account shared fragments or main neutral 
 losses. \newline
 
-Visualisation of molecular networks was pioneered by the 
+visualisation of molecular networks was pioneered by the 
 Dorrestein lab \citep[e.g.][]{Watrous2012} to efficiently organize MS/MS spectra in such a way that 
 clusters of MS/MS spectra sharing multiple common fragments are rapidly inferred. \newline
 In contrary to the analysis there, the \Rpackage{MetCirc} framework offers two ways for the computation of 
@@ -471,7 +471,7 @@ The NDP calculation uses here neutral losses corresponding to mass differences
 between the precursor and fragment ions within a spectrum. The intensities 
 are the respective intensities of the fragments. 
 
-\paragraph{Clustering/Visualisation.} Analogously to the \Robject{MSP}-object 
+\paragraph{Clustering/visualisation.} Analogously to the \Robject{MSP}-object 
 with fragment ions, we are able to 
 cluster the similarity matrix based on neutral losses. 
 <<eval=FALSE>>=
@@ -490,7 +490,7 @@ colnames(nlSimilarityMat)[nlHClustMSP$order]
 @
 
 
-\section{Visualisation using the \Rpackage{shiny}/\Rpackage{circlize} framework}
+\section{visualisation using the \Rpackage{shiny}/\Rpackage{circlize} framework}
 
 \Rpackage{MetCirc} comprises functionality to visualise metabolomics
 data, exploring it interactively and annotate unknown features based on 
