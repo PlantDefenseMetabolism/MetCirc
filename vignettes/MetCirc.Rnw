@@ -75,14 +75,10 @@
 \onehalfspacing
 
 \usepackage{authblk} 
-\author[]{Thomas Naake and Emmanuel Gaquerel}
 
-
-
-\affil{
-    Plant Defense Metabolism \\
-    Centre for Organismal Studies
-}
+\author{Naake, Thomas and Gaquerel, Emmanuel\,$^{\text{1}}$}
+\affil{$^{\text{\sf 1}}$ Centre for Organismal Studies, University of Heidelberg, 
+Im Neuenheimer Feld 360, Heidelberg 69120, Germany}
 
 \title{MetCirc: Navigating mass spectral similarity in high-resolution 
     MS/MS metabolomics data}
@@ -182,15 +178,15 @@ deconvoluted spectra with fragment ions (m/z, chromatographic retention time, re
 intensity in \%) and a column with unique identifiers for MS/MS features (here, 
 the corresponding principal component group with the 
 precursor ion). The data set is derived from the study of \citet{Li2015}. 
-<<eval=TRUE,echo=c(1:2)>>=
+<<eval=TRUE,echo=1:2>>=
 ## load data from Li et al., 2015
 data("sd02_deconvoluted", package = "MetCirc")
 
 ## load binnedMSP
 data("sd01_outputXCMS", package = "MetCirc")
-data("binnedMSP", package = "MetCirc")
+##data("binnedMSP", package = "MetCirc")
 ## load similarityMat
-data("similarityMat", package = "MetCirc")
+##data("similarityMat", package = "MetCirc")
 @
 
 The second data set comes from the data-independent MS/MS 
@@ -279,7 +275,7 @@ style, STY). We will truncate \Robject{tissue} in order that it contains only th
 instances belonging to these types of tissue. In a next step, we will 
 create a \Rpackage{MSP}-object, \Robject{finalMSP}, comprising the features found 
 in the tissues SPL, LIM, ANT and STY. 
-<<eval=c(1:18)>>=
+<<eval=TRUE>>=
 ## create vectors with precursor names present in tissue
 tissueSPL <- compartmentTissue[compartmentTissue[,"SPL"] == TRUE, 1]
 tissueLIM <- compartmentTissue[compartmentTissue[,"LIM"] == TRUE, 1]
@@ -343,6 +339,9 @@ finalMSPGNSP <- convertMSP2MSP(msp2msp)
 
 \subsection{Workflow for \Robject{tissue} data set using fragment ions}
 
+In this vignette we will only continue with the \Robject{tissue} data set 
+for analysis.
+
 \paragraph{Binning.} Due to slight differences in m/z values over measurements, 
 fragments might have m/z values which differ from other 
 fragments even though they are in theory identical. \Rfunction{binning} 
@@ -360,7 +359,7 @@ species, individual, etc. If \Robject{group} is not specified
 the length of the \Robject{msp} object). We use here the \Robject{tissue} data 
 set.
 
-<<eval=FALSE>>=
+<<eval=TRUE>>=
 ## create data frame with binned fragments
 binnedMSP <- binning(msp = finalMSPtissue, tol = 0.01, 
                      group = compartment, method = "median")
@@ -392,7 +391,7 @@ respective precursor) for a given MS/MS feature. The function
 \Rfunction{binning} will return a matrix with such properties.
 
 <<eval=TRUE>>=
-## similarity Matrix 
+## create similarity Matrix 
 similarityMat <- createSimilarityMatrix(binnedMSP)
 @
 
@@ -409,10 +408,9 @@ from \Rpackage{stats}, \Rfunction{Mclust} from \Rpackage{mclust} or
 to cluster similar features. To cluster features and visualise the result (see 
 figure \ref{fig:cluster}) we enter:
 <<cluster,eval=TRUE,fig.show='hide'>>=
-## load package amap
 hClustMSP <- hcluster(similarityMat, method = "spearman")
 ## visualise clusters
-plot(hClustMSP, labels = FALSE, xlab="", sub="")
+plot(hClustMSP, labels = FALSE, xlab = "", sub = "")
 @
 
 \begin{figure}[h!]
@@ -425,23 +423,41 @@ plot(hClustMSP, labels = FALSE, xlab="", sub="")
 To promote readibility we will not show labels. These can be printed to the 
 \R~console by \code{colnames(similarityMat)[hClustMSP\$order]}. \newline
 
-\paragraph{Extraction of highly-related features using clustering.}
+\paragraph{Extraction of highly-related features using clustering analysis.}
 Within the \R~session the similarity matrix can be truncated by using the 
 above-mentioned functions to retrieve a similarity matrix that contains 
 highly-related MS/MS features. For instance, this might be needed when 
 we want to analyse modules of high similarity, representing e.g. a certain 
 metabolite class. By way of example, we extract in the following all features
-from module 1 when defining three modules in total and define a new 
-similarity matrix of highly-related features. This kind of matrix can be 
+from module 3 when defining three modules in total and define a new 
+similarity matrix of highly-related features and \Robject{MSP}-object that 
+stores spectra information of these features. These objects can be 
 used in later analysis steps, e.g. in the analysis with \Rfunction{shinyCircos}.
 
-<<truncateGroup1,eval=TRUE,echo=TRUE>>=
+<<truncateGroup3,eval=TRUE,echo=TRUE>>=
 ## define three clusters
 cutTreeMSP <- cutree(hClustMSP, k = 3)
-## extract feature identifiers that belong to module 1
-module1 <- names(cutTreeMSP)[as.vector(cutTreeMSP) == "1"] 
-## create a new similarity matrix that contains only highly related features
-similarityMat_module1 <- similarityMat[module1, module1]
+
+## extract feature identifiers that belong to the modules
+module1 <- names(cutTreeMSP)[as.vector(cutTreeMSP) == "1"]
+module2 <- names(cutTreeMSP)[as.vector(cutTreeMSP) == "2"]
+module3 <- names(cutTreeMSP)[as.vector(cutTreeMSP) == "3"]
+
+## create a new similarity matrix that contains only highly-related features
+## of module 3
+similarityMat_module <- similarityMat[module3, module3]
+
+## recreate a vector comprising the group information + m/z / retention time
+## values
+groupnameTissue <- paste(compartment, "_", getPrecursorMZ(finalMSPtissue),
+                            "/", getRT(finalMSPtissue), sep = "")
+
+## match the elements in module3 against groupnameTissue
+module_ind <- match(module3, groupnameTissue)
+
+## truncate the finalMSPtissue and compartment objects
+finalMSPtissue_module <- finalMSPtissue[module_ind]
+compartment_module <- compartment[module_ind]
 @
 
 \subsection{Workflow for \Robject{tissue} data set using neutral losses}
@@ -461,10 +477,9 @@ nlMSP <- msp2FunctionalLossesMSP(finalMSPtissue)
 the \Rpackage{MSP}-object with fragments we can bin the \Robject{nlMSP} 
 \Robject{MSP}-object with neutral losses and create a similarity matrix:
 <<eval=FALSE>>=
-## bin msp file with functional losses, create table with same fragments 
-## (binning)
-nlBinnedMSP <- binning(nlMSP, tol = 0.01, group = compartment, method = "median")
-## similarity Matrix
+## bin MSP object with functional losses
+nlBinnedMSP <- binning(nlMSP, tol = 0.01, group = compartment)
+## create similarity Matrix
 nlSimilarityMat <- createSimilarityMatrix(nlBinnedMSP)
 @
 The NDP calculation uses here neutral losses corresponding to mass differences
@@ -475,14 +490,13 @@ are the respective intensities of the fragments.
 with fragment ions, we are able to 
 cluster the similarity matrix based on neutral losses. 
 <<eval=FALSE>>=
-## Clustering
 nlHClustMSP <- hcluster(nlSimilarityMat, method = "spearman")
 @
 
 To visualise the clustering enter the following line of code 
 (labels will not be displayed due to readibility): 
 
-<<eval=FALSE>>=
+<<eval=FALSE,fig.show="hide",echo=FALSE>>=
 plot(nlHClustMSP, labels = FALSE)
 
 ## labels can be reproduced by entering in the console
@@ -511,7 +525,7 @@ Internally, in \Rfunction{shinyCircos}, \Rfunction{createLinkMatrix} will be
 called to produce link matrices based on the given thresholds. 
 <<eval=TRUE>>=
 linkMat <- createLinkMatrix(similarityMatrix = similarityMat, 
-                            threshold_low=0.5, threshold_high=1)
+                            threshold_low = 0.5, threshold_high = 1)
 @
 
 As we have calculated similarity coefficients between precursors, we would
@@ -538,14 +552,15 @@ via the exit button in the sidebar panel, selected precursors will
 be returned which are allocated here to \Robject{selectedFeatures}. 
 \Robject{selectedFeatures} is a vector of the precursor names. \newline
 
-To start the shiny app, run
+We would like to analyse the MS/MS features defined as module 3 in the 
+following. To start the shiny app, run
 <<eval=FALSE>>=
-selectedFeatures <- shinyCircos(similarityMat)
+selectedFeatures <- shinyCircos(similarityMat_module)
 @
 
 To show and modify annotations enter
 <<eval=FALSE>>=
-selectedFeatures <- shinyCircos(similarityMat, msp = finalMSPtissue)
+selectedFeatures <- shinyCircos(similarityMat_module, finalMSPtissue_module)
 @
 to the console. This will load information stored in the \Robject{MSP}-object
 to the \Robject{shinyCircos} interface. Information (metabolite names and
@@ -568,7 +583,7 @@ also promotes reproducibility of such figures. \newline
 To rebuild the figure in a non-interactive environment, run 
 <<circos,eval=TRUE,results='hide',message=FALSE,fig.show='hide'>>=
 ## order similarity matrix according to retention time
-simM <- createOrderedSimMat(similarityMat, order = "retentionTime")
+simM <- createOrderedSimMat(similarityMat_module, order = "retentionTime")
 groupname <- rownames(simM)
 ## create link matrix
 linkMat <- createLinkMatrix(similarityMatrix = simM, 
@@ -600,7 +615,7 @@ plotCircos(groupname, linkMat_cut, initialize = TRUE, featureNames = TRUE,
 
 \begin{figure}[h!]
     \center
-    \includegraphics{./figure/circos-1}
+    \includegraphics[scale=0.8]{./figure/circos-1}
     \caption{Examplary plot where an arbitrary feature is highlighted. Upon
         highlighting all links will be plotted in grey (expect links to and 
         from highlighted features). The intensity
@@ -632,7 +647,7 @@ sessionInfo()
     CH$_4$ & 16.0313 \\
     NH$_3$ &  17.0265 \\
     H$_2$O & 18.0106 \\
-    K$^+$ to NH$_4$$^+$" & 20.9293 \\
+    K$^+$ to NH$_4$$^+$ & 20.9293 \\
     Na$^+$ to H$^+$ & 21.9819 \\
     C$_2$H$_2$ & 26.0157 \\
     CO & 27.9949 \\
