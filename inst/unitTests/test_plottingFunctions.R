@@ -22,6 +22,15 @@ test_plotCircos <- function() {
     checkException(plotCircos(groupnameO, linkMat, initialize = TRUE, 
         featureNames = FALSE, groupSector = FALSE, groupName = FALSE, 
         links = TRUE, highlight = FALSE, colour = NULL, transparency = 0.2)) ## names are different
+    checkException(plotCircos(featureNames = TRUE))
+    checkException(plotCircos(groupname, linkMat, cexFeatureNames = 0.3,
+            initialize = TRUE, featureNames = FALSE, groupSector = FALSE, 
+            groupName = FALSE, links = TRUE, highlight = FALSE, 
+            transparency = 0.2, colour = c("red", "blue")))
+    checkException(plotCircos(groupname, linkMat, cexFeatureNames = 0.3,
+                initialize = TRUE, featureNames = FALSE, groupSector = TRUE, 
+                groupName = FALSE, links = TRUE, highlight = FALSE, 
+                colour = c("red", "blue"), transparency = 0.2))
 }
 ## END unit test for plotCircos
 
@@ -30,13 +39,26 @@ test_plotCircos <- function() {
 test_highlight <- function() {
     checkException(highlight(groupnameO, 1, NULL, NULL, 0.4))
     checkException(highlight(groupnameO, length(groupnameO)+1,NULL, NULL, 0.4))
+    checkException(highlight(groupnameO, length(groupnameO)+1,NULL, NULL, 0.4,
+                             colour = "red"))
+    checkException(highlight(groupname, 
+        LinkMatrix = cbind("name1" = 0, "name2" = 0), ind = 1))
+    checkException(highlight(groupname, 
+        LinkMatrix = cbind("name1" = c(0, 2), "name2" = c(2, 0)), ind = 1))
+    checkException(highlight(groupname, LinkMatrix = linkMat, links = FALSE, ind = 100))
+    checkException(highlight(groupname, LinkMatrix = linkMat, links = TRUE, ind = 100))
     ## names in linkMat do not match names in groupnameO
     checkException(highlight(groupnameO, 1, linkMat, NULL, 0.4))
 }
 ## END unit test for highlight
 
 ## START unit test for circosLegend
-## no unit test for circosLegend
+test_circosLegend <- function() {
+    checkException(circosLegend(1, highlight = TRUE, colour = NULL))
+    checkException(circosLegend(1, highlight = TRUE, colour = "red"))
+    checkException(circosLegend(1, highlight = FALSE, colour = NULL))
+    checkException(circosLegend(1, highlight = FALSE, colour = "red"))
+}
 ## END unit test for circosLegend
 
 

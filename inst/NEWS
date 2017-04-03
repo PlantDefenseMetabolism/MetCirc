@@ -1,3 +1,7 @@
+CHANGES IN VERSION 1.1.5
+------------------------
+ o extend unit tests for shinyApp, plottingFunctions and convert2MSP [2017-04-03 Mon]
+
 CHANGES IN VERSION 1.1.4
 ------------------------
  o change MSP class, create slots mz, rt, names, classes, information and 

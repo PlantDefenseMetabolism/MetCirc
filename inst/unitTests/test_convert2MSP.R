@@ -30,6 +30,12 @@ test_convert2MSP <- function() {
         table(peaks(testMSP)[,1])["Num Peaks: "]), 360)
     checkEquals(length(testMSP@mz), 360)
     checkEquals(length(testMSP@rt), 360)
+    checkException(convert2MSP(sd02_deconvoluted, names = TRUE))
+    checkException(convert2MSP(sd02_deconvoluted[, c(1, 3:4)], rt = TRUE))
+    checkTrue(is.numeric(convert2MSP(sd02_deconvoluted, rt = FALSE)@rt))
+    checkException(convert2MSP(sd02_deconvoluted, information = TRUE))
+    checkException(convert2MSP(sd02_deconvoluted, classes = TRUE))
+    checkException(convert2MSP(sd02_deconvoluted, adduct= TRUE))
 }
 ## END unit test convert2MSP
 
@@ -129,6 +135,14 @@ test_getMetaboliteClass <- function() {
 }
 ## END unit test getMetaboliteClass-method
 
+## START unit test getAdduct-method
+test_adduct <- function() {
+    checkTrue(all(is.character(adduct(testMSP))))
+    checkTrue(length(adduct(testMSP)) == length(testMSP))
+    checkException(adduct("x"))
+}
+## END unit test getAdduct-method
+
 ## START unit test [
 test_extract <- function() {
     checkEquals(length(testMSP[1]), 1)
@@ -138,6 +152,35 @@ test_extract <- function() {
     checkException(testMSP[400])
 }
 ## END unit test ]
+
+## START unit test setMethod names <- 
+testMSP@names[1] <- 1
+"test_names<-" <-  function() {
+    checkTrue(is.character(testMSP@names[1]))
+} 
+## END unit test setMethod names<-
+
+## START unit test setMethod information<- 
+testMSP@information[1] <- "unknown"
+"test_information<-" <-  function() {
+    checkTrue(is.character(testMSP@information[1]))
+} 
+## END unit test setMethod information<-
+
+## START unit test setMethod classes<- 
+testMSP@classes[1] <- "unknown"
+"test_classes<-" <-  function() {
+    checkTrue(is.character(testMSP@classes[1]))
+} 
+## END unit test setMethod classes<-
+
+
+## START unit test setMethod adduct<- 
+testMSP@adduct[1] <- "unknown"
+"test_adduct<-" <-  function() {
+    checkTrue(is.character(testMSP@adduct[1]))
+} 
+## END unit test setMethod adduct<-
 
 ## START unit test getBegEndIndMSP
 testMSP <- convert2MSP(sd02_deconvoluted, split = " _ ", 
