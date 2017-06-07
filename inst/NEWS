@@ -1,3 +1,10 @@
+CHANGES IN VERSION 1.1.6
+------------------------
+ o implement calculation for parameter m = 0 in NDP [2017-05-14 Sun]
+ o correct bug fix for msp binning when there is only one entry for 
+   msp entry [2017-06-05 Mon]
+ o improve function binning when there is only one fragment [2017-06-05 Mon]
+
 CHANGES IN VERSION 1.1.5
 ------------------------
  o extend unit tests for shinyApp, plottingFunctions and convert2MSP [2017-04-03 Mon]

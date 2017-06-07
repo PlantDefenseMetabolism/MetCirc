@@ -1,13 +1,15 @@
 #' @name binning
 #' @title Bin m/z values
 #' @description Bin m/z values
-#' @usage binning(msp, tol = 0.01, group = NULL, method = c("median", "mean"))
+#' @usage binning(msp, tol = 0.01, group = NULL, method = c("median", "mean"), verbose = FALSE)
 #' @param msp \code{MSP}-object, see ?convert2MSP for further information
 #' @param tol \code{numerical}, boundary value until which neighboured peaks will be 
 #'      joined together
 #' @param group \code{character} vector, to which group does the entry belong to
 #' @param method \code{character} vector, method has to be \code{median} or 
 #'  \code{mean}
+#' @param verbose \code{logical} vector, if set to TRUE information will be printed
+#' if groups were not detected
 #' @details The functions \code{binning} bins fragments together by obtaining bins via 
 #' calculating either mean or medians of fragments which were put in intervals 
 #' according to the \code{tol} parameter. 
@@ -16,10 +18,10 @@
 #' were binned. Entires are intensity values in %. 
 #' @author Thomas Naake, \email{thomasnaake@@googlemail.com}
 #' @examples data("idMSMStoMSP", package = "MetCirc")
-#' binning(msp = finalMSP, tol = 0.01, group = NULL, method = "median")
+#' binning(msp = finalMSP, tol = 0.01, group = NULL, method = "median", verbose = FALSE)
 #' @export
 #' @importFrom stats median
-binning <- function(msp, tol = 0.01, group = NULL, method = c("median", "mean")) { 
+binning <- function(msp, tol = 0.01, group = NULL, method = c("median", "mean"), verbose = FALSE) { 
     
     method <- match.arg(method)
     ## msp is .msp file
@@ -32,7 +34,7 @@ binning <- function(msp, tol = 0.01, group = NULL, method = c("median", "mean"))
     msp <- peaks(msp)
     
     if (is.null(group)) {
-        print("argument group is not specified, will create dummy group")
+        if (verbose) print("argument group is not specified, will create dummy group")
         group <- rep("a", length(precmz))
     }
     ## if group is not NULL then: 
@@ -69,12 +71,21 @@ binning <- function(msp, tol = 0.01, group = NULL, method = c("median", "mean"))
 
         if (method == "median") {
             ## calculate median of values in bins
-            bins <- tapply(frag_s, cut(frag_s, steps), median)
+            if (length(frag_s) > 1) {
+                bins <- tapply(frag_s, cut(frag_s, steps), median)
+            } else {
+                bins <- frag_s
+            }
         }
     
         if (method == "mean") {
             ## calculate mean of values in bins
-            bins <- tapply(frag_s, cut(frag_s, steps), mean)
+            if (length(frag_s) > 1) {
+                bins <- tapply(frag_s, cut(frag_s, steps), mean)    
+            } else {
+                bins <- frag_s
+            }
+             
         }
         ## remove bins which no not show up
         bins <- bins[!is.na(bins)]
@@ -112,6 +123,17 @@ binning <- function(msp, tol = 0.01, group = NULL, method = c("median", "mean"))
     
     ## scale back to percent
     mm <- apply(mm, 1, function(x) {x / max(x) * 100})
-    mm <- t(mm)
+    if (length(frag) > 1)  {
+        mm <- t(mm)
+        
+    } 
+    
+    ## if there is only one fragment do the following
+    if (length(frag) == 1) {
+        mm <- as.matrix(mm)
+    }
+    
+    colnames(mm) <- bins
+    
     return(mm)
 }
