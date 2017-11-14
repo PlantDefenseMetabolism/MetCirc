@@ -41,4 +41,3 @@ createSimilarityMatrix(binnedMSP, m = 0.5, n = 2)
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

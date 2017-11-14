@@ -32,4 +32,3 @@ convertMSP2MSP(msp = msp2msp)
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

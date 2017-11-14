@@ -36,7 +36,8 @@ The NDP is calculated according to the following formula:
  secondary metabolism in coyote tobacco populations using MS/MS structural analysis. 
  PNAS, E4147--E4155. NDP returns a numeric value ranging between 0 and 1, where 0 
 indicates no similarity between the two MS/MS features, while 1 indicates 
-that the MS/MS features are identical.
+that the MS/MS features are identical. For the calculation of the NDP only the 
+elements of S1 and S2 that are not equal to 0 will be used.
 }
 \examples{
 data("binnedMSP", package = "MetCirc")
@@ -46,4 +47,3 @@ NDP(matrow1 = binnedMSP[1,], matrow2 = binnedMSP[2,], m = 0.5, n = 2,
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

@@ -22,4 +22,3 @@ for further details.
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

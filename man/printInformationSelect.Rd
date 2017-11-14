@@ -60,4 +60,3 @@ MetCirc:::printInformationSelect(groupname = groupname,
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

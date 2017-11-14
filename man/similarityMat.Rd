@@ -24,4 +24,3 @@ See the vignette for a workflow to reproduce the object \code{similarityMat}.
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

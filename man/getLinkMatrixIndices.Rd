@@ -31,4 +31,3 @@ Internal use for function \code{highlight}.
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

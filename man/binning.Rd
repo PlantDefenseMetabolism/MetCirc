@@ -4,7 +4,7 @@
 \alias{binning}
 \title{Bin m/z values}
 \usage{
-binning(msp, tol = 0.01, group = NULL, method = c("median", "mean"))
+binning(msp, tol = 0.01, group = NULL, method = c("median", "mean"), verbose = FALSE)
 }
 \arguments{
 \item{msp}{\code{MSP}-object, see ?convert2MSP for further information}
@@ -16,6 +16,9 @@ joined together}
 
 \item{method}{\code{character} vector, method has to be \code{median} or 
 \code{mean}}
+
+\item{verbose}{\code{logical} vector, if set to TRUE information will be printed
+if groups were not detected}
 }
 \value{
 \code{binning} returns a \code{matrix} where rownames are precursor ions
@@ -32,9 +35,8 @@ according to the \code{tol} parameter.
 }
 \examples{
 data("idMSMStoMSP", package = "MetCirc")
-binning(msp = finalMSP, tol = 0.01, group = NULL, method = "median")
+binning(msp = finalMSP, tol = 0.01, group = NULL, method = "median", verbose = FALSE)
 }
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

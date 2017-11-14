@@ -67,4 +67,3 @@ Internal use for \code{shinyCircos} or outside of \code{shinyCircos}
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

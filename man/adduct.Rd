@@ -4,6 +4,7 @@
 \name{adduct}
 \alias{adduct}
 \alias{adduct,MSP-method}
+\alias{adduct}
 \title{\code{adduct} returns adduct ion names of compounds in \code{MSP}-object}
 \format{An object of class \code{NULL} of length 0.}
 \usage{
@@ -24,6 +25,7 @@ adduct(x)
 \item \code{adduct}: returns adduct ion names of compounds in
 \code{MSP}-objects
 }}
+
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
 finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
@@ -31,4 +33,3 @@ finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
 adduct(finalMSP)
 }
 \keyword{datasets}
-

@@ -46,4 +46,3 @@ minFragCart2Polar(x, y, degreeOfFeatures = degreeFeatures)
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

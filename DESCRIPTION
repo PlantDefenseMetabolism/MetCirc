@@ -2,8 +2,8 @@ Package: MetCirc
 Type: Package
 Title: Navigating mass spectral similarity in high-resolution MS/MS 
     metabolomics data
-Version: 1.1.6
-Date: 2017-06-05
+Version: 1.5.0
+Date: 2017-10-20
 Authors@R: c(person(given = "Thomas", family = "Naake",
     email = "thomasnaake@googlemail.com",
     role = c("aut","cre")),
@@ -35,4 +35,4 @@ Description: MetCirc comprises a workflow to interactively explore
   the user can annotate MS/MS features based on their similarity to 
   (known) related MS/MS features. 
 License: GPL-2
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

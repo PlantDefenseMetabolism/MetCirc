@@ -35,4 +35,3 @@ A function to truncate names
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

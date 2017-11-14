@@ -87,4 +87,3 @@ convert2MSP(mm = sd02_deconvoluted, splitPattern = " _ ", splitIndMZ = 2,
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

@@ -4,6 +4,7 @@
 \name{peaks}
 \alias{peaks}
 \alias{peaks,MSP-method}
+\alias{peaks,MSP-method}
 \title{\code{peaks} method for \code{MSP}-class}
 \usage{
 peaks(object)
@@ -24,10 +25,10 @@ peaks(object)
 \itemize{
 \item \code{MSP}: returns the \code{data.frame} of an \code{MSP}-object
 }}
+
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
 finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
                      splitIndMZ = 2, splitIndRT = NULL)
 peaks(finalMSP)
 }
-

@@ -2,8 +2,8 @@
 % Please edit documentation in R/idMSMStoMSP-data.R
 \docType{data}
 \name{idMSMStoMSP-data}
-\alias{finalMSP}
 \alias{idMSMStoMSP-data}
+\alias{finalMSP}
 \title{Example data for \code{MetCirc}: \code{finalMSP}}
 \format{object of class \code{MSP}}
 \source{
@@ -43,4 +43,3 @@ and \code{compartmentTissue}.
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

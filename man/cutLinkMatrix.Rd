@@ -38,4 +38,3 @@ cutLinkMatrix(LinkMatrix = linkMat, type = "all")
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

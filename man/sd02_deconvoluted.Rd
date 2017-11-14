@@ -24,4 +24,3 @@ sd02_deconvoluted
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

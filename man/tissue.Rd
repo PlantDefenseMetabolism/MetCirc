@@ -23,4 +23,3 @@ in this \code{data.frame}.
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

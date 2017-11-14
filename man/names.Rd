@@ -24,4 +24,3 @@ finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
                          splitIndMZ = 2, splitIndRT = NULL)
 names(finalMSP)
 }
-

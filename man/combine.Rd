@@ -3,8 +3,8 @@
 \docType{methods}
 \name{combine}
 \alias{combine}
-\alias{combine,MSP,MSP-method}
 \alias{combine,MSP-method}
+\alias{combine,MSP,MSP-method}
 \title{\code{combine} method for \code{MSP}-class}
 \usage{
 combine(object1, object2)
@@ -26,6 +26,7 @@ combine(object1, object2)
 \itemize{
 \item \code{object1 = MSP,object2 = MSP}: combines two object of class \code{MSP}
 }}
+
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
 finalMSP1 <- convert2MSP(sd02_deconvoluted, split = " _ ",
@@ -34,4 +35,3 @@ finalMSP2 <- convert2MSP(sd02_deconvoluted, split = " _ ",
                          splitIndMZ = 2, splitIndRT = NULL)
 combine(finalMSP1, finalMSP2)
 }
-

@@ -40,4 +40,3 @@ cutUniquePrecursor(precursor, splitPattern = splitPattern,
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

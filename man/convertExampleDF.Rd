@@ -29,4 +29,3 @@ information.
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

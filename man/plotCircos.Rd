@@ -77,4 +77,3 @@ plotCircos(groupname, linkMat_cut, initialize = TRUE,
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

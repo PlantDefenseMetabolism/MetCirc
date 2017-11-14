@@ -50,4 +50,3 @@ similarityMat <- createSimilarityMatrix(binnedMSP)
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

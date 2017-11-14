@@ -4,6 +4,7 @@
 \name{getRT}
 \alias{getRT}
 \alias{getRT,MSP-method}
+\alias{getRT}
 \title{\code{getRT} returns precursor RT values of an \code{MSP}-object}
 \format{An object of class \code{NULL} of length 0.}
 \usage{
@@ -23,6 +24,7 @@ getRT(x)
 \itemize{
 \item \code{getRT}: returns precursor RT values of an \code{MSP}-object
 }}
+
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
 finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
@@ -30,4 +32,3 @@ finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
 getRT(finalMSP)
 }
 \keyword{datasets}
-

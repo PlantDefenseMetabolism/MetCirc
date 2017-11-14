@@ -28,4 +28,3 @@ the \code{matrix} \code{msp2msp} is used to construct an object of class \code{M
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

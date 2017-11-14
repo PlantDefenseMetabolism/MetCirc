@@ -33,4 +33,3 @@ getBegEndIndMSP(finalMSPdf)
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

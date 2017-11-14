@@ -40,4 +40,3 @@ thresholdLinkMatrix(linkMatrix = linkMatrix,
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

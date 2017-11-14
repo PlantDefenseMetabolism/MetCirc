@@ -43,4 +43,3 @@ createOrderedSimMat(similarityMatrix = similarityMat, order = "retentionTime")
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

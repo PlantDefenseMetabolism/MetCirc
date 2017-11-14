@@ -29,4 +29,3 @@ cart2Polar(x, y)
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

@@ -4,6 +4,7 @@
 \name{getPrecursorMZ}
 \alias{getPrecursorMZ}
 \alias{getPrecursorMZ,MSP-method}
+\alias{getPrecursorMZ}
 \title{\code{getPrecursorMZ} returns precursor m/z values of an
  \code{MSP}-object}
 \format{An object of class \code{NULL} of length 0.}
@@ -24,6 +25,7 @@ getPrecursorMZ(x)
 \itemize{
 \item \code{getPrecursorMZ}: returns precursor m/z values of an MSP object
 }}
+
 \examples{
 data("sd02_deconvoluted", package = "MetCirc")
 finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
@@ -31,4 +33,3 @@ finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
 getPrecursorMZ(finalMSP)
 }
 \keyword{datasets}
-

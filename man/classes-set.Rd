@@ -25,4 +25,3 @@ finalMSP <- convert2MSP(sd02_deconvoluted, split = " _ ",
 classes(finalMSP) <- rep("Unknown")
 }
 \keyword{datasets}
-

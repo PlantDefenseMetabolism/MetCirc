@@ -23,4 +23,3 @@ organ-localisation of each MS/MS spectrum is stored.
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

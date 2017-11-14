@@ -30,4 +30,3 @@ finalMSPNL <- msp2FunctionalLossesMSP(msp = finalMSP)
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-

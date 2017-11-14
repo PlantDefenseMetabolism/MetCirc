@@ -39,4 +39,3 @@ createLinkMatrix(similarityMatrix = similarityMat,
 \author{
 Thomas Naake, \email{thomasnaake@googlemail.com}
 }
-
